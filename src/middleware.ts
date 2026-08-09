@@ -27,18 +27,21 @@ export default auth((request) => {
       );
     }
 
+    if (!session?.user) {
+      return NextResponse.redirect(
+        new URL("/login", request.url)
+      );
+    }
+
     if (session.user.role !== "ADMIN") {
       return NextResponse.redirect(
-        new URL("/", nextUrl)
+        new URL("/", request.url)
       );
     }
   }
 
   // User account protection
-  if (
-    (isAccountRoute || isCheckoutRoute) &&
-    !isLoggedIn
-  ) {
+  if ((isAccountRoute || isCheckoutRoute) && !isLoggedIn) {
     return NextResponse.redirect(
       new URL(
         `/login?callbackUrl=${encodeURIComponent(
@@ -46,6 +49,12 @@ export default auth((request) => {
         )}`,
         nextUrl
       )
+    );
+  }
+
+  if (!session?.user) {
+    return NextResponse.redirect(
+      new URL("/login", request.url)
     );
   }
 
