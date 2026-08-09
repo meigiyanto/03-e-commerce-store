@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Heart, ShoppingBag, Sparkles } from "lucide-react";
 import { useStore } from "@/context/store-context";
+import { useSession } from "next-auth/react";
+import LogoutButton from "@/components/auth/logout-button";
 
 const navigation = [
   { href: "/", label: "Home" },
@@ -13,6 +15,7 @@ const navigation = [
 ];
 
 export default function SiteShell({ children }: { children: React.ReactNode }) {
+  const { data: session } = useSession();
   const pathname = usePathname();
   const { cartCount, wishlist } = useStore();
 
@@ -84,9 +87,26 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
             <Link href="/checkout" className="hover:text-slate-900">
               Checkout
             </Link>
-            <Link href="/admin" className="hover:text-slate-900">
-              Admin
-            </Link>
+            {session?.user.role === "ADMIN" && (
+              <Link href="/admin" className="hover:text-slate-900">
+                Admin
+              </Link>
+            )}
+            {!session?.user && (
+              <Link href="/login">
+                Login
+              </Link>
+            )}
+
+            {session?.user && (
+              <>
+                <Link href="/account">
+                  Account
+                </Link>
+
+                <LogoutButton />
+              </>
+            )}
           </div>
         </div>
       </footer>

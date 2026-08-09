@@ -1,6 +1,8 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react"; import Link from "next/link"; import { ArrowLeft, Pencil, Plus, Trash2, X, } from "lucide-react";
+import { FormEvent, useMemo, useState } from "react"; 
+import Link from "next/link"; 
+import { ArrowLeft, Pencil, Plus, Trash2, X, } from "lucide-react";
 import { categories } from "@/data/products";
 import type { Product } from "@/data/products";
 import { useStore } from "@/context/store-context";

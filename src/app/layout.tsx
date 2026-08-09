@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import "./globals.css";
 import SiteShell from "@/components/site-shell";
 import { StoreProvider } from "@/context/store-context";
+import AuthSessionProvider from "@/components/auth-session-provider";
 
 const geist = Geist({
   variable: "--font-geist-sans",
@@ -26,10 +27,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="id" className={`${geist.variable} h-full antialiased`}>
-      <body className="min-h-full bg-slate-50 font-sans text-slate-900">
-        <StoreProvider>
-          <SiteShell>{children}</SiteShell>
-        </StoreProvider>
+      <body className={`${geist.variable} antialiased`}>
+        <AuthSessionProvider>
+          <StoreProvider>
+            <SiteShell>{children}</SiteShell>
+          </StoreProvider>
+        </AuthSessionProvider>
       </body>
     </html>
   );
