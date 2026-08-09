@@ -1,3 +1,4 @@
+import Link from "next/link";
 import LoginForm from "@/components/auth/login-form";
 
 export default function LoginPage() {
@@ -15,10 +16,21 @@ export default function LoginPage() {
 
           <p className="mt-2 text-sm text-slate-500">
             Masuk untuk melanjutkan belanja.
-          </p>
+          </p>          
         </div>
 
         <LoginForm />
+
+        {/* Registration link */}
+          <p className="mt-6 text-center text-sm text-slate-500">
+            Sudah mempunyai akun?{" "}
+            <Link
+              href="/register"
+              className="font-semibold text-cyan-600 transition hover:text-cyan-700"
+            >
+              Sign Up
+            </Link>
+          </p>
       </div>
     </main>
   );
