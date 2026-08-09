@@ -8,17 +8,25 @@ import {
   useState,
   type ReactNode,
 } from "react";
+
 import type { Product } from "@/data/products";
+import { products as initialProducts } from "@/data/products";
 
 export type CartItem = Product & {
   quantity: number;
 };
 
 type StoreContextValue = {
+  products: Product[];
   cart: CartItem[];
   wishlist: string[];
+
   cartCount: number;
   cartSubtotal: number;
+
+  addProduct: (product: Product) => void;
+  updateProduct: (product: Product) => void;
+  deleteProduct: (productId: string) => void;
 
   addToCart: (product: Product) => void;
   removeFromCart: (productId: string) => void;
@@ -29,24 +37,48 @@ type StoreContextValue = {
   isInWishlist: (productId: string) => boolean;
 };
 
-const StoreContext = createContext<StoreContextValue | undefined>(undefined);
+const StoreContext = createContext<StoreContextValue | undefined>(
+  undefined
+);
 
 const CART_STORAGE_KEY = "northstar-cart";
 const WISHLIST_STORAGE_KEY = "northstar-wishlist";
+const PRODUCTS_STORAGE_KEY = "northstar-products";
 
-export function StoreProvider({ children }: { children: ReactNode }) {
+export function StoreProvider({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const [products, setProducts] =
+    useState<Product[]>(initialProducts);
+
   const [cart, setCart] = useState<CartItem[]>([]);
   const [wishlist, setWishlist] = useState<string[]>([]);
 
   const [hydrated, setHydrated] = useState(false);
 
-  /*
-   * Restore cart and wishlist from localStorage.
-   */
   useEffect(() => {
     try {
-      const savedCart = localStorage.getItem(CART_STORAGE_KEY);
-      const savedWishlist = localStorage.getItem(WISHLIST_STORAGE_KEY);
+      const savedProducts = localStorage.getItem(
+        PRODUCTS_STORAGE_KEY
+      );
+
+      const savedCart = localStorage.getItem(
+        CART_STORAGE_KEY
+      );
+
+      const savedWishlist = localStorage.getItem(
+        WISHLIST_STORAGE_KEY
+      );
+
+      if (savedProducts) {
+        const parsedProducts = JSON.parse(savedProducts);
+
+        if (Array.isArray(parsedProducts)) {
+          setProducts(parsedProducts);
+        }
+      }
 
       if (savedCart) {
         const parsedCart = JSON.parse(savedCart);
@@ -64,24 +96,33 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         }
       }
     } catch (error) {
-      console.error("Failed to restore store data:", error);
+      console.error(
+        "Failed to restore store data:",
+        error
+      );
     } finally {
       setHydrated(true);
     }
   }, []);
 
-  /*
-   * Persist cart after hydration.
-   */
   useEffect(() => {
     if (!hydrated) return;
 
-    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+    localStorage.setItem(
+      PRODUCTS_STORAGE_KEY,
+      JSON.stringify(products)
+    );
+  }, [products, hydrated]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+
+    localStorage.setItem(
+      CART_STORAGE_KEY,
+      JSON.stringify(cart)
+    );
   }, [cart, hydrated]);
 
-  /*
-   * Persist wishlist after hydration.
-   */
   useEffect(() => {
     if (!hydrated) return;
 
@@ -90,6 +131,63 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       JSON.stringify(wishlist)
     );
   }, [wishlist, hydrated]);
+
+  // =========================
+  // PRODUCT CRUD
+  // =========================
+
+  function addProduct(product: Product) {
+    setProducts((currentProducts) => [
+      ...currentProducts,
+      product,
+    ]);
+  }
+
+  function updateProduct(product: Product) {
+    setProducts((currentProducts) =>
+      currentProducts.map((item) =>
+        item.id === product.id ? product : item
+      )
+    );
+
+    // Keep existing cart data synchronized
+    setCart((currentCart) =>
+      currentCart.map((item) =>
+        item.id === product.id
+          ? {
+              ...product,
+              quantity: item.quantity,
+            }
+          : item
+      )
+    );
+  }
+
+  function deleteProduct(productId: string) {
+    setProducts((currentProducts) =>
+      currentProducts.filter(
+        (item) => item.id !== productId
+      )
+    );
+
+    // Remove deleted product from cart
+    setCart((currentCart) =>
+      currentCart.filter(
+        (item) => item.id !== productId
+      )
+    );
+
+    // Remove deleted product from wishlist
+    setWishlist((currentWishlist) =>
+      currentWishlist.filter(
+        (id) => id !== productId
+      )
+    );
+  }
+
+  // =========================
+  // CART
+  // =========================
 
   function addToCart(product: Product) {
     setCart((currentCart) => {
@@ -120,11 +218,16 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   function removeFromCart(productId: string) {
     setCart((currentCart) =>
-      currentCart.filter((item) => item.id !== productId)
+      currentCart.filter(
+        (item) => item.id !== productId
+      )
     );
   }
 
-  function updateCartQuantity(productId: string, quantity: number) {
+  function updateCartQuantity(
+    productId: string,
+    quantity: number
+  ) {
     if (quantity <= 0) {
       removeFromCart(productId);
       return;
@@ -146,10 +249,16 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setCart([]);
   }
 
+  // =========================
+  // WISHLIST
+  // =========================
+
   function toggleWishlist(productId: string) {
     setWishlist((currentWishlist) => {
       if (currentWishlist.includes(productId)) {
-        return currentWishlist.filter((id) => id !== productId);
+        return currentWishlist.filter(
+          (id) => id !== productId
+        );
       }
 
       return [...currentWishlist, productId];
@@ -159,6 +268,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   function isInWishlist(productId: string) {
     return wishlist.includes(productId);
   }
+
+  // =========================
+  // COMPUTED VALUES
+  // =========================
 
   const cartCount = useMemo(
     () =>
@@ -172,17 +285,24 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const cartSubtotal = useMemo(
     () =>
       cart.reduce(
-        (total, item) => total + item.price * item.quantity,
+        (total, item) =>
+          total + item.price * item.quantity,
         0
       ),
     [cart]
   );
 
   const value: StoreContextValue = {
+    products,
     cart,
     wishlist,
+
     cartCount,
     cartSubtotal,
+
+    addProduct,
+    updateProduct,
+    deleteProduct,
 
     addToCart,
     removeFromCart,

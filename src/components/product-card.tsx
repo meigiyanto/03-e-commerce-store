@@ -65,6 +65,31 @@ export default function ProductCard({
           />
         </button>
 
+        {/* Product Rating */}
+        <div className="mt-3 flex items-center gap-2">
+          <div
+            className="flex text-amber-400"
+            aria-label={`Rating ${product.rating ?? 0} dari 5`}
+          >
+            {"★★★★★".split("").map((star, index) => (
+              <span
+                key={index}
+                className={
+                  index < Math.round(product.rating ?? 0)
+                    ? "text-amber-400"
+                    : "text-slate-200"
+                }
+              >
+                {star}
+              </span>
+            ))}
+          </div>
+
+          <span className="text-sm font-medium text-slate-600">
+            {(product.rating ?? 0).toFixed(1)}
+          </span>
+        </div>
+
         {/* Category */}
         <span className="absolute bottom-4 left-4 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
           {product.category}
