@@ -5,7 +5,7 @@ export type Product = {
   category: string;
   description: string;
   image: string;
-  rating?: number;
+  rating: number;
 };
 
 export const categories = [
@@ -19,7 +19,6 @@ export const categories = [
 ] as const;
 
 export const products: Product[] = [
-  /* 1 */
   {
   id: "aurora-wireless-headphones",
   name: "Aurora Wireless Headphones",
@@ -29,19 +28,15 @@ export const products: Product[] = [
   image:"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=80",
   rating: 4.8,
 },
-/* 2 */
 {
   id: "nordic-table-lamp",
   name: "Nordic Table Lamp",
   price: 79.99,
   description: "Minimalist table lamp designed to bring warm and focused light to your workspace.",
   category: "Home",
-  description: "Wireless headphones with rich sound, comfortable ear cushions, and long-lasting battery life.",
   image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=80",
   rating: 4.5,
-  image: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=900&q=80",
 },
-/* 3 */
 {
   id:  "pulse-smartwatch",
   name: "Pulse Smartwatch",
@@ -51,7 +46,6 @@ export const products: Product[] = [
   image:"https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80",
   rating: 4.6,
 },
-/* 4 */
 {
   id:  "voyager-backpack",
   name: "Voyager Everyday Backpack",
@@ -61,7 +55,6 @@ export const products: Product[] = [
   image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=900&q=80",
   rating: 4.7,
 },
-/* 5 */
 {
   id:  "focus-camera",
   name:  "Focus Mirrorless Camera",
@@ -71,7 +64,6 @@ export const products: Product[] = [
   image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=900&q=80",
   rating: 4.9,
 },
-/* 6 */
 {
   id:  "oak-lounge-chair",
   name:  "Oak Lounge Chair",
