@@ -34,7 +34,7 @@ export const products: Product[] = [
   price: 79.99,
   description: "Minimalist table lamp designed to bring warm and focused light to your workspace.",
   category: "Home",
-  image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=80",
+  image: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=900&q=80",
   rating: 4.5,
 },
 {

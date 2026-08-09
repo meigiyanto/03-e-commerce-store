@@ -20,24 +20,22 @@ export default function LoginForm() {
     setError("");
     setLoading(true);
 
-    const callbackUrl =
-      searchParams.get("callbackUrl") || "/";
+    const callbackUrl = searchParams.get("callbackUrl") || "/";
 
     const result = await signIn("credentials", {
       email,
       password,
       redirect: false,
+      callbackUrl,
     });
 
     if (result?.error) {
-      setError(
-        "Email atau password tidak valid."
-      );
+      setError("Email or password is invalid.");
       setLoading(false);
       return;
     }
 
-    window.location.href = callbackUrl;
+    window.location.href = result?.url || callbackUrl;
   }
 
   return (
