@@ -59,15 +59,14 @@ export const products: Product[] = [
     image:
       "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&w=900&q=80",
   },
+  
   {
     id: "echo-portable-speaker",
     name: "Echo Portable Speaker",
     price: 69.99,
     category: "Audio",
-    description:
-      "Portable Bluetooth speaker with clear audio, deep bass, and a compact design for travel.",
-    image:
-      "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=900&q=80",
+    description: "Portable Bluetooth speaker with clear audio, deep bass, and a compact design for travel.",
+    image: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=900&q=80",
   },
   {
     id: "nova-mechanical-keyboard",

@@ -1,21 +1,8 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
-import Link from "next/link";
-import {
-  ArrowLeft,
-  Pencil,
-  Plus,
-  Trash2,
-  X,
-} from "lucide-react";
-
-import {
-  categories,
-} from "@/data/products";
-
+import { FormEvent, useMemo, useState } from "react"; import Link from "next/link"; import { ArrowLeft, Pencil, Plus, Trash2, X, } from "lucide-react";
+import { categories } from "@/data/products";
 import type { Product } from "@/data/products";
-
 import { useStore } from "@/context/store-context";
 
 const emptyForm = {
@@ -24,6 +11,7 @@ const emptyForm = {
   description: "",
   category: "Audio",
   image: "",
+  rating: "0",
 };
 
 function createSlug(value: string) {
@@ -42,19 +30,15 @@ export default function AdminPage() {
     deleteProduct,
   } = useStore();
 
-  const [form, setForm] =
-    useState(emptyForm);
+  const [form, setForm] = useState(emptyForm);
 
   const [editingId, setEditingId] =
     useState<string | null>(null);
 
-  const [search, setSearch] =
-    useState("");
+  const [search, setSearch] = useState("");
 
   const filteredProducts = useMemo(() => {
-    const query = search
-      .trim()
-      .toLowerCase();
+    const query = search.trim().toLowerCase();
 
     if (!query) {
       return products;
@@ -88,10 +72,15 @@ export default function AdminPage() {
 
   function handleSubmit(
     event: FormEvent<HTMLFormElement>
-  ) {
+  ): void {
     event.preventDefault();
 
     const price = Number(form.price);
+    const rating = Number(form.rating);
+
+    // =========================
+    // VALIDATION
+    // =========================
 
     if (!form.name.trim()) {
       alert("Product name wajib diisi.");
@@ -113,6 +102,19 @@ export default function AdminPage() {
       return;
     }
 
+    if (
+      !Number.isFinite(rating) ||
+      rating < 0 ||
+      rating > 5
+    ) {
+      alert("Rating harus berada di antara 0 dan 5.");
+      return;
+    }
+
+    // =========================
+    // UPDATE PRODUCT
+    // =========================
+
     if (editingId) {
       const existing = products.find(
         (product) =>
@@ -127,14 +129,20 @@ export default function AdminPage() {
         id: existing.id,
         name: form.name.trim(),
         price,
-        description:
-          form.description.trim(),
+        description: form.description.trim(),
         category: form.category,
         image: form.image.trim(),
+        rating,
       };
 
       updateProduct(updatedProduct);
-    } else {
+    }
+
+    // =========================
+    // CREATE PRODUCT
+    // =========================
+
+    else {
       let id = createSlug(form.name);
 
       if (!id) {
@@ -153,10 +161,10 @@ export default function AdminPage() {
         id,
         name: form.name.trim(),
         price,
-        description:
-          form.description.trim(),
+        description: form.description.trim(),
         category: form.category,
         image: form.image.trim(),
+        rating,
       };
 
       addProduct(newProduct);
@@ -164,6 +172,10 @@ export default function AdminPage() {
 
     resetForm();
   }
+
+  // =========================
+  // EDIT
+  // =========================
 
   function handleEdit(product: Product) {
     setEditingId(product.id);
@@ -174,6 +186,7 @@ export default function AdminPage() {
       description: product.description,
       category: product.category,
       image: product.image,
+      rating: String(product.rating ?? 0),
     });
 
     window.scrollTo({
@@ -181,6 +194,10 @@ export default function AdminPage() {
       behavior: "smooth",
     });
   }
+
+  // =========================
+  // DELETE
+  // =========================
 
   function handleDelete(product: Product) {
     const confirmed = window.confirm(
@@ -202,7 +219,10 @@ export default function AdminPage() {
     <main className="min-h-screen bg-slate-50 px-6 py-10 lg:px-8">
       <div className="mx-auto max-w-7xl">
 
-        {/* Header */}
+        {/* =========================
+            HEADER
+        ========================== */}
+
         <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-600">
@@ -228,9 +248,14 @@ export default function AdminPage() {
           </Link>
         </div>
 
-        {/* CRUD form */}
+        {/* =========================
+            CRUD FORM
+        ========================== */}
+
         <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+
           <div className="flex items-center justify-between gap-4">
+
             <div>
               <h2 className="text-xl font-semibold text-slate-950">
                 {editingId
@@ -261,6 +286,9 @@ export default function AdminPage() {
             onSubmit={handleSubmit}
             className="mt-6 grid gap-5 md:grid-cols-2"
           >
+
+            {/* PRODUCT NAME */}
+
             <label>
               <span className="mb-2 block text-sm font-medium">
                 Product name
@@ -279,6 +307,8 @@ export default function AdminPage() {
                 required
               />
             </label>
+
+            {/* PRICE */}
 
             <label>
               <span className="mb-2 block text-sm font-medium">
@@ -301,6 +331,8 @@ export default function AdminPage() {
                 required
               />
             </label>
+
+            {/* CATEGORY */}
 
             <label>
               <span className="mb-2 block text-sm font-medium">
@@ -333,6 +365,8 @@ export default function AdminPage() {
               </select>
             </label>
 
+            {/* IMAGE */}
+
             <label>
               <span className="mb-2 block text-sm font-medium">
                 Image URL
@@ -353,6 +387,8 @@ export default function AdminPage() {
               />
             </label>
 
+            {/* RATING */}
+
             <label>
               <span className="mb-2 block text-sm font-medium">
                 Rating
@@ -365,12 +401,21 @@ export default function AdminPage() {
                 step="0.1"
                 value={form.rating}
                 onChange={(event) =>
-                  updateField("rating", event.target.value)
+                  updateField(
+                    "rating",
+                    event.target.value
+                  )
                 }
                 placeholder="4.8"
                 className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-cyan-400"
               />
-            </label>            
+
+              <span className="mt-1 block text-xs text-slate-400">
+                Masukkan nilai antara 0 sampai 5.
+              </span>
+            </label>
+
+            {/* DESCRIPTION */}
 
             <label className="md:col-span-2">
               <span className="mb-2 block text-sm font-medium">
@@ -390,7 +435,9 @@ export default function AdminPage() {
                 className="w-full resize-none rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-cyan-400"
                 required
               />
-            </label>            
+            </label>
+
+            {/* SUBMIT */}
 
             <div className="md:col-span-2">
               <button
@@ -410,12 +457,18 @@ export default function AdminPage() {
                 )}
               </button>
             </div>
+
           </form>
         </section>
 
-        {/* Product list */}
+        {/* =========================
+            PRODUCT LIST
+        ========================== */}
+
         <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+
           <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+
             <div>
               <h2 className="text-xl font-semibold text-slate-950">
                 Products ({products.length})
@@ -437,9 +490,12 @@ export default function AdminPage() {
           </div>
 
           <div className="mt-6 overflow-x-auto">
-            <table className="w-full min-w-[720px] text-left">
+
+            <table className="w-full min-w-[820px] text-left">
+
               <thead>
                 <tr className="border-b border-slate-200 text-sm text-slate-500">
+
                   <th className="px-3 py-3 font-medium">
                     Product
                   </th>
@@ -449,24 +505,35 @@ export default function AdminPage() {
                   </th>
 
                   <th className="px-3 py-3 font-medium">
+                    Rating
+                  </th>
+
+                  <th className="px-3 py-3 font-medium">
                     Price
                   </th>
 
                   <th className="px-3 py-3 text-right font-medium">
                     Actions
                   </th>
+
                 </tr>
               </thead>
 
               <tbody>
+
                 {filteredProducts.map(
                   (product) => (
                     <tr
                       key={product.id}
                       className="border-b border-slate-100 last:border-0"
                     >
+
+                      {/* PRODUCT */}
+
                       <td className="px-3 py-4">
+
                         <div className="flex items-center gap-3">
+
                           <img
                             src={product.image}
                             alt={product.name}
@@ -474,6 +541,7 @@ export default function AdminPage() {
                           />
 
                           <div>
+
                             <p className="font-semibold text-slate-900">
                               {product.name}
                             </p>
@@ -481,26 +549,53 @@ export default function AdminPage() {
                             <p className="text-xs text-slate-400">
                               {product.id}
                             </p>
+
                           </div>
+
                         </div>
+
                       </td>
+
+                      {/* CATEGORY */}
 
                       <td className="px-3 py-4 text-sm text-slate-600">
                         {product.category}
                       </td>
 
+                      {/* RATING */}
+
+                      <td className="px-3 py-4">
+
+                        <div className="flex items-center gap-2">
+
+                          <span className="text-amber-400">
+                            ★
+                          </span>
+
+                          <span className="text-sm font-semibold text-slate-700">
+                            {(product.rating ?? 0).toFixed(1)}
+                          </span>
+
+                        </div>
+
+                      </td>
+
+                      {/* PRICE */}
+
                       <td className="px-3 py-4 text-sm font-semibold">
                         ${product.price.toFixed(2)}
                       </td>
 
+                      {/* ACTIONS */}
+
                       <td className="px-3 py-4">
+
                         <div className="flex justify-end gap-2">
+
                           <button
                             type="button"
                             onClick={() =>
-                              handleEdit(
-                                product
-                              )
+                              handleEdit(product)
                             }
                             className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:border-slate-300"
                           >
@@ -511,21 +606,24 @@ export default function AdminPage() {
                           <button
                             type="button"
                             onClick={() =>
-                              handleDelete(
-                                product
-                              )
+                              handleDelete(product)
                             }
                             className="inline-flex items-center gap-2 rounded-full border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50"
                           >
                             <Trash2 size={15} />
                             Delete
                           </button>
+
                         </div>
+
                       </td>
+
                     </tr>
                   )
                 )}
+
               </tbody>
+
             </table>
 
             {filteredProducts.length === 0 && (
@@ -533,8 +631,10 @@ export default function AdminPage() {
                 No products found.
               </div>
             )}
+
           </div>
         </section>
+
       </div>
     </main>
   );
