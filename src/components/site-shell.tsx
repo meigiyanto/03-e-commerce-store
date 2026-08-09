@@ -37,7 +37,9 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`text-sm font-medium transition ${isActive ? "text-slate-900" : "text-slate-600 hover:text-slate-900"}`}
+                  className={`text-sm font-medium transition ${
+                    isActive ? "text-slate-900" : "text-slate-600 hover:text-slate-900"
+                  }`}
                 >
                   {item.label}
                 </Link>
@@ -46,9 +48,13 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
           </nav>
 
           <div className="flex items-center gap-3">
-            <Link href="/products" className="rounded-full border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700">
+            <Link
+              href="/products"
+              className="rounded-full border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700"
+            >
               Browse
             </Link>
+
             <Link href="/cart" className="relative rounded-full bg-slate-900 p-2 text-white">
               <ShoppingBag size={18} />
               {cartCount > 0 ? (
@@ -57,6 +63,7 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
                 </span>
               ) : null}
             </Link>
+
             <div className="hidden rounded-full bg-slate-100 p-2 text-slate-600 sm:flex">
               <Heart size={18} />
               <span className="ml-2 text-sm">{wishlist.length}</span>
@@ -71,12 +78,19 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
         <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-6 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <p>© 2026 Northstar Store. Semua kebutuhan modern ada di sini.</p>
           <div className="flex gap-4">
-            <Link href="/products" className="hover:text-slate-900">Produk</Link>
-            <Link href="/checkout" className="hover:text-slate-900">Checkout</Link>
-            <Link href="/admin" className="hover:text-slate-900">Admin</Link>
+            <Link href="/products" className="hover:text-slate-900">
+              Produk
+            </Link>
+            <Link href="/checkout" className="hover:text-slate-900">
+              Checkout
+            </Link>
+            <Link href="/admin" className="hover:text-slate-900">
+              Admin
+            </Link>
           </div>
         </div>
       </footer>
     </div>
   );
 }
+

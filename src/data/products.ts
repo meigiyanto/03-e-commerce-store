@@ -2,80 +2,88 @@ export type Product = {
   id: string;
   name: string;
   price: number;
-  category: string;
   description: string;
+  category: string;
   image: string;
-  badge: string;
-  rating: number;
 };
+
+export const categories = [
+  "All",
+  "Audio",
+  "Home",
+  "Wearables",
+  "Travel",
+  "Photography",
+  "Furniture",
+] as const;
 
 export const products: Product[] = [
   {
-    id: "aurora-headphones",
-    name: "Aurora Headphones",
-    price: 189,
+    id: "aurora-wireless-headphones",
+    name: "Aurora Wireless Headphones",
+    price: 149.99,
+    description:
+      "Premium wireless headphones with immersive sound and comfortable all-day fit.",
     category: "Audio",
-    description: "Noise-canceling headphones dengan suara studio dan desain premium.",
     image:
-      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80",
-    badge: "Best Seller",
-    rating: 4.9,
+      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=80",
   },
   {
-    id: "lumen-lamp",
-    name: "Lumen Desk Lamp",
-    price: 89,
+    id: "nordic-table-lamp",
+    name: "Nordic Table Lamp",
+    price: 79.99,
+    description:
+      "Minimalist table lamp designed to bring warm and focused light to your workspace.",
     category: "Home",
-    description: "Lampu meja pintar dengan pencahayaan hangat untuk ruang kerja modern.",
     image:
-      "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=800&q=80",
-    badge: "New Arrival",
-    rating: 4.8,
+      "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=900&q=80",
   },
   {
-    id: "nova-watch",
-    name: "Nova Smart Watch",
-    price: 249,
+    id: "pulse-smartwatch",
+    name: "Pulse Smartwatch",
+    price: 199.99,
+    description:
+      "Modern smartwatch with fitness tracking, notifications, and a clean everyday design.",
     category: "Wearables",
-    description: "Jam tangan pintar dengan pelacakan kesehatan dan desain ramping.",
     image:
-      "https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=800&q=80",
-    badge: "Editor Choice",
-    rating: 4.7,
+      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80",
   },
   {
-    id: "terra-bag",
-    name: "Terra Travel Bag",
-    price: 129,
+    id: "voyager-backpack",
+    name: "Voyager Everyday Backpack",
+    price: 89.99,
+    description:
+      "Durable everyday backpack with organized storage for work, travel, and daily essentials.",
     category: "Travel",
-    description: "Tas perjalanan modular dengan ruang luas dan material tahan air.",
     image:
-      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80",
-    badge: "Limited",
-    rating: 4.6,
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=900&q=80",
   },
   {
-    id: "solis-camera",
-    name: "Solis Mirrorless Camera",
-    price: 799,
+    id: "focus-camera",
+    name: "Focus Mirrorless Camera",
+    price: 899.99,
+    description:
+      "Compact mirrorless camera designed for creators who want sharp images and easy portability.",
     category: "Photography",
-    description: "Kamera compact untuk hasil foto jernih dan video cinematic.",
     image:
-      "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=800&q=80",
-    badge: "Pro Pick",
-    rating: 4.9,
+      "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=900&q=80",
   },
   {
-    id: "cove-chair",
-    name: "Cove Accent Chair",
-    price: 299,
+    id: "oak-lounge-chair",
+    name: "Oak Lounge Chair",
+    price: 329.99,
+    description:
+      "Comfortable modern lounge chair with natural oak details and timeless Scandinavian styling.",
     category: "Furniture",
-    description: "Kursi nyaman untuk ruang tamu atau sudut kerja yang terasa premium.",
     image:
-      "https://images.unsplash.com/photo-1519947486511-46149fa0a254?auto=format&fit=crop&w=800&q=80",
-    badge: "Trending",
-    rating: 4.5,
+      "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&w=900&q=80",
   },
 ];
 
-export const categories = ["All", ...Array.from(new Set(products.map((product) => product.category)))];
+export function getProductById(id: string) {
+  return products.find((product) => product.id === id);
+}
+
+export function findProduct(id: string) {
+  return products.find((product) => product.id === id);
+}
