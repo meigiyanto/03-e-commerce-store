@@ -11,7 +11,6 @@ const navigation = [
   { href: "/", label: "Home" },
   { href: "/products", label: "Products" },
   { href: "/cart", label: "Cart" },
-  { href: "/admin", label: "Admin" },
 ];
 
 export default function SiteShell({ children }: { children: React.ReactNode }) {
@@ -36,18 +35,34 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
           <nav className="hidden items-center gap-6 md:flex">
             {navigation.map((item) => {
               const isActive = pathname === item.href;
+
               return (
                 <Link
                   key={item.href}
                   href={item.href}
                   className={`text-sm font-medium transition ${
-                    isActive ? "text-slate-900" : "text-slate-600 hover:text-slate-900"
+                    isActive
+                      ? "text-slate-900"
+                      : "text-slate-600 hover:text-slate-900"
                   }`}
                 >
                   {item.label}
                 </Link>
               );
             })}
+
+            {session?.user?.role === "ADMIN" && (
+              <Link
+                href="/admin"
+                className={`text-sm font-medium transition ${
+                  pathname.startsWith("/admin")
+                    ? "text-slate-900"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                Admin
+              </Link>
+            )}
           </nav>
 
           <div className="flex items-center gap-3">
@@ -87,11 +102,16 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
             <Link href="/checkout" className="hover:text-slate-900">
               Checkout
             </Link>
-            {session?.user.role === "ADMIN" && (
-              <Link href="/admin" className="hover:text-slate-900">
+            
+            {session?.user?.role === "ADMIN" && (
+              <Link
+                href="/admin"
+                className="hover:text-slate-900"
+              >
                 Admin
               </Link>
             )}
+            
             {!session?.user && (
               <Link href="/login">
                 Login
