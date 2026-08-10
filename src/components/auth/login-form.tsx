@@ -1,10 +1,12 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { signIn } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
+import { useSignIn } from "@clerk/nextjs";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function LoginForm() {
+  const { isLoaded, signIn, setActive } = useSignIn();
+  const router = useRouter();
   const searchParams = useSearchParams();
 
   const [email, setEmail] = useState("");
@@ -12,36 +14,54 @@ export default function LoginForm() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(
-    event: FormEvent<HTMLFormElement>
-  ) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    if (!isLoaded) {
+      return;
+    }
 
     setError("");
     setLoading(true);
 
-    const callbackUrl = searchParams.get("callbackUrl") || "/";
+    const callbackUrl =
+      searchParams.get("callbackUrl") || "/";
 
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-      callbackUrl,
-    });
+    try {
+      const result = await signIn.create({
+        identifier: email.trim().toLowerCase(),
+        password,
+      });
 
-    if (result?.error) {
-      setError("Email or password is invalid.");
+      if (result.status === "complete") {
+        await setActive({
+          session: result.createdSessionId,
+        });
+
+        router.push(callbackUrl);
+        router.refresh();
+
+        return;
+      }
+
+      setError(
+        "Login belum dapat diselesaikan. Silakan coba lagi."
+      );
+    } catch (error: unknown) {
+      console.error("CLERK_LOGIN_ERROR", error);
+
+      setError(
+        "Email atau password tidak valid."
+      );
+    } finally {
       setLoading(false);
-      return;
     }
-
-    window.location.href = result?.url || callbackUrl;
   }
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-5 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
+      className="space-y-5"
     >
       <div>
         <label
@@ -64,7 +84,6 @@ export default function LoginForm() {
         />
       </div>
 
-      {/* GtuqQTS2cv7fk8D */}
       <div>
         <label
           htmlFor="password"
@@ -94,7 +113,7 @@ export default function LoginForm() {
 
       <button
         type="submit"
-        disabled={loading}
+        disabled={loading || !isLoaded}
         className="w-full rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-cyan-600 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {loading ? "Signing in..." : "Sign in"}

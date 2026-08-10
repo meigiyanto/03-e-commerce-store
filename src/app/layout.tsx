@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import "./globals.css";
 import SiteShell from "@/components/site-shell";
 import { StoreProvider } from "@/context/store-context";
-import AuthSessionProvider from "@/components/auth-session-provider";
+import { ClerkProvider, Show, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs'
 
 const geist = Geist({
   variable: "--font-geist-sans",
@@ -28,11 +28,11 @@ export default function RootLayout({
   return (
     <html lang="id" className={`${geist.variable} h-full antialiased`}>
       <body className={`${geist.variable} antialiased`}>
-        <AuthSessionProvider>
+        <ClerkProvider>
           <StoreProvider>
             <SiteShell>{children}</SiteShell>
           </StoreProvider>
-        </AuthSessionProvider>
+        </ClerkProvider>
       </body>
     </html>
   );

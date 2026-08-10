@@ -1,28 +1,32 @@
 "use client";
 
-import { signOut } from "next-auth/react";
+import { useClerk } from "@clerk/nextjs";
 
 export default function LogoutButton() {
+  const { signOut } = useClerk();
+
   async function handleLogout() {
-    console.log("LOGOUT: mulai");
-
-    try {
-      const result = await signOut({
-        redirect: false,
-      });
-
-      console.log("LOGOUT RESULT:", result);
-
-      window.location.href = "/login";
-    } catch (error) {
-      console.error("LOGOUT ERROR:", error);
-    }
+    await signOut({
+      redirectUrl: "/login",
+    });
   }
 
   return (
+    // <button
+    //   type="button"
+    //   onClick={handleLogout}
+    //   className="hover:text-slate-900"
+    // >
+    //   Logout
+    // </button>
     <button
       type="button"
-      onClick={handleLogout}
+      onClick={() => {
+        console.log("CLERK LOGOUT CLICKED");
+        signOut({
+          redirectUrl: "/login",
+        });
+      }}
       className="hover:text-slate-900"
     >
       Logout
