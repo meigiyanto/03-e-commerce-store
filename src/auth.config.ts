@@ -7,22 +7,24 @@ export default {
 
   callbacks: {
     authorized({ auth, request }) {
-      const isLoggedIn = !!auth?.user;
       const pathname = request.nextUrl.pathname;
+      const user = auth?.user;
 
-      const isAdminRoute = pathname.startsWith("/admin");
-      const isAccountRoute = pathname.startsWith("/account");
-      const isCheckoutRoute = pathname.startsWith("/checkout");
+      if (pathname.startsWith("/admin")) {
+        return user?.role === "ADMIN";
+      }
 
-      if (
-        isAdminRoute ||
-        isAccountRoute ||
-        isCheckoutRoute
-      ) {
-        return isLoggedIn;
+      if (pathname.startsWith("/account") ||
+        pathname.startsWith("/checkout")) {
+        return !!user;
+      }
+
+      if (pathname === "/login" && user) {
+        return Response.redirect(new URL("/", request.url));
       }
 
       return true;
     },
   },
+  providers: []
 } satisfies NextAuthConfig;

@@ -1,18 +1,15 @@
-import "server-only";
-
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
-import authConfig from "@/auth.config";
-
-type Role = "USER" | "ADMIN";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  ...authConfig,
-
   session: {
     strategy: "jwt",
+  },
+
+  pages: {
+    signIn: "/login",
   },
 
   providers: [
@@ -66,18 +63,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           id: String(user.id),
           name: user.name,
           email: user.email,
-          role: user.role as Role,
+          role: user.role,
         };
       },
     }),
   ],
 
   callbacks: {
-    ...authConfig.callbacks,
-
     async jwt({ token, user }) {
       if (user) {
-        token.userId = user.id;
+        token.id = user.id;
         token.role = user.role;
       }
 
@@ -86,8 +81,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.userId as string;
-        session.user.role = token.role as Role;
+        session.user.id = token.id as string;
+        session.user.role = token.role as "USER" | "ADMIN";
       }
 
       return session;

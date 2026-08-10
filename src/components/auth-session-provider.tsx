@@ -8,8 +8,6 @@ export default function AuthSessionProvider({
   children: React.ReactNode;
 }) {
   return (
-    <SessionProvider>
-      {children}
-    </SessionProvider>
+    <SessionProvider>{children}</SessionProvider>
   );
 }
