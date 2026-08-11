@@ -1,5 +1,6 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { getOrCreateCurrentUser } from "@/lib/user";
 
 export default async function AccountPage() {
   const { userId } = await auth();
@@ -8,19 +9,26 @@ export default async function AccountPage() {
     redirect("/login");
   }
 
-  const user = await currentUser();
+  const clerkUser = await currentUser();
 
-  if (!user) {
+  if (!clerkUser) {
+    redirect("/login");
+  }
+
+  // Pastikan user Clerk juga tersedia di database Prisma
+  const dbUser = await getOrCreateCurrentUser();
+
+  if (!dbUser) {
     redirect("/login");
   }
 
   const name =
-    user.firstName ||
-    user.username ||
+    clerkUser.firstName ||
+    clerkUser.username ||
     "User";
 
   const email =
-    user.emailAddresses[0]?.emailAddress ||
+    clerkUser.primaryEmailAddress?.emailAddress ||
     "-";
 
   return (
@@ -36,6 +44,14 @@ export default async function AccountPage() {
 
         <p>
           <strong>Email:</strong> {email}
+        </p>
+
+        <p>
+          <strong>Database ID:</strong> {dbUser.id}
+        </p>
+
+        <p>
+          <strong>Role:</strong> {dbUser.role}
         </p>
       </div>
     </main>
