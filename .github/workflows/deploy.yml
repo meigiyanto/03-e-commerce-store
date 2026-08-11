@@ -19,4 +19,4 @@ jobs:
         uses: prisma/project-compute/github-action@main
         with:
           api-token: ${{ secrets.PRISMA_API_TOKEN }}
-          compute-service-id: cmslkg0qk0cj43pdrun13gvn2
+          compute-service-id: cmsol0ztk23is17e5w4ui6da1
