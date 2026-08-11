@@ -22,7 +22,8 @@
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "server-only": "^0.0.1",
-    "stripe": "^22.4.0"
+    "stripe": "^22.4.0",
+    "svix": "^1.99.1"
   },
   "devDependencies": {
     "@tailwindcss/oxide-linux-x64-gnu": "^4.3.3",

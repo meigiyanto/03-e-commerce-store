@@ -1,0 +1,4 @@
+curl -i -X POST \
+https://congenial-meme-xpg99qvwwvj39p9w-3000.app.github.dev/api/webhooks/clerk \
+-H "Content-Type: application/json" \
+-d "{}"
