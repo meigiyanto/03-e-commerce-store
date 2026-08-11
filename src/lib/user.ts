@@ -6,7 +6,11 @@ import { prisma } from "@/lib/prisma";
 export async function getOrCreateCurrentUser() {
   const clerkUser = await currentUser();
 
+  console.log("=== CLERK USER ===");
+  console.log(clerkUser);
+
   if (!clerkUser) {
+    console.log("No Clerk user found");
     return null;
   }
 
@@ -27,48 +31,40 @@ export async function getOrCreateCurrentUser() {
     clerkUser.username ||
     null;
 
-  const existingUser = await prisma.user.findUnique({
-    where: {
-      clerkId,
-    },
+  console.log("=== USER DATA ===");
+  console.log({
+    clerkId,
+    email,
+    name,
   });
 
-  if (existingUser) {
-    return prisma.user.update({
+  try {
+    const user = await prisma.user.upsert({
       where: {
         clerkId,
       },
-      data: {
+
+      update: {
         email,
         name,
       },
-    });
-  }
 
-  const existingByEmail = await prisma.user.findUnique({
-    where: {
-      email,
-    },
-  });
-
-  if (existingByEmail) {
-    return prisma.user.update({
-      where: {
-        id: existingByEmail.id,
-      },
-      data: {
+      create: {
         clerkId,
+        email,
         name,
+        role: "USER",
       },
     });
-  }
 
-  return prisma.user.create({
-    data: {
-      clerkId,
-      email,
-      name,
-      role: "USER",
-    },
-  });
+    console.log("=== PRISMA USER ===");
+    console.log(user);
+
+    return user;
+  } catch (error) {
+    console.error("=== PRISMA USER ERROR ===");
+    console.error(error);
+
+    throw error;
+  }
 }
