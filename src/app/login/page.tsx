@@ -1,5 +1,5 @@
 import Link from "next/link";
-import LoginForm from "@/components/auth/login-form";
+// import LoginForm from "@/components/auth/login-form";
 
 export default function LoginPage() {
   return (
@@ -19,7 +19,7 @@ export default function LoginPage() {
           </p>          
         </div>
 
-        <LoginForm />
+        {/* <LoginForm /> */}
 
         {/* Registration link */}
           <p className="mt-6 text-center text-sm text-slate-500">
