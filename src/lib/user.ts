@@ -6,8 +6,8 @@ import { prisma } from "@/lib/prisma";
 export async function getOrCreateCurrentUser() {
   const clerkUser = await currentUser();
 
-  console.log("=== CLERK USER ===");
-  console.log(clerkUser);
+  // console.log("=== CLERK USER ===");
+  // console.log(clerkUser);
 
   if (!clerkUser) {
     console.log("No Clerk user found");
@@ -31,12 +31,12 @@ export async function getOrCreateCurrentUser() {
     clerkUser.username ||
     null;
 
-  console.log("=== USER DATA ===");
-  console.log({
-    clerkId,
-    email,
-    name,
-  });
+  // console.log("=== USER DATA ===");
+  // console.log({
+  //   clerkId,
+  //   email,
+  //   name,
+  // });
 
   try {
     const user = await prisma.user.upsert({
@@ -57,8 +57,8 @@ export async function getOrCreateCurrentUser() {
       },
     });
 
-    console.log("=== PRISMA USER ===");
-    console.log(user);
+    // console.log("=== PRISMA USER ===");
+    // console.log(user);
 
     return user;
   } catch (error) {
