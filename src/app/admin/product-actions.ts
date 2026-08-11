@@ -1,8 +1,23 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { currentUser } from "@clerk/nextjs/server";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
+
+export type ProductInput = {
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  image: string;
+  rating: number;
+};
+
+export type AdminProduct = ProductInput & {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+};
 
 async function requireAdmin() {
   const clerkUser = await currentUser();
@@ -20,28 +35,21 @@ async function requireAdmin() {
     },
   });
 
-  if (user?.role !== "ADMIN") {
+  if (!user || user.role !== "ADMIN") {
     throw new Error("Forbidden: admin access required");
   }
-
-  return user;
 }
 
-type ProductInput = {
-  name: string;
-  description: string;
-  price: number;
-  category: string;
-  image?: string;
-  rating?: number;
-};
-
-function validateProductInput(input: ProductInput) {
+function validateProductInput(
+  input: ProductInput
+): ProductInput {
   const name = input.name.trim();
   const description = input.description.trim();
   const category = input.category.trim();
-  const image = input.image?.trim() || null;
-  const rating = input.rating ?? 0;
+  const image = input.image.trim();
+
+  const price = Number(input.price);
+  const rating = Number(input.rating);
 
   if (!name) {
     throw new Error("Product name wajib diisi.");
@@ -55,53 +63,101 @@ function validateProductInput(input: ProductInput) {
     throw new Error("Category wajib diisi.");
   }
 
-  if (!Number.isFinite(input.price) || input.price < 0) {
+  if (!image) {
+    throw new Error("Image URL wajib diisi.");
+  }
+
+  if (!Number.isFinite(price) || price < 0) {
     throw new Error("Harga produk tidak valid.");
   }
 
-  if (!Number.isFinite(rating) || rating < 0 || rating > 5) {
-    throw new Error("Rating harus berada di antara 0 dan 5.");
+  if (
+    !Number.isFinite(rating) ||
+    rating < 0 ||
+    rating > 5
+  ) {
+    throw new Error(
+      "Rating harus berada di antara 0 dan 5."
+    );
   }
 
   return {
     name,
     description,
-    price: input.price,
+    price,
     category,
     image,
     rating,
   };
 }
 
-export async function getProducts() {
+function serializeProduct(product: {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  image: string | null;
+  rating: number;
+  createdAt: Date;
+  updatedAt: Date;
+}): AdminProduct {
+  return {
+    id: String(product.id),
+    name: product.name,
+    description: product.description,
+    price: product.price,
+    category: product.category,
+    image: product.image ?? "",
+    rating: product.rating,
+    createdAt: product.createdAt.toISOString(),
+    updatedAt: product.updatedAt.toISOString(),
+  };
+}
+
+// READ
+export async function getProducts(): Promise<AdminProduct[]> {
   await requireAdmin();
 
-  return prisma.product.findMany({
+  const products = await prisma.product.findMany({
     orderBy: {
       createdAt: "desc",
     },
   });
+
+  return products.map(serializeProduct);
 }
 
-export async function createProduct(input: ProductInput) {
+// CREATE
+export async function createProduct(
+  input: ProductInput
+): Promise<AdminProduct> {
   await requireAdmin();
 
   const data = validateProductInput(input);
 
   const product = await prisma.product.create({
-    data,
+    data: {
+      name: data.name,
+      description: data.description,
+      price: data.price,
+      category: data.category,
+      image: data.image || null,
+      rating: data.rating,
+    },
   });
 
   revalidatePath("/admin");
   revalidatePath("/products");
 
-  return product;
+  return serializeProduct(product);
 }
 
+// UPDATE
 export async function updateProduct(
   id: number,
   input: ProductInput
-) {
+): Promise<AdminProduct> {
   await requireAdmin();
 
   if (!Number.isInteger(id) || id <= 0) {
@@ -114,31 +170,55 @@ export async function updateProduct(
     where: {
       id,
     },
-    data,
+    data: {
+      name: data.name,
+      description: data.description,
+      price: data.price,
+      category: data.category,
+      image: data.image || null,
+      rating: data.rating,
+    },
   });
 
   revalidatePath("/admin");
   revalidatePath("/products");
   revalidatePath(`/products/${id}`);
 
-  return product;
+  return serializeProduct(product);
 }
 
-export async function deleteProduct(id: number) {
+// DELETE
+export async function deleteProduct(
+  id: number
+): Promise<{ id: number }> {
   await requireAdmin();
 
   if (!Number.isInteger(id) || id <= 0) {
     throw new Error("Product ID tidak valid.");
   }
 
-  const product = await prisma.product.delete({
-    where: {
-      id,
-    },
-  });
+  try {
+    const product = await prisma.product.delete({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+      },
+    });
 
-  revalidatePath("/admin");
-  revalidatePath("/products");
+    revalidatePath("/admin");
+    revalidatePath("/products");
 
-  return product;
+    return product;
+  } catch (error) {
+    console.error(
+      "Failed to delete product:",
+      error
+    );
+
+    throw new Error(
+      "Produk tidak dapat dihapus. Pastikan produk tidak sedang digunakan oleh order."
+    );
+  }
 }

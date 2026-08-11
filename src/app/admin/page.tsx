@@ -1,64 +1,125 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react"; 
-import Link from "next/link"; 
-import { ArrowLeft, Pencil, Plus, Trash2, X, } from "lucide-react";
-import { categories } from "@/data/products";
-import type { Product } from "@/data/products";
-import { useStore } from "@/context/store-context";
+import { FormEvent, useEffect, useMemo, useState } from "react";
+import {
+  createProduct,
+  deleteProduct,
+  getProducts,
+  updateProduct,
+  type AdminProduct,
+  type ProductInput,
+} from "./product-actions";
 
-const emptyForm = {
+type FormState = {
+  name: string;
+  price: string;
+  description: string;
+  category: string;
+  image: string;
+  rating: string;
+};
+
+const initialForm: FormState = {
   name: "",
   price: "",
   description: "",
-  category: "Audio",
+  category: "",
   image: "",
   rating: "0",
 };
 
-function createSlug(value: string) {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
-
 export default function AdminPage() {
-  const {
-    products,
-    addProduct,
-    updateProduct,
-    deleteProduct,
-  } = useStore();
+  const [products, setProducts] = useState<AdminProduct[]>([]);
+  const [form, setForm] = useState<FormState>(initialForm);
 
-  const [form, setForm] = useState(emptyForm);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
-  const [editingId, setEditingId] =
-    useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   const [search, setSearch] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
 
-  const filteredProducts = useMemo(() => {
-    const query = search.trim().toLowerCase();
+  const isEditing = editingId !== null;
 
-    if (!query) {
-      return products;
+  // --------------------------------------------------
+  // READ - Load products from Prisma
+  // --------------------------------------------------
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadProducts() {
+      try {
+        setLoading(true);
+
+        const data = await getProducts();
+
+        if (mounted) {
+          setProducts(data);
+        }
+      } catch (error) {
+        console.error("Failed to load products:", error);
+
+        if (mounted) {
+          alert(
+            error instanceof Error
+              ? error.message
+              : "Gagal mengambil data produk."
+          );
+        }
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
     }
 
-    return products.filter(
-      (product) =>
-        product.name
-          .toLowerCase()
-          .includes(query) ||
-        product.category
-          .toLowerCase()
-          .includes(query)
-    );
-  }, [products, search]);
+    loadProducts();
 
-  function updateField(
-    field: keyof typeof emptyForm,
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  // --------------------------------------------------
+  // Categories
+  // --------------------------------------------------
+
+  const categories = useMemo(() => {
+    return Array.from(
+      new Set(products.map((product) => product.category))
+    ).sort();
+  }, [products]);
+
+  // --------------------------------------------------
+  // Filter products
+  // --------------------------------------------------
+
+  const filteredProducts = useMemo(() => {
+    const keyword = search.trim().toLowerCase();
+
+    return products.filter((product) => {
+      const matchesSearch =
+        !keyword ||
+        product.name.toLowerCase().includes(keyword) ||
+        product.description.toLowerCase().includes(keyword) ||
+        product.category.toLowerCase().includes(keyword);
+
+      const matchesCategory =
+        categoryFilter === "all" ||
+        product.category === categoryFilter;
+
+      return matchesSearch && matchesCategory;
+    });
+  }, [products, search, categoryFilter]);
+
+  // --------------------------------------------------
+  // Form helpers
+  // --------------------------------------------------
+
+  function updateForm(
+    field: keyof FormState,
     value: string
   ) {
     setForm((current) => ({
@@ -68,118 +129,11 @@ export default function AdminPage() {
   }
 
   function resetForm() {
-    setForm(emptyForm);
+    setForm(initialForm);
     setEditingId(null);
   }
 
-  function handleSubmit(
-    event: FormEvent<HTMLFormElement>
-  ): void {
-    event.preventDefault();
-
-    const price = Number(form.price);
-    const rating = Number(form.rating);
-
-    // =========================
-    // VALIDATION
-    // =========================
-
-    if (!form.name.trim()) {
-      alert("Product name wajib diisi.");
-      return;
-    }
-
-    if (!Number.isFinite(price) || price < 0) {
-      alert("Harga produk tidak valid.");
-      return;
-    }
-
-    if (!form.description.trim()) {
-      alert("Description wajib diisi.");
-      return;
-    }
-
-    if (!form.image.trim()) {
-      alert("Image URL wajib diisi.");
-      return;
-    }
-
-    if (
-      !Number.isFinite(rating) ||
-      rating < 0 ||
-      rating > 5
-    ) {
-      alert("Rating harus berada di antara 0 dan 5.");
-      return;
-    }
-
-    // =========================
-    // UPDATE PRODUCT
-    // =========================
-
-    if (editingId) {
-      const existing = products.find(
-        (product) =>
-          product.id === editingId
-      );
-
-      if (!existing) {
-        return;
-      }
-
-      const updatedProduct: Product = {
-        id: existing.id,
-        name: form.name.trim(),
-        price,
-        description: form.description.trim(),
-        category: form.category,
-        image: form.image.trim(),
-        rating,
-      };
-
-      updateProduct(updatedProduct);
-    }
-
-    // =========================
-    // CREATE PRODUCT
-    // =========================
-
-    else {
-      let id = createSlug(form.name);
-
-      if (!id) {
-        id = `product-${Date.now()}`;
-      }
-
-      const idExists = products.some(
-        (product) => product.id === id
-      );
-
-      if (idExists) {
-        id = `${id}-${Date.now()}`;
-      }
-
-      const newProduct: Product = {
-        id,
-        name: form.name.trim(),
-        price,
-        description: form.description.trim(),
-        category: form.category,
-        image: form.image.trim(),
-        rating,
-      };
-
-      addProduct(newProduct);
-    }
-
-    resetForm();
-  }
-
-  // =========================
-  // EDIT
-  // =========================
-
-  function handleEdit(product: Product) {
+  function startEdit(product: AdminProduct) {
     setEditingId(product.id);
 
     setForm({
@@ -188,7 +142,7 @@ export default function AdminPage() {
       description: product.description,
       category: product.category,
       image: product.image,
-      rating: String(product.rating ?? 0),
+      rating: String(product.rating),
     });
 
     window.scrollTo({
@@ -197,166 +151,427 @@ export default function AdminPage() {
     });
   }
 
-  // =========================
-  // DELETE
-  // =========================
+  // --------------------------------------------------
+  // CREATE / UPDATE
+  // --------------------------------------------------
 
-  function handleDelete(product: Product) {
+  async function handleSubmit(
+    event: FormEvent<HTMLFormElement>
+  ) {
+    event.preventDefault();
+
+    const price = Number(form.price);
+    const rating = Number(form.rating);
+
+    if (!form.name.trim()) {
+      alert("Nama produk wajib diisi.");
+      return;
+    }
+
+    if (!form.description.trim()) {
+      alert("Deskripsi produk wajib diisi.");
+      return;
+    }
+
+    if (!form.category.trim()) {
+      alert("Kategori produk wajib diisi.");
+      return;
+    }
+
+    if (!form.image.trim()) {
+      alert("URL gambar produk wajib diisi.");
+      return;
+    }
+
+    if (!Number.isFinite(price) || price < 0) {
+      alert("Harga produk tidak valid.");
+      return;
+    }
+
+    if (
+      !Number.isFinite(rating) ||
+      rating < 0 ||
+      rating > 5
+    ) {
+      alert("Rating harus berada di antara 0 sampai 5.");
+      return;
+    }
+
+    const productData: ProductInput = {
+      name: form.name.trim(),
+      description: form.description.trim(),
+      price,
+      category: form.category.trim(),
+      image: form.image.trim(),
+      rating,
+    };
+
+    try {
+      setSaving(true);
+
+      // UPDATE
+      if (editingId) {
+        const updatedProduct = await updateProduct(
+          Number(editingId),
+          productData
+        );
+
+        setProducts((current) =>
+          current.map((product) =>
+            product.id === updatedProduct.id
+              ? updatedProduct
+              : product
+          )
+        );
+
+        alert("Produk berhasil diperbarui.");
+      }
+
+      // CREATE
+      else {
+        const newProduct = await createProduct(
+          productData
+        );
+
+        setProducts((current) => [
+          newProduct,
+          ...current,
+        ]);
+
+        alert("Produk berhasil ditambahkan.");
+      }
+
+      resetForm();
+    } catch (error) {
+      console.error(
+        "Failed to save product:",
+        error
+      );
+
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Gagal menyimpan produk."
+      );
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  // --------------------------------------------------
+  // DELETE
+  // --------------------------------------------------
+
+  async function handleDelete(
+    product: AdminProduct
+  ) {
     const confirmed = window.confirm(
-      `Hapus produk "${product.name}"?`
+      `Apakah Anda yakin ingin menghapus "${product.name}"?`
     );
 
     if (!confirmed) {
       return;
     }
 
-    deleteProduct(product.id);
+    try {
+      setSaving(true);
 
-    if (editingId === product.id) {
-      resetForm();
+      await deleteProduct(Number(product.id));
+
+      setProducts((current) =>
+        current.filter(
+          (item) => item.id !== product.id
+        )
+      );
+
+      if (editingId === product.id) {
+        resetForm();
+      }
+
+      alert("Produk berhasil dihapus.");
+    } catch (error) {
+      console.error(
+        "Failed to delete product:",
+        error
+      );
+
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Gagal menghapus produk."
+      );
+    } finally {
+      setSaving(false);
     }
   }
 
+  // --------------------------------------------------
+  // UI
+  // --------------------------------------------------
+
   return (
-    <main className="min-h-screen bg-slate-50 px-6 py-10 lg:px-8">
+    <main className="min-h-screen bg-gray-50 px-4 py-8">
       <div className="mx-auto max-w-7xl">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">
+            Product Management
+          </h1>
 
-        {/* =========================
-            HEADER
-        ========================== */}
-
-        <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-600">
-              Administration
-            </p>
-
-            <h1 className="mt-2 text-4xl font-semibold tracking-tight text-slate-950">
-              Product management
-            </h1>
-
-            <p className="mt-2 text-slate-600">
-              Tambah, lihat, ubah, dan hapus produk
-              dari storefront.
-            </p>
-          </div>
-
-          <Link
-            href="/products"
-            className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700"
-          >
-            <ArrowLeft size={16} />
-            Storefront
-          </Link>
+          <p className="mt-2 text-sm text-gray-600">
+            Kelola produk yang tersimpan di Prisma
+            Postgres.
+          </p>
         </div>
 
-        {/* =========================
-            CRUD FORM
-        ========================== */}
-
-        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-
-          <div className="flex items-center justify-between gap-4">
-
+        {/* Product Form */}
+        <section className="mb-10 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="mb-6 flex items-center justify-between">
             <div>
-              <h2 className="text-xl font-semibold text-slate-950">
-                {editingId
-                  ? "Edit product"
-                  : "Add product"}
+              <h2 className="text-xl font-semibold text-gray-900">
+                {isEditing
+                  ? "Edit Product"
+                  : "Add Product"}
               </h2>
 
-              <p className="mt-1 text-sm text-slate-500">
-                {editingId
+              <p className="mt-1 text-sm text-gray-500">
+                {isEditing
                   ? "Perbarui informasi produk."
-                  : "Tambahkan produk baru ke toko."}
+                  : "Tambahkan produk baru ke database."}
               </p>
             </div>
 
-            {editingId && (
+            {isEditing && (
               <button
                 type="button"
                 onClick={resetForm}
-                className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600"
+                disabled={saving}
+                className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                <X size={16} />
-                Cancel
+                Cancel Edit
               </button>
             )}
           </div>
 
           <form
             onSubmit={handleSubmit}
-            className="mt-6 grid gap-5 md:grid-cols-2"
+            className="grid gap-5 md:grid-cols-2"
           >
-
-            {/* PRODUCT NAME */}
-
-            <label>
-              <span className="mb-2 block text-sm font-medium">
-                Product name
-              </span>
+            {/* Name */}
+            <div>
+              <label
+                htmlFor="product-name"
+                className="mb-2 block text-sm font-medium text-gray-700"
+              >
+                Product Name
+              </label>
 
               <input
+                id="product-name"
+                type="text"
                 value={form.name}
                 onChange={(event) =>
-                  updateField(
+                  updateForm(
                     "name",
                     event.target.value
                   )
                 }
-                placeholder="Example Wireless Headphones"
-                className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-cyan-400"
-                required
+                placeholder="Contoh: Wireless Headphones"
+                disabled={saving}
+                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 outline-none focus:border-black disabled:bg-gray-100"
               />
-            </label>
+            </div>
 
-            {/* PRICE */}
-
-            <label>
-              <span className="mb-2 block text-sm font-medium">
+            {/* Price */}
+            <div>
+              <label
+                htmlFor="product-price"
+                className="mb-2 block text-sm font-medium text-gray-700"
+              >
                 Price
-              </span>
+              </label>
 
               <input
+                id="product-price"
                 type="number"
                 min="0"
                 step="0.01"
                 value={form.price}
                 onChange={(event) =>
-                  updateField(
+                  updateForm(
                     "price",
                     event.target.value
                   )
                 }
                 placeholder="149.99"
-                className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-cyan-400"
-                required
+                disabled={saving}
+                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 outline-none focus:border-black disabled:bg-gray-100"
               />
-            </label>
+            </div>
 
-            {/* CATEGORY */}
-
-            <label>
-              <span className="mb-2 block text-sm font-medium">
+            {/* Category */}
+            <div>
+              <label
+                htmlFor="product-category"
+                className="mb-2 block text-sm font-medium text-gray-700"
+              >
                 Category
-              </span>
+              </label>
 
-              <select
+              <input
+                id="product-category"
+                type="text"
                 value={form.category}
                 onChange={(event) =>
-                  updateField(
+                  updateForm(
                     "category",
                     event.target.value
                   )
                 }
-                className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 outline-none focus:border-cyan-400"
+                placeholder="Audio"
+                disabled={saving}
+                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 outline-none focus:border-black disabled:bg-gray-100"
+              />
+            </div>
+
+            {/* Rating */}
+            <div>
+              <label
+                htmlFor="product-rating"
+                className="mb-2 block text-sm font-medium text-gray-700"
               >
-                {categories
-                  .filter(
-                    (category) =>
-                      category !== "All"
+                Rating
+              </label>
+
+              <input
+                id="product-rating"
+                type="number"
+                min="0"
+                max="5"
+                step="0.1"
+                value={form.rating}
+                onChange={(event) =>
+                  updateForm(
+                    "rating",
+                    event.target.value
                   )
-                  .map((category) => (
+                }
+                placeholder="4.5"
+                disabled={saving}
+                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 outline-none focus:border-black disabled:bg-gray-100"
+              />
+            </div>
+
+            {/* Image */}
+            <div className="md:col-span-2">
+              <label
+                htmlFor="product-image"
+                className="mb-2 block text-sm font-medium text-gray-700"
+              >
+                Image URL
+              </label>
+
+              <input
+                id="product-image"
+                type="url"
+                value={form.image}
+                onChange={(event) =>
+                  updateForm(
+                    "image",
+                    event.target.value
+                  )
+                }
+                placeholder="https://example.com/image.jpg"
+                disabled={saving}
+                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 outline-none focus:border-black disabled:bg-gray-100"
+              />
+            </div>
+
+            {/* Description */}
+            <div className="md:col-span-2">
+              <label
+                htmlFor="product-description"
+                className="mb-2 block text-sm font-medium text-gray-700"
+              >
+                Description
+              </label>
+
+              <textarea
+                id="product-description"
+                value={form.description}
+                onChange={(event) =>
+                  updateForm(
+                    "description",
+                    event.target.value
+                  )
+                }
+                placeholder="Deskripsi produk..."
+                rows={5}
+                disabled={saving}
+                className="w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 outline-none focus:border-black disabled:bg-gray-100"
+              />
+            </div>
+
+            {/* Submit */}
+            <div className="md:col-span-2">
+              <button
+                type="submit"
+                disabled={saving}
+                className="rounded-lg bg-black px-6 py-3 text-sm font-semibold text-white hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {saving
+                  ? "Saving..."
+                  : isEditing
+                    ? "Update Product"
+                    : "Add Product"}
+              </button>
+            </div>
+          </form>
+        </section>
+
+        {/* Products */}
+        <section className="rounded-xl border border-gray-200 bg-white shadow-sm">
+          {/* Toolbar */}
+          <div className="border-b border-gray-200 p-6">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900">
+                  Products
+                </h2>
+
+                <p className="mt-1 text-sm text-gray-500">
+                  {products.length} product
+                  {products.length !== 1 ? "s" : ""}
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-3 sm:flex-row">
+                {/* Search */}
+                <input
+                  type="search"
+                  value={search}
+                  onChange={(event) =>
+                    setSearch(event.target.value)
+                  }
+                  placeholder="Search products..."
+                  className="rounded-lg border border-gray-300 px-4 py-2 text-sm outline-none focus:border-black"
+                />
+
+                {/* Category */}
+                <select
+                  value={categoryFilter}
+                  onChange={(event) =>
+                    setCategoryFilter(
+                      event.target.value
+                    )
+                  }
+                  className="rounded-lg border border-gray-300 px-4 py-2 text-sm outline-none focus:border-black"
+                >
+                  <option value="all">
+                    All categories
+                  </option>
+
+                  {categories.map((category) => (
                     <option
                       key={category}
                       value={category}
@@ -364,279 +579,149 @@ export default function AdminPage() {
                       {category}
                     </option>
                   ))}
-              </select>
-            </label>
-
-            {/* IMAGE */}
-
-            <label>
-              <span className="mb-2 block text-sm font-medium">
-                Image URL
-              </span>
-
-              <input
-                type="url"
-                value={form.image}
-                onChange={(event) =>
-                  updateField(
-                    "image",
-                    event.target.value
-                  )
-                }
-                placeholder="https://..."
-                className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-cyan-400"
-                required
-              />
-            </label>
-
-            {/* RATING */}
-
-            <label>
-              <span className="mb-2 block text-sm font-medium">
-                Rating
-              </span>
-
-              <input
-                type="number"
-                min="0"
-                max="5"
-                step="0.1"
-                value={form.rating}
-                onChange={(event) =>
-                  updateField(
-                    "rating",
-                    event.target.value
-                  )
-                }
-                placeholder="4.8"
-                className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-cyan-400"
-              />
-
-              <span className="mt-1 block text-xs text-slate-400">
-                Masukkan nilai antara 0 sampai 5.
-              </span>
-            </label>
-
-            {/* DESCRIPTION */}
-
-            <label className="md:col-span-2">
-              <span className="mb-2 block text-sm font-medium">
-                Description
-              </span>
-
-              <textarea
-                rows={4}
-                value={form.description}
-                onChange={(event) =>
-                  updateField(
-                    "description",
-                    event.target.value
-                  )
-                }
-                placeholder="Describe this product..."
-                className="w-full resize-none rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-cyan-400"
-                required
-              />
-            </label>
-
-            {/* SUBMIT */}
-
-            <div className="md:col-span-2">
-              <button
-                type="submit"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white hover:bg-slate-800"
-              >
-                {editingId ? (
-                  <>
-                    <Pencil size={16} />
-                    Update product
-                  </>
-                ) : (
-                  <>
-                    <Plus size={16} />
-                    Add product
-                  </>
-                )}
-              </button>
+                </select>
+              </div>
             </div>
-
-          </form>
-        </section>
-
-        {/* =========================
-            PRODUCT LIST
-        ========================== */}
-
-        <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-
-          <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-
-            <div>
-              <h2 className="text-xl font-semibold text-slate-950">
-                Products ({products.length})
-              </h2>
-
-              <p className="mt-1 text-sm text-slate-500">
-                Semua produk yang tersedia.
-              </p>
-            </div>
-
-            <input
-              value={search}
-              onChange={(event) =>
-                setSearch(event.target.value)
-              }
-              placeholder="Search products..."
-              className="rounded-full border border-slate-200 px-5 py-2.5 text-sm outline-none focus:border-cyan-400"
-            />
           </div>
 
-          <div className="mt-6 overflow-x-auto">
+          {/* Loading */}
+          {loading && (
+            <div className="p-10 text-center text-sm text-gray-500">
+              Loading products...
+            </div>
+          )}
 
-            <table className="w-full min-w-[820px] text-left">
-
-              <thead>
-                <tr className="border-b border-slate-200 text-sm text-slate-500">
-
-                  <th className="px-3 py-3 font-medium">
-                    Product
-                  </th>
-
-                  <th className="px-3 py-3 font-medium">
-                    Category
-                  </th>
-
-                  <th className="px-3 py-3 font-medium">
-                    Rating
-                  </th>
-
-                  <th className="px-3 py-3 font-medium">
-                    Price
-                  </th>
-
-                  <th className="px-3 py-3 text-right font-medium">
-                    Actions
-                  </th>
-
-                </tr>
-              </thead>
-
-              <tbody>
-
-                {filteredProducts.map(
-                  (product) => (
-                    <tr
-                      key={product.id}
-                      className="border-b border-slate-100 last:border-0"
-                    >
-
-                      {/* PRODUCT */}
-
-                      <td className="px-3 py-4">
-
-                        <div className="flex items-center gap-3">
-
-                          <img
-                            src={product.image}
-                            alt={product.name}
-                            className="h-12 w-12 rounded-xl object-cover"
-                          />
-
-                          <div>
-
-                            <p className="font-semibold text-slate-900">
-                              {product.name}
-                            </p>
-
-                            <p className="text-xs text-slate-400">
-                              {product.id}
-                            </p>
-
-                          </div>
-
-                        </div>
-
-                      </td>
-
-                      {/* CATEGORY */}
-
-                      <td className="px-3 py-4 text-sm text-slate-600">
-                        {product.category}
-                      </td>
-
-                      {/* RATING */}
-
-                      <td className="px-3 py-4">
-
-                        <div className="flex items-center gap-2">
-
-                          <span className="text-amber-400">
-                            ★
-                          </span>
-
-                          <span className="text-sm font-semibold text-slate-700">
-                            {(product.rating ?? 0).toFixed(1)}
-                          </span>
-
-                        </div>
-
-                      </td>
-
-                      {/* PRICE */}
-
-                      <td className="px-3 py-4 text-sm font-semibold">
-                        ${product.price.toFixed(2)}
-                      </td>
-
-                      {/* ACTIONS */}
-
-                      <td className="px-3 py-4">
-
-                        <div className="flex justify-end gap-2">
-
-                          <button
-                            type="button"
-                            onClick={() =>
-                              handleEdit(product)
-                            }
-                            className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:border-slate-300"
-                          >
-                            <Pencil size={15} />
-                            Edit
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() =>
-                              handleDelete(product)
-                            }
-                            className="inline-flex items-center gap-2 rounded-full border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50"
-                          >
-                            <Trash2 size={15} />
-                            Delete
-                          </button>
-
-                        </div>
-
-                      </td>
-
-                    </tr>
-                  )
-                )}
-
-              </tbody>
-
-            </table>
-
-            {filteredProducts.length === 0 && (
-              <div className="py-12 text-center text-sm text-slate-500">
-                No products found.
+          {/* Empty */}
+          {!loading &&
+            filteredProducts.length === 0 && (
+              <div className="p-10 text-center">
+                <p className="text-sm text-gray-500">
+                  Tidak ada produk yang ditemukan.
+                </p>
               </div>
             )}
 
-          </div>
-        </section>
+          {/* Product Table */}
+          {!loading &&
+            filteredProducts.length > 0 && (
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                        Product
+                      </th>
 
+                      <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                        Category
+                      </th>
+
+                      <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                        Price
+                      </th>
+
+                      <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                        Rating
+                      </th>
+
+                      <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+
+                  <tbody className="divide-y divide-gray-200 bg-white">
+                    {filteredProducts.map(
+                      (product) => (
+                        <tr key={product.id}>
+                          {/* Product */}
+                          <td className="whitespace-nowrap px-6 py-4">
+                            <div className="flex items-center gap-4">
+                              <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-gray-100">
+                                {product.image ? (
+                                  <img
+                                    src={product.image}
+                                    alt={product.name}
+                                    className="h-full w-full object-cover"
+                                  />
+                                ) : (
+                                  <div className="flex h-full w-full items-center justify-center text-xs text-gray-400">
+                                    No image
+                                  </div>
+                                )}
+                              </div>
+
+                              <div>
+                                <div className="font-medium text-gray-900">
+                                  {product.name}
+                                </div>
+
+                                <div className="mt-1 max-w-xs truncate text-sm text-gray-500">
+                                  {
+                                    product.description
+                                  }
+                                </div>
+
+                                <div className="mt-1 text-xs text-gray-400">
+                                  ID: {product.id}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+
+                          {/* Category */}
+                          <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-700">
+                            {product.category}
+                          </td>
+
+                          {/* Price */}
+                          <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
+                            ${product.price.toFixed(2)}
+                          </td>
+
+                          {/* Rating */}
+                          <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-700">
+                            ⭐ {product.rating.toFixed(1)}
+                          </td>
+
+                          {/* Actions */}
+                          <td className="whitespace-nowrap px-6 py-4 text-right">
+                            <div className="flex justify-end gap-2">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  startEdit(
+                                    product
+                                  )
+                                }
+                                disabled={saving}
+                                className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                              >
+                                Edit
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleDelete(
+                                    product
+                                  )
+                                }
+                                disabled={saving}
+                                className="rounded-lg bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      )
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
+        </section>
       </div>
     </main>
   );
