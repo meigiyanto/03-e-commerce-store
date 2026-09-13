@@ -9,13 +9,14 @@ import {
     ShoppingCart,
 } from "lucide-react";
 import { useState } from "react";
-
 import Navbar from "@/components/layout/Navbar";
 import { products } from "@/data/products";
+import { useCartStore } from "@/stores/cart-store";
 
 export default function ProductDetailPage() {
     const params = useParams()
     const [quantity, setQuantity] = useState(1)
+    const addItem = useCartStore((state) => state.addItem);
     const productId = Number(params.id)
     const product = products.find((product) => product.id === productId)
 
@@ -145,7 +146,11 @@ export default function ProductDetailPage() {
                 </div>
         
                 {/* Add to Cart */}
-                <button className="mt-8 flex w-full items-center justify-center gap-3 rounded-xl bg-blue-600 px-6 py-4 font-semibold text-white transition hover:bg-blue-700">
+                <button
+                  type="button"
+                  onClick={() => addItem(product, quantity)}
+                  className="mt-8 flex w-full items-center justify-center gap-3 rounded-xl bg-blue-600 px-6 py-4 font-semibold text-white transition hover:bg-blue-700"
+                >
                   <ShoppingCart size={20} />
                   Tambah ke Keranjang
                 </button>

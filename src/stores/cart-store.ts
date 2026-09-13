@@ -12,7 +12,7 @@ type CartStore = {
     clearCart: () => void;
 }
 
-export const useCartStore = create((set) => ({
+export const useCartStore = create<CartStore>((set) => ({
     items: [],
     addItem: (product, quantity = 1) => set((state) => {
         const existingItem = state.items.find( (item) => item.id === product.id );
