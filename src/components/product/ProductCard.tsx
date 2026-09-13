@@ -12,7 +12,7 @@ export default function ProductCard({ product, }: ProductCardProps) {
     const handleAddToCart = () => { addItem(product); };
     
     return (
-        <Link href={`/products/${product.id}`}>    
+        // <Link href={`/products/${product.id}`}>    
             
             {/* Product Content */}
             <div className="p-4">
@@ -40,6 +40,6 @@ export default function ProductCard({ product, }: ProductCardProps) {
                     </button>
                 </div>
             </div>
-        </Link>
+        // </Link>
     )
 }
