@@ -59,7 +59,7 @@ export default function CartPage() {
 
                 <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
                     <div className="space-y-4">
-                        {items.map(item) => (
+                        {items.map((item) => (
                             <div
                                 key={item.id}
                                 className="flex flex-col gap-5 rounded-2xl bg-white p-5 shadow-sm sm:flex-row"
@@ -126,7 +126,7 @@ export default function CartPage() {
                                     {(item.price * item.quantity).toLocaleString("id-ID")}
                                 </p>
                             </div>
-                        )}
+                        ))}
                     </div>
     
                     <button
