@@ -165,125 +165,129 @@ export default function WishlistPage() {
               </Link>
             </div>
 
-            {/* ================= WISHLIST GRID ================= */}
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {items.map((item) => (
-                <article
-                  key={item.id}
-                  className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white transition duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl"
-                >
+            {/* ================= WISHLIST ITEMS ================= */}
+            <div className="space-y-4">
+  {items.map((item) => (
+    <article
+      key={item.id}
+      className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white transition hover:border-blue-200 hover:shadow-lg"
+    >
+      <div className="flex flex-col gap-5 p-4 sm:flex-row sm:items-center sm:p-5">
 
-                  {/* Remove Button */}
-                  <button
-                    type="button"
-                    onClick={() =>
-                      removeItem(item.id)
-                    }
-                    className="absolute right-3 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white text-red-500 shadow-md transition hover:scale-105 hover:bg-red-50"
-                    aria-label={`Hapus ${item.name} dari wishlist`}
-                  >
-                    <X size={20} />
-                  </button>
+        {/* Product Image */}
+        <Link
+          href={`/products/${item.id}`}
+          className="flex h-40 w-full shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gray-50 sm:h-32 sm:w-32"
+        >
+          <img
+            src={item.image}
+            alt={item.name}
+            className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+          />
+        </Link>
 
-                  {/* Product Image */}
-                  <Link
-                    href={`/products/${item.id}`}
-                    className="block"
-                  >
-                    <div className="h-60 overflow-hidden bg-gray-100">
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
-                      />
-                    </div>
-                  </Link>
+        {/* Product Information */}
+        <div className="min-w-0 flex-1">
 
-                  {/* Product Information */}
-                  <div className="p-4">
+          <div className="flex items-start justify-between gap-4">
 
-                    {/* Category */}
-                    <p className="text-xs font-semibold uppercase tracking-wide text-blue-600">
-                      {item.category}
-                    </p>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
+                {item.category}
+              </p>
 
-                    {/* Product Name */}
-                    <Link
-                      href={`/products/${item.id}`}
-                    >
-                      <h2 className="mt-2 line-clamp-2 min-h-[48px] text-base font-semibold text-gray-900 transition hover:text-blue-600">
-                        {item.name}
-                      </h2>
-                    </Link>
+              <Link
+                href={`/products/${item.id}`}
+              >
+                <h2 className="mt-2 text-lg font-bold text-gray-900 transition hover:text-blue-600">
+                  {item.name}
+                </h2>
+              </Link>
+            </div>
 
-                    {/* Rating */}
-                    <div className="mt-3 flex items-center gap-2">
-                      <div className="flex">
-                        {Array.from({
-                          length: 5,
-                        }).map((_, index) => (
-                          <Star
-                            key={`${item.id}-star-${index}`}
-                            size={15}
-                            className={
-                              index <
-                              Math.round(
-                                item.rating ?? 0
-                              )
-                                ? "fill-yellow-400 text-yellow-400"
-                                : "text-gray-300"
-                            }
-                          />
-                        ))}
-                      </div>
+            {/* Remove */}
+            <button
+              type="button"
+              onClick={() =>
+                removeItem(item.id)
+              }
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-gray-400 transition hover:bg-red-50 hover:text-red-500"
+              aria-label={`Hapus ${item.name}`}
+            >
+              <X size={20} />
+            </button>
 
-                      <span className="text-xs font-semibold text-gray-700">
-                        {item.rating ?? 0}
-                      </span>
+          </div>
 
-                      <span className="text-xs text-gray-400">
-                        ({item.reviewCount ?? 0})
-                      </span>
-                    </div>
+          {/* Rating */}
+          <div className="mt-3 flex items-center gap-2">
 
-                    {/* Price */}
-                    <p className="mt-4 text-lg font-bold text-blue-600">
-                      {formatPrice(item.price)}
-                    </p>
-
-                    {/* Divider */}
-                    <div className="my-4 border-t" />
-
-                    {/* Actions */}
-                    <div className="grid grid-cols-[1fr_auto] gap-3">
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          handleAddToCart(item)
-                        }
-                        className="flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
-                      >
-                        <ShoppingCart size={17} />
-                        Keranjang
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          removeItem(item.id)
-                        }
-                        className="flex h-10 w-10 items-center justify-center rounded-lg border border-red-200 text-red-500 transition hover:bg-red-50"
-                        aria-label={`Hapus ${item.name}`}
-                      >
-                        <Trash2 size={17} />
-                      </button>
-
-                    </div>
-                  </div>
-                </article>
+            <div className="flex">
+              {Array.from({
+                length: 5,
+              }).map((_, index) => (
+                <Star
+                  key={`${item.id}-star-${index}`}
+                  size={15}
+                  className={
+                    index <
+                    Math.round(
+                      item.rating ?? 0
+                    )
+                      ? "fill-yellow-400 text-yellow-400"
+                      : "text-gray-300"
+                  }
+                />
               ))}
             </div>
+
+            <span className="text-xs font-medium text-gray-600">
+              {item.rating ?? 0}
+            </span>
+
+            <span className="text-xs text-gray-400">
+              •
+            </span>
+
+            <span className="text-xs text-gray-400">
+              {item.reviewCount ?? 0} ulasan
+            </span>
+
+          </div>
+
+          {/* Price */}
+          <p className="mt-4 text-xl font-bold text-blue-600">
+            {formatPrice(item.price)}
+          </p>
+        </div>
+
+        {/* Actions */}
+        <div className="flex shrink-0 flex-col gap-2 sm:w-44">
+
+          <button
+            type="button"
+            onClick={() =>
+              handleAddToCart(item)
+            }
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
+          >
+            <ShoppingCart size={18} />
+            Ke Keranjang
+          </button>
+
+          <Link
+            href={`/products/${item.id}`}
+            className="flex w-full items-center justify-center rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold text-gray-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
+          >
+            Lihat Produk
+          </Link>
+
+        </div>
+      </div>
+    </article>
+  ))}
+</div>
+
           </>
         )}
       </section>
