@@ -52,121 +52,102 @@ export default function CartPage() {
                 <h1 className="text-3xl font-bold text-gray-900">
                     Keranjang Belanja
                 </h1>
-                
+            
                 <p className="mt-2 text-gray-500">
                     {totalItems} produk di keranjang Anda
                 </p>
-
-                <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
-                    <div className="space-y-4">
-                        {items.map((item) => (
-                            <div
-                                key={item.id}
-                                className="flex flex-col gap-5 rounded-2xl bg-white p-5 shadow-sm sm:flex-row"
-                            >
-                                <div className="h-32 w-full overflow-hidden rounded-xl bg-gray-100 sm:w-32">
-                                    <img
-                                        src={item.image}
-                                        alt={item.name}
-                                        className="h-full w-full object-cover"
-                                    />
-                                </div>
-    
-                                <div className="flex flex-1 flex-col">
-                                    <div className="flex items-start justify-between gap-4">
-                                        <div>
-                                            <p className="text-sm text-blue-600">
-                                                {item.category}
-                                            </p>
-                            
-                                            <h2 className="mt-1 text-lg font-semibold text-gray-900">
-                                                {item.name}
-                                            </h2>
-                                        </div>
-                                    </div>
-    
-                                    <button
-                                        type="button"
-                                        onClick={() => removeItem(item.id)}
-                                        className="rounded-lg p-2 text-red-500 transition hover:bg-red-50"
-                                        aria-label={`Hapus ${item.name}`}
-                                      >
-                                          <Trash2 size={20} />
-                                      </button>
-                                </div>
-    
-                                <div className="mt-auto flex flex-wrap items-end justify-between gap-4 pt-5">
-                                    <div className="flex items-center rounded-xl border border-gray-200">
-                                        <button
-                                          type="button"
-                                          onClick={() => decreaseQuantity(item.id)}
-                                          className="p-2 text-gray-600 transition hover:bg-gray-100"
-                                          aria-label={`Kurangi jumlah ${item.name}`}
-                                        >
-                                          <Minus size={18} />
-                                        </button>
-                        
-                                        <span className="w-10 text-center font-semibold">
-                                          {item.quantity}
-                                        </span>
-                        
-                                        <button
-                                          type="button"
-                                          onClick={() => increaseQuantity(item.id)}
-                                          className="p-2 text-gray-600 transition hover:bg-gray-100"
-                                          aria-label={`Tambah jumlah ${item.name}`}
-                                        >
-                                          <Plus size={18} />
-                                        </button>
-                                    </div>
-                                </div>
-    
-                                <p className="text-lg font-bold text-gray-900">
-                                    Rp{" "}
-                                    {(item.price * item.quantity).toLocaleString("id-ID")}
-                                </p>
-                            </div>
-                        ))}
-                    </div>
-    
-                    <button
-                        type="button"
-                        onClick={clearCart}
-                        className="text-sm font-medium text-red-500 transition hover:text-red-600"
-                      >
-                        Kosongkan Keranjang
-                      </button>
-                </div>
-    
-                <aside className="h-fit rounded-2xl bg-white p-6 shadow-sm">
-                    <h2 className="text-xl font-bold text-gray-900">
-                        Ringkasan Pesanan
-                    </h2>
-                </aside>
             </div>
-        </section>
-    )
-}
-
-/*
-
-const CartPage = () => {
-            
+        
+          <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
+            {/* Cart Items */}
+            <div className="space-y-4">
               {items.map((item) => (
-                
-                  
-                  
-                      
+                <div
+                  key={item.id}
+                  className="flex flex-col gap-5 rounded-2xl bg-white p-5 shadow-sm sm:flex-row"
+                >
+                  {/* Product Image */}
+                  <div className="h-32 w-full overflow-hidden rounded-xl bg-gray-100 sm:w-32">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+        
+                  {/* Product Information */}
+                  <div className="flex flex-1 flex-col">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <p className="text-sm text-blue-600">
+                          {item.category}
+                        </p>
+        
+                        <h2 className="mt-1 text-lg font-semibold text-gray-900">
+                          {item.name}
+                        </h2>
+                      </div>
+        
+                      <button
+                        type="button"
+                        onClick={() => removeItem(item.id)}
+                        className="rounded-lg p-2 text-red-500 transition hover:bg-red-50"
+                        aria-label={`Hapus ${item.name}`}
+                      >
+                        <Trash2 size={20} />
+                      </button>
+                    </div>
+        
+                    <div className="mt-auto flex flex-wrap items-end justify-between gap-4 pt-5">
+                      {/* Quantity */}
+                      <div className="flex items-center rounded-xl border border-gray-200">
+                        <button
+                          type="button"
+                          onClick={() => decreaseQuantity(item.id)}
+                          className="p-2 text-gray-600 transition hover:bg-gray-100"
+                          aria-label={`Kurangi jumlah ${item.name}`}
+                        >
+                          <Minus size={18} />
+                        </button>
+        
+                        <span className="w-10 text-center font-semibold">
+                          {item.quantity}
+                        </span>
+        
+                        <button
+                          type="button"
+                          onClick={() => increaseQuantity(item.id)}
+                          className="p-2 text-gray-600 transition hover:bg-gray-100"
+                          aria-label={`Tambah jumlah ${item.name}`}
+                        >
+                          <Plus size={18} />
+                        </button>
+                      </div>
+        
+                      {/* Item Total */}
+                      <p className="text-lg font-bold text-gray-900">
+                        Rp{" "}
+                        {(item.price * item.quantity).toLocaleString("id-ID")}
+                      </p>
                     </div>
                   </div>
                 </div>
               ))}
         
-              
+              <button
+                type="button"
+                onClick={clearCart}
+                className="text-sm font-medium text-red-500 transition hover:text-red-600"
+              >
+                Kosongkan Keranjang
+              </button>
             </div>
         
-            
-              
+            {/* Order Summary */}
+            <aside className="h-fit rounded-2xl bg-white p-6 shadow-sm">
+              <h2 className="text-xl font-bold text-gray-900">
+                Ringkasan Pesanan
+              </h2>
         
               <div className="mt-6 space-y-4">
                 <div className="flex justify-between text-gray-600">
@@ -210,8 +191,6 @@ const CartPage = () => {
             </aside>
           </div>
         </section>
+
     )
 }
-
-export default CartPage;
-*/
