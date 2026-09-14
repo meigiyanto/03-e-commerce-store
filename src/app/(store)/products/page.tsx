@@ -144,8 +144,7 @@ export default function ProductsPage() {
 
   return (
     <main className="min-h-screen bg-gray-50">
-      <Navbar />
-
+      
       {/* ================= BREADCRUMB ================= */}
       <div className="border-b bg-white">
         <div className="mx-auto flex max-w-7xl items-center gap-2 px-4 py-4 text-sm md:px-8">
