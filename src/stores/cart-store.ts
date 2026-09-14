@@ -14,17 +14,11 @@ type CartStore = {
     quantity?: number
   ) => void;
 
-  removeItem: (
-    productId: number
-  ) => void;
+  removeItem: (productId: string) => void;
 
-  increaseQuantity: (
-    productId: number
-  ) => void;
+  increaseQuantity: (productId: string) => void;
 
-  decreaseQuantity: (
-    productId: number
-  ) => void;
+  decreaseQuantity: (productId: string) => void;
 
   clearCart: () => void;
 
