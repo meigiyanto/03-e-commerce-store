@@ -12,38 +12,15 @@ import {
 import { useCartStore } from "@/stores/cart-store";
 
 export default function CartPage() {
-  const items = useCartStore((state) => state.items);
-
-  return (
-    <div>
-      <h1>Keranjang Belanja</h1>
-    </div>
-  );
-}
-/*
-"use client";
-
-import Link from "next/link";
-import {
-    ArrowLeft,
-    Minus,
-    Plus,
-    ShoppingBag,
-    Trash2,
-} from "lucide-react";
-
-import { useCartStore } from "@/stores/cart-store";
-
-const CartPage = () => {
     const items = useCartStore((state) => state.items);
     const removeItem = useCartStore((state) => state.removeItem);
-    const increaseQuantity = useCartStore((state) => state.increaseQuantity)
-    const decreaseQuantity = useCartStore((state) => state.decreaseQuantity)
+    const increaseQuantity = useCartStore((state) => state.increaseQuantity);
+    const decreaseQuantity = useCartStore((state) => state.decreaseQuantity);
     const clearCart = useCartStore((state) => state.clearCart);
-    const subtotal = items.reduce((total, item) => total + item.price * item.quantity,0)
-    const totalItems = items.reduce((total, item) => total + item.quantity,0)
-    
-    if (items.length === 0) {
+    const subtotal = items.reduce((total, item) => total + item.price * item.quantity,0);
+    const totalItems = items.reduce((total, item) => total + item.quantity,0);
+
+    if(items.length === 0) {
         return (
             <section className="mx-auto flex max-w-7xl flex-col items-center justify-center px-4 py-32 text-center">
                 <div className="rounded-full bg-blue-100 p-6 text-blue-600">
@@ -65,12 +42,30 @@ const CartPage = () => {
                   <ArrowLeft size={18} />
                   Mulai Belanja
                 </Link>
-              </section>
+            </section>
         )
     }
     
     return (
         <section className="mx-auto max-w-7xl px-4 py-10 md:px-8">
+            <h3>Test</h3>
+        </section>
+    )
+}
+
+/*
+
+const CartPage = () => {
+    const items = useCartStore((state) => state.items);
+    
+    if () {
+        return (
+            
+        )
+    }
+    
+    return (
+        
             <div className="mb-8">
                 <h1 className="text-3xl font-bold text-gray-900">
             Keranjang Belanja
