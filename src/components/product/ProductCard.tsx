@@ -5,6 +5,8 @@ import { ShoppingCart } from "lucide-react";
 import ProductRating from "@/components/product/ProductRating";
 import { Product } from "@/types/product";
 import { useCartStore } from "@/stores/cart-store";
+import { Heart } from "lucide-react";
+import { useWishlistStore } from "@/stores/wishlist-store";
 
 type ProductCardProps = {
     product: Product;
@@ -13,11 +15,31 @@ type ProductCardProps = {
 export default function ProductCard({ product } : ProductCardProps) {
     const addItem = useCartStore((state) => state.addItem);
     const handleAddToCart = () => { addItem(product) }
+    const toggleItem = useWishlistStore((state) => state.toggleItem);
+    const isFavorite = useWishlistStore((state) => state.items.some((item) => item.id === product.id));
+    const handleFavorite = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+        event.stopPropagation();
+        toggleItem(product);
+    };
 
+    
     return (
         <div className="group overflow-hidden rounded-2xl border bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
             <Link href={`/products/${product.id}`}>
                 <div className="relative h-64 overflow-hidden bg-gray-100">
+                    {/* Wishlist Button */}
+                    <button
+                         type="button"
+                         onClick={handleFavorite}
+                         className="absolute right-6 top-6 z-10 rounded-full bg-white p-2 shadow-md transition hover:scale-110"
+                         aria-label="Tambah ke wishlist"
+                       >
+                        <Heart
+                            size={20}
+                            className={ isFavorite ? "fill-red-500 text-red-500" : "text-gray-500" }
+                        />
+                    </button>
                     <img
                         src={product.image}
                         alt={product.name}
@@ -25,6 +47,7 @@ export default function ProductCard({ product } : ProductCardProps) {
                    />
                 </div>
             </Link>            
+            
             <div className="p-4">
                 <p className="mb-2 text-sm text-blue-600">
                     {product.category}

@@ -4,11 +4,14 @@ import Link from "next/link";
 import { ShoppingCart, Search, Menu, User } from "lucide-react";
 import { useState } from "react";
 import { useCartStore } from "@/stores/cart-store";
+import { Heart } from "lucide-react";
+import { useWishlistStore } from "@/stores/wishlist-store";
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const items = useCartStore((state) => state.items)
     const totalItems = items.reduce((total, item) => total + item.quantity, 0)
+    const wishlistItems = useWishlistStore((state) => state.items);
     
     return (
         <header className="sticky top-0 z-50 border-b bg-white">
@@ -54,41 +57,54 @@ export default function Navbar() {
             
                 {/* Right Menu */}
                 <div className="flex items-center gap-4">
-                  <button
-                    className="hidden rounded-lg p-2 hover:bg-gray-100 md:block"
-                    aria-label="Cari"
-                  >
-                    <Search size={20} />
-                  </button>
+                    <button
+                        className="hidden rounded-lg p-2 hover:bg-gray-100 md:block"
+                        aria-label="Cari"
+                    >
+                        <Search size={20} />
+                    </button>
         
-                  <Link
-                    href="/profile"
-                    className="hidden rounded-lg p-2 hover:bg-gray-100 md:block"
-                  >
-                    <User size={20} />
-                  </Link>
+                    <Link
+                        href="/profile"
+                        className="hidden rounded-lg p-2 hover:bg-gray-100 md:block"
+                    >
+                        <User size={20} />
+                    </Link>
             
-                  <Link
-                      href="/cart"
-                      className="relative rounded-lg p-2 hover:bg-gray-100"
+                    <Link
+                        href="/cart"
+                        className="relative rounded-lg p-2 hover:bg-gray-100"
                     >
                       <ShoppingCart size={20} />
                     
                       {totalItems > 0 && (
-                        <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-xs text-white">
-                          {totalItems}
+                          <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-xs text-white">
+                              {totalItems}
+                          </span>
+                      )}
+                      </Link>
+                    
+                      <Link
+                          href="/wishlist"
+                          className="relative flex items-center justify-center rounded-lg p-2 text-gray-700 transition hover:bg-gray-100"
+                          aria-label="Wishlist"
+                      >
+                      <Heart size={22} />                    
+                      {wishlistItems.length > 0 && (
+                        <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+                          {wishlistItems.length}
                         </span>
                       )}
-                  </Link>
+                    </Link>
     
-                  {/* Mobile Menu Button */}
-                  <button
+                    {/* Mobile Menu Button */}
+                    <button
                     className="rounded-lg p-2 hover:bg-gray-100 md:hidden"
                     onClick={() => setIsOpen(!isOpen)}
                     aria-label="Menu"
                   >
-                    <Menu size={22} />
-                  </button>
+                        <Menu size={22} />
+                    </button>
                 </div>
             </div>
             
