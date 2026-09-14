@@ -35,7 +35,7 @@ const navigationLinks = [
   {
     id: "promo",
     label: "Promo",
-    href: "/products",
+    href: "/promo",
   },
   {
     id: "about",
