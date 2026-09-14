@@ -34,7 +34,7 @@ This project is built using:
 ---
 
 📂 Project Structure
-
+```text
 03-e-commerce-store/
 ├── public/
 │   └── ...
@@ -63,7 +63,7 @@ This project is built using:
 ├── postcss.config.mjs
 ├── tsconfig.json
 └── README.md
-
+```
 ---
 
 🚀 Getting Started
@@ -76,25 +76,25 @@ Make sure you have installed:
 - npm
 
 Check your Node.js version:
-
+```text
 node -v
-
+```
 Clone the Repository
-
+```text
 git clone https://github.com/meigiyanto/03-e-commerce-store.git
-
+```
 Move into the project directory:
-
+```text
 cd 03-e-commerce-store
-
+```
 Install Dependencies
-
+```text
 npm install
-
+```
 Run the Development Server
-
+```text
 npm run dev
-
+```
 Open your browser and visit:
 
 http://localhost:3000
@@ -104,27 +104,28 @@ http://localhost:3000
 📜 Available Scripts
 
 Development
-
+```
 npm run dev
-
+```
 Runs the application in development mode.
 
 Build
-
+```text
 npm run build
-
+```
 Creates an optimized production build.
 
 Start
-
+```text
 npm run start
+```
 
 Runs the application in production mode.
-
+```text
 Lint
 
 npm run lint
-
+```
 Checks the code using ESLint.
 
 ---
@@ -197,13 +198,13 @@ git checkout -b feature/your-feature-name
 
 3. Make your changes.
 4. Commit your changes:
-
+```text
 git commit -m "Add your feature"
-
+```
 5. Push to your branch:
-
+```text
 git push origin feature/your-feature-name
-
+```
 6. Open a Pull Request.
 
 ---
@@ -214,13 +215,9 @@ This project is intended for learning and development purposes.
 
 ---
 
-👨‍💻 Author
+👨‍💻 Author Mei Giyanto (meigiyanto)
 
-Meigiyanto
-
-GitHub Repository:
-
-https://github.com/meigiyanto/03-e-commerce-store
+GitHub Repository: https://github.com/meigiyanto/03-e-commerce-store
 
 ---
 
