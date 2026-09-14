@@ -11,7 +11,7 @@ import {
 
 import { useCartStore } from "@/stores/cart-store";
 
-export default function CartPage() {
+const CartPage = () => {
     const items = useCartStore((state) => state.items);
     const removeItem = useCartStore((state) => state.removeItem);
     const increaseQuantity = useCartStore((state) => state.increaseQuantity)
@@ -193,3 +193,5 @@ export default function CartPage() {
         </section>
     )
 }
+
+export default CartPage;
