@@ -1,11 +1,11 @@
-##🛒 E-Commerce Store##
+🛒 ##E-Commerce Store##
 
 A modern and responsive e-commerce web application built with Next.js, TypeScript, and Tailwind CSS.
 This project is developed as a learning project to implement fundamental e-commerce features such as product listing, product detail pages, and shopping cart functionality.
 
 ---
 
-###✨ Features###
+✨ ###Features###
 
 - 🏠 Product listing
 - 📦 Product detail page
@@ -19,7 +19,7 @@ This project is developed as a learning project to implement fundamental e-comme
 
 ---
 
-###🛠️ Tech Stack###
+🛠️ ###Tech Stack###
 
 This project is built using:
 
@@ -33,7 +33,7 @@ This project is built using:
 
 ---
 
-###📂 Project Structure###
+📂 ###Project Structure###
 ```text
 03-e-commerce-store/
 ├── public/
@@ -66,7 +66,7 @@ This project is built using:
 ```
 ---
 
-###🚀 Getting Started###
+🚀 ###Getting Started###
 
 Prerequisites
 
@@ -101,7 +101,7 @@ http://localhost:3000
 ```
 ---
 
-###📜 Available Scripts###
+📜 ###Available Scripts###
 
 Development
 ```
@@ -130,7 +130,7 @@ Checks the code using ESLint.
 
 ---
 
-###🛒 Shopping Cart###
+🛒 ###Shopping Cart###
 
 The shopping cart feature allows users to manage selected products.
 
@@ -146,7 +146,7 @@ State management for the shopping cart is handled using Zustand.
 
 ---
 
-###📦 Product Detail###
+📦 ###Product Detail###
 
 Each product has its own detail page using a dynamic route:
 ```text
@@ -156,7 +156,7 @@ Users can view detailed product information and add products to the shopping car
 
 ---
 
-###🎨 Styling###
+🎨 ###Styling###
 
 The application uses Tailwind CSS to build a modern and responsive user interface.
 
@@ -169,7 +169,7 @@ Benefits include:
 
 ---
 
-###🔮 Future Improvements###
+🔮 ###Future Improvements###
 
 Possible future improvements include:
 
@@ -187,7 +187,7 @@ Possible future improvements include:
 
 ---
 
-###🤝 Contributing###
+🤝 ###Contributing###
 
 Contributions are welcome!
 
@@ -209,7 +209,7 @@ git push origin feature/your-feature-name
 
 ---
 
-###📄 License###
+📄 ###License###
 
 This project is intended for learning and development purposes.
 
