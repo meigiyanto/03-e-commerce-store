@@ -215,8 +215,8 @@ This project is intended for learning and development purposes.
 
 ---
 
-👨‍💻 Author Mei Giyanto (*meigiyanto*)
-[title](https://www.example.com)
+👨‍💻 Author Mei Giyanto (*[meigiyanto](https://github.com/meigiyanto)*)
+
 GitHub Repository: https://github.com/meigiyanto/03-e-commerce-store
 
 ---
