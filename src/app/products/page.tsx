@@ -28,6 +28,9 @@ const formatPrice = (price: number) =>
   }).format(price);
 
 export default function ProductsPage() {
+  const [viewMode, setViewMode] = useState<"grid" | "list">(
+      "grid"
+  );
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] =
     useState("Semua");
@@ -754,8 +757,6 @@ function ProductListItem({
     </article>
   );
 }
-
-
 
 /* ================= EMPTY STATE ================= */
 function EmptyState({
