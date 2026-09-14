@@ -1,10 +1,12 @@
-export type Product = {
+export interface Product {
   id: string;
   name: string;
   price: number;
-  category: string;
   description: string;
   image: string;
-  rating?: number;
-  reviewCount?: number;
-};
+  category: string;
+  rating: number;
+  stock: number;
+}
+
+export type ProductInput = Omit<Product, "id">;
