@@ -1,37 +1,228 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+🛒 E-Commerce Store
 
-## Getting Started
+A modern and responsive e-commerce web application built with Next.js, TypeScript, and Tailwind CSS.
 
-First, run the development server:
+This project is developed as a learning project to implement fundamental e-commerce features such as product listing, product detail pages, and shopping cart functionality.
 
-```bash
+---
+
+✨ Features
+
+- 🏠 Product listing
+- 📦 Product detail page
+- 🛒 Shopping cart
+- ➕ Add products to cart
+- ➖ Update product quantity
+- 🗑️ Remove products from cart
+- 📱 Responsive design
+- ⚡ Fast performance with Next.js
+- 🎨 Modern user interface
+
+---
+
+🛠️ Tech Stack
+
+This project is built using:
+
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+- Zustand
+- shadcn/ui
+- Lucide React
+
+---
+
+📂 Project Structure
+
+03-e-commerce-store/
+├── public/
+│   └── ...
+│
+├── src/
+│   ├── app/
+│   │   ├── products/
+│   │   │   └── [id]/
+│   │   │
+│   │   ├── cart/
+│   │   │
+│   │   └── ...
+│   │
+│   ├── components/
+│   │   └── ...
+│   │
+│   ├── store/
+│   │   └── ...
+│   │
+│   └── ...
+│
+├── components.json
+├── eslint.config.mjs
+├── next.config.ts
+├── package.json
+├── postcss.config.mjs
+├── tsconfig.json
+└── README.md
+
+---
+
+🚀 Getting Started
+
+Prerequisites
+
+Make sure you have installed:
+
+- "Node.js" (https://nodejs.org/)
+- npm
+
+Check your Node.js version:
+
+node -v
+
+Clone the Repository
+
+git clone https://github.com/meigiyanto/03-e-commerce-store.git
+
+Move into the project directory:
+
+cd 03-e-commerce-store
+
+Install Dependencies
+
+npm install
+
+Run the Development Server
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open your browser and visit:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+http://localhost:3000
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+📜 Available Scripts
 
-To learn more about Next.js, take a look at the following resources:
+Development
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+npm run dev
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Runs the application in development mode.
 
-## Deploy on Vercel
+Build
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+npm run build
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# 03-e-commerce-store
+Creates an optimized production build.
+
+Start
+
+npm run start
+
+Runs the application in production mode.
+
+Lint
+
+npm run lint
+
+Checks the code using ESLint.
+
+---
+
+🛒 Shopping Cart
+
+The shopping cart feature allows users to manage selected products.
+
+Users can:
+
+- Add products to the cart
+- Increase product quantity
+- Decrease product quantity
+- Remove products from the cart
+- View selected products
+
+State management for the shopping cart is handled using Zustand.
+
+---
+
+📦 Product Detail
+
+Each product has its own detail page using a dynamic route:
+
+/products/[id]
+
+Users can view detailed product information and add products to the shopping cart.
+
+---
+
+🎨 Styling
+
+The application uses Tailwind CSS to build a modern and responsive user interface.
+
+Benefits include:
+
+- Responsive layouts
+- Reusable utility classes
+- Consistent styling
+- Faster UI development
+
+---
+
+🔮 Future Improvements
+
+Possible future improvements include:
+
+- ❤️ Wishlist functionality
+- 🔐 User authentication
+- 🔎 Product search
+- 🏷️ Product categories
+- 🎛️ Product filtering
+- 💳 Checkout system
+- 💰 Payment integration
+- 📦 Order management
+- 🌙 Dark mode
+- 💾 Persistent shopping cart
+- ⭐ Product reviews and ratings
+
+---
+
+🤝 Contributing
+
+Contributions are welcome!
+
+1. Fork this repository.
+2. Create a new branch:
+
+git checkout -b feature/your-feature-name
+
+3. Make your changes.
+4. Commit your changes:
+
+git commit -m "Add your feature"
+
+5. Push to your branch:
+
+git push origin feature/your-feature-name
+
+6. Open a Pull Request.
+
+---
+
+📄 License
+
+This project is intended for learning and development purposes.
+
+---
+
+👨‍💻 Author
+
+Meigiyanto
+
+GitHub Repository:
+
+https://github.com/meigiyanto/03-e-commerce-store
+
+---
+
+⭐ If you find this project useful, consider giving it a star!
