@@ -18,26 +18,33 @@ import { useWishlistStore } from "@/stores/wishlist-store";
 
 const navigationLinks = [
   {
+    id: "home",
     label: "Beranda",
     href: "/",
   },
   {
+    id: "products",
     label: "Produk",
     href: "/products",
   },
   {
+    id: "categories",
     label: "Kategori",
     href: "/categories",
   },
   {
+    id: "promo",
     label: "Promo",
     href: "/products",
   },
   {
+    id: "about",
     label: "Tentang Kami",
     href: "/about",
   },
 ];
+
+
 
 const departments = [
   "Elektronik",
