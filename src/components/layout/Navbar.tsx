@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { FormEvent, useState } from "react";
 import {
   ChevronDown,
-  Headphones,
+  ChevronRight,
   Heart,
   Menu,
   Search,
@@ -28,11 +29,6 @@ const navigationLinks = [
     href: "/products",
   },
   {
-    id: "categories",
-    label: "Kategori",
-    href: "/categories",
-  },
-  {
     id: "promo",
     label: "Promo",
     href: "/promo",
@@ -44,25 +40,55 @@ const navigationLinks = [
   },
 ];
 
-
-
 const departments = [
-  "Elektronik",
-  "Komputer & Laptop",
-  "Smartphone",
-  "Fashion",
-  "Rumah & Dapur",
-  "Olahraga",
+  {
+    id: "electronics",
+    label: "Elektronik",
+    href: "/products?category=Elektronik",
+  },
+  {
+    id: "computer-laptop",
+    label: "Komputer & Laptop",
+    href: "/products?category=Komputer%20%26%20Laptop",
+  },
+  {
+    id: "smartphone",
+    label: "Smartphone",
+    href: "/products?category=Smartphone",
+  },
+  {
+    id: "fashion",
+    label: "Fashion",
+    href: "/products?category=Fashion",
+  },
+  {
+    id: "home-kitchen",
+    label: "Rumah & Dapur",
+    href: "/products?category=Rumah%20%26%20Dapur",
+  },
+  {
+    id: "sports",
+    label: "Olahraga",
+    href: "/products?category=Olahraga",
+  },
 ];
 
 export default function Navbar() {
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const [searchQuery, setSearchQuery] =
+    useState("");
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] =
     useState(false);
 
-  const [isDepartmentOpen, setIsDepartmentOpen] =
-    useState(false);
+  const [
+    isDepartmentOpen,
+    setIsDepartmentOpen,
+  ] = useState(false);
 
-  const items = useCartStore(
+  const cartItems = useCartStore(
     (state) => state.items
   );
 
@@ -70,51 +96,81 @@ export default function Navbar() {
     (state) => state.items
   );
 
-  const totalItems = items.reduce(
+  const cartItemCount = cartItems.reduce(
     (total, item) => total + item.quantity,
     0
   );
 
+  const wishlistItemCount =
+    wishlistItems.length;
+
+  const handleSearch = (
+    event: FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
+
+    const query = searchQuery.trim();
+
+    if (!query) {
+      router.push("/products");
+      return;
+    }
+
+    router.push(
+      `/products?search=${encodeURIComponent(
+        query
+      )}`
+    );
+
+    setSearchQuery("");
+  };
+
+  const isActiveLink = (href: string) => {
+    if (href === "/") {
+      return pathname === "/";
+    }
+
+    return pathname.startsWith(href);
+  };
+
   return (
     <header className="sticky top-0 z-50 bg-white shadow-sm">
-      {/* ================= TOP BAR ================= */}
-      <div className="hidden border-b bg-gray-900 text-gray-300 lg:block">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2 text-xs md:px-8">
-          <p>
-            Selamat datang di NexaShop — Belanja mudah,
-            aman, dan terpercaya.
+
+      {/* ========================================
+          TOP BAR
+      ======================================== */}
+      <div className="hidden border-b border-gray-100 bg-gray-50 md:block">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2 md:px-8">
+          <p className="text-xs text-gray-500">
+            Selamat datang di NexaShop — Belanja
+            mudah dan aman.
           </p>
 
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-5">
             <Link
-              href="/products"
-              className="transition hover:text-white"
+              href="/about"
+              className="text-xs text-gray-500 transition hover:text-blue-600"
             >
-              Promo Hari Ini
-            </Link>
-
-            <Link
-              href="/contact"
-              className="flex items-center gap-2 transition hover:text-white"
-            >
-              <Headphones size={14} />
               Bantuan
             </Link>
 
             <Link
-              href="/profile"
-              className="transition hover:text-white"
+              href="/about"
+              className="text-xs text-gray-500 transition hover:text-blue-600"
             >
-              Akun Saya
+              Hubungi Kami
             </Link>
           </div>
         </div>
       </div>
 
-      {/* ================= MAIN HEADER ================= */}
-      <div className="border-b bg-white">
-        <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-4 md:px-8 lg:gap-8">
-          {/* Mobile Menu */}
+      {/* ========================================
+          MAIN HEADER
+      ======================================== */}
+      <div className="border-b border-gray-100">
+        <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-4 md:px-8">
+
+          {/* Mobile Menu Button */}
           <button
             type="button"
             onClick={() =>
@@ -122,7 +178,7 @@ export default function Navbar() {
                 !isMobileMenuOpen
               )
             }
-            className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 text-gray-700 lg:hidden"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-gray-700 transition hover:bg-gray-100 lg:hidden"
             aria-label="Buka menu"
           >
             {isMobileMenuOpen ? (
@@ -135,76 +191,105 @@ export default function Navbar() {
           {/* Logo */}
           <Link
             href="/"
-            className="shrink-0 text-2xl font-bold tracking-tight text-blue-600 sm:text-3xl"
+            className="shrink-0"
+            onClick={() =>
+              setIsMobileMenuOpen(false)
+            }
           >
-            Nexa
-            <span className="text-gray-900">
-              Shop
+            <span className="text-xl font-bold tracking-tight text-gray-900 sm:text-2xl">
+              Nexa
+              <span className="text-blue-600">
+                Shop
+              </span>
             </span>
           </Link>
 
-          {/* Search Desktop */}
-          <div className="hidden flex-1 lg:block">
-            <form className="flex h-12 overflow-hidden rounded-lg border-2 border-blue-600 bg-white">
-              <div className="hidden items-center border-r px-4 text-sm text-gray-500 xl:flex">
-                <span>Semua Kategori</span>
-
-                <ChevronDown
-                  size={16}
-                  className="ml-2"
-                />
-              </div>
+          {/* Search */}
+          <form
+            onSubmit={handleSearch}
+            className="hidden flex-1 md:block"
+          >
+            <div className="relative mx-auto max-w-2xl">
+              <Search
+                size={20}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+              />
 
               <input
                 type="search"
+                value={searchQuery}
+                onChange={(event) =>
+                  setSearchQuery(
+                    event.target.value
+                  )
+                }
                 placeholder="Cari produk yang Anda butuhkan..."
-                className="min-w-0 flex-1 px-4 text-sm text-gray-700 outline-none"
-                aria-label="Cari produk"
+                className="h-12 w-full rounded-xl border border-gray-200 bg-gray-50 pl-12 pr-28 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-50"
               />
 
               <button
                 type="submit"
-                className="flex w-14 items-center justify-center bg-blue-600 text-white transition hover:bg-blue-700"
-                aria-label="Cari"
+                className="absolute right-1.5 top-1.5 rounded-lg bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
               >
-                <Search size={21} />
+                Cari
               </button>
-            </form>
-          </div>
+            </div>
+          </form>
 
-          {/* Right Actions */}
+          {/* Desktop Actions */}
           <div className="ml-auto flex items-center gap-1 sm:gap-2">
+
+            {/* Search Mobile */}
+            <Link
+              href="/products"
+              className="flex h-10 w-10 items-center justify-center rounded-lg text-gray-700 transition hover:bg-gray-100 md:hidden"
+              aria-label="Cari produk"
+            >
+              <Search size={21} />
+            </Link>
+
             {/* Account */}
             <Link
-              href="/profile"
-              className="hidden items-center gap-3 rounded-lg px-2 py-2 transition hover:bg-gray-50 sm:flex"
+              href="/account"
+              className="hidden items-center gap-3 rounded-lg px-3 py-2 transition hover:bg-gray-50 lg:flex"
             >
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-700">
-                <User size={20} />
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-50 text-blue-600">
+                <User size={18} />
               </div>
 
               <div className="hidden xl:block">
-                <p className="text-xs text-gray-500">
-                  Selamat datang
+                <p className="text-xs text-gray-400">
+                  Halo,
                 </p>
 
-                <p className="text-sm font-semibold text-gray-900">
+                <p className="text-sm font-semibold text-gray-800">
                   Akun Saya
                 </p>
               </div>
             </Link>
 
+            {/* Mobile Account */}
+            <Link
+              href="/account"
+              className="flex h-10 w-10 items-center justify-center rounded-lg text-gray-700 transition hover:bg-gray-100 lg:hidden"
+              aria-label="Akun"
+            >
+              <User size={21} />
+            </Link>
+
             {/* Wishlist */}
             <Link
               href="/wishlist"
-              className="relative flex h-11 w-11 items-center justify-center rounded-lg text-gray-700 transition hover:bg-gray-100"
+              className="relative flex h-10 w-10 items-center justify-center rounded-lg text-gray-700 transition hover:bg-red-50 hover:text-red-500"
               aria-label="Wishlist"
             >
-              <Heart size={22} />
+              <Heart size={21} />
 
-              {wishlistItems.length > 0 && (
-                <span className="absolute right-0 top-0 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-xs font-bold text-white">
-                  {wishlistItems.length}
+              {wishlistItemCount > 0 && (
+                <span className="absolute -right-1 -top-1 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+                  {wishlistItemCount > 99
+                    ? "99+"
+                    : wishlistItemCount}
                 </span>
               )}
             </Link>
@@ -212,14 +297,16 @@ export default function Navbar() {
             {/* Cart */}
             <Link
               href="/cart"
-              className="relative flex h-11 w-11 items-center justify-center rounded-lg text-gray-700 transition hover:bg-gray-100"
+              className="relative flex h-10 w-10 items-center justify-center rounded-lg text-gray-700 transition hover:bg-blue-50 hover:text-blue-600"
               aria-label="Keranjang"
             >
-              <ShoppingCart size={23} />
+              <ShoppingCart size={21} />
 
-              {totalItems > 0 && (
-                <span className="absolute right-0 top-0 flex h-5 min-w-5 items-center justify-center rounded-full bg-blue-600 px-1 text-xs font-bold text-white">
-                  {totalItems}
+              {cartItemCount > 0 && (
+                <span className="absolute -right-1 -top-1 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-blue-600 px-1 text-[10px] font-bold text-white">
+                  {cartItemCount > 99
+                    ? "99+"
+                    : cartItemCount}
                 </span>
               )}
             </Link>
@@ -227,30 +314,38 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Search */}
-        <div className="border-t px-4 py-3 lg:hidden">
-          <form className="flex h-11 overflow-hidden rounded-lg border border-gray-300 bg-white">
-            <input
-              type="search"
-              placeholder="Cari produk..."
-              className="min-w-0 flex-1 px-4 text-sm outline-none"
-              aria-label="Cari produk"
+        <div className="px-4 pb-4 md:hidden">
+          <form
+            onSubmit={handleSearch}
+            className="relative"
+          >
+            <Search
+              size={19}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
             />
 
-            <button
-              type="submit"
-              className="flex w-12 items-center justify-center bg-blue-600 text-white"
-              aria-label="Cari"
-            >
-              <Search size={20} />
-            </button>
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={(event) =>
+                setSearchQuery(
+                  event.target.value
+                )
+              }
+              placeholder="Cari produk..."
+              className="h-11 w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 text-sm outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-50"
+            />
           </form>
         </div>
       </div>
 
-      {/* ================= CATEGORY NAVIGATION ================= */}
-      <div className="hidden border-b bg-white lg:block">
-        <div className="mx-auto flex max-w-7xl items-center px-4 md:px-8">
-          {/* Shop by Department */}
+      {/* ========================================
+          CATEGORY NAVIGATION
+      ======================================== */}
+      <div className="hidden border-b border-gray-100 bg-white lg:block">
+        <div className="mx-auto flex max-w-7xl items-center gap-7 px-8">
+
+          {/* Department Dropdown */}
           <div className="relative">
             <button
               type="button"
@@ -259,17 +354,15 @@ export default function Navbar() {
                   !isDepartmentOpen
                 )
               }
-              className="flex h-14 min-w-60 items-center gap-3 bg-blue-600 px-5 text-sm font-semibold text-white transition hover:bg-blue-700"
+              className="flex items-center gap-2 border-x border-gray-100 px-5 py-4 text-sm font-semibold text-gray-800 transition hover:bg-gray-50"
             >
-              <Menu size={20} />
+              <Menu size={18} />
 
-              <span>
-                SHOP BY DEPARTMENT
-              </span>
+              Semua Kategori
 
               <ChevronDown
-                size={17}
-                className={`ml-auto transition ${
+                size={16}
+                className={`transition ${
                   isDepartmentOpen
                     ? "rotate-180"
                     : ""
@@ -277,97 +370,61 @@ export default function Navbar() {
               />
             </button>
 
-            {/* Department Dropdown */}
             {isDepartmentOpen && (
-              <div className="absolute left-0 top-full z-50 w-72 border border-gray-200 bg-white py-2 shadow-xl">
+              <div className="absolute left-0 top-full z-50 mt-2 w-72 overflow-hidden rounded-xl border border-gray-200 bg-white py-2 shadow-xl">
                 {departments.map(
                   (department) => (
                     <Link
-                      key={department}
-                      href="/products"
+                      key={department.id}
+                      href={department.href}
                       onClick={() =>
-                        setIsDepartmentOpen(
-                          false
-                        )
+                        setIsDepartmentOpen(false)
                       }
-                      className="flex items-center justify-between px-5 py-3 text-sm text-gray-700 transition hover:bg-gray-50 hover:text-blue-600"
+                      className="flex items-center justify-between px-5 py-3 text-sm text-gray-700 transition hover:bg-blue-50 hover:text-blue-600"
                     >
-                      {department}
+                      {department.label}
 
-                      <ChevronDown
-                        size={16}
-                        className="-rotate-90"
-                      />
+                      <ChevronRight size={16} />
                     </Link>
                   )
                 )}
-
-                <div className="mt-2 border-t pt-2">
-                  <Link
-                    href="/categories"
-                    onClick={() =>
-                      setIsDepartmentOpen(
-                        false
-                      )
-                    }
-                    className="block px-5 py-3 text-sm font-semibold text-blue-600 hover:bg-blue-50"
-                  >
-                    Lihat Semua Kategori
-                  </Link>
-                </div>
               </div>
             )}
           </div>
 
-          {/* Navigation */}
-          <nav className="ml-6 flex h-14 items-center gap-7">
+          {/* Navigation Links */}
+          <nav className="flex items-center gap-6">
             {navigationLinks.map((link) => (
               <Link
                 key={link.id}
                 href={link.href}
-                className="text-sm font-medium text-gray-700 transition hover:text-blue-600"
+                className={`py-4 text-sm font-medium transition ${
+                  isActiveLink(link.href)
+                    ? "text-blue-600"
+                    : "text-gray-600 hover:text-blue-600"
+                }`}
               >
                 {link.label}
               </Link>
             ))}
           </nav>
 
-          {/* Right Promo */}
+          {/* Right Promotion */}
           <Link
-            href="/products"
-            className="ml-auto text-sm font-semibold text-orange-600 transition hover:text-orange-700"
+            href="/promo"
+            className="ml-auto py-4 text-sm font-semibold text-red-500 transition hover:text-red-600"
           >
-            🔥 Penawaran Spesial
+            🔥 Promo Spesial Hari Ini
           </Link>
         </div>
       </div>
 
-      {/* ================= MOBILE MENU ================= */}
+      {/* ========================================
+          MOBILE MENU
+      ======================================== */}
       {isMobileMenuOpen && (
-        <div className="border-b bg-white lg:hidden">
-          <div className="max-h-[calc(100vh-150px)] overflow-y-auto px-4 py-5">
-            {/* Mobile Account */}
-            <Link
-              href="/profile"
-              onClick={() =>
-                setIsMobileMenuOpen(false)
-              }
-              className="mb-5 flex items-center gap-3 rounded-xl bg-gray-50 p-4"
-            >
-              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-blue-100 text-blue-600">
-                <User size={21} />
-              </div>
-
-              <div>
-                <p className="text-sm text-gray-500">
-                  Selamat datang
-                </p>
-
-                <p className="font-semibold text-gray-900">
-                  Masuk ke Akun
-                </p>
-              </div>
-            </Link>
+        <div className="border-b border-gray-200 bg-white lg:hidden">
+          <div className="mx-auto max-w-7xl px-4 py-5">
 
             {/* Main Navigation */}
             <nav className="flex flex-col">
@@ -378,48 +435,50 @@ export default function Navbar() {
                   onClick={() =>
                     setIsMobileMenuOpen(false)
                   }
-                  className="border-b py-4 text-sm font-medium text-gray-800"
+                  className={`border-b py-4 text-sm font-medium transition ${
+                    isActiveLink(link.href)
+                      ? "text-blue-600"
+                      : "text-gray-800 hover:text-blue-600"
+                  }`}
                 >
                   {link.label}
                 </Link>
               ))}
             </nav>
 
-            {/* Mobile Departments */}
+            {/* Categories */}
             <div className="mt-6">
-              <h3 className="mb-3 text-xs font-bold tracking-wider text-gray-400">
-                SHOP BY DEPARTMENT
-              </h3>
+              <p className="mb-3 text-xs font-bold uppercase tracking-wider text-gray-400">
+                Kategori
+              </p>
 
               <div className="grid grid-cols-2 gap-2">
                 {departments.map(
                   (department) => (
                     <Link
-                      key={department}
-                      href="/products"
+                      key={department.id}
+                      href={department.href}
                       onClick={() =>
-                        setIsMobileMenuOpen(
-                          false
-                        )
+                        setIsMobileMenuOpen(false)
                       }
                       className="rounded-lg bg-gray-50 px-3 py-3 text-xs font-medium text-gray-700 transition hover:bg-blue-50 hover:text-blue-600"
                     >
-                      {department}
+                      {department.label}
                     </Link>
                   )
                 )}
               </div>
             </div>
 
-            {/* Mobile Promo */}
+            {/* Mobile Promotion */}
             <Link
-              href="/products"
+              href="/promo"
               onClick={() =>
                 setIsMobileMenuOpen(false)
               }
-              className="mt-6 block rounded-lg bg-orange-50 px-4 py-4 text-sm font-semibold text-orange-600"
+              className="mt-6 flex items-center justify-center rounded-xl bg-red-50 px-4 py-3 text-sm font-semibold text-red-500 transition hover:bg-red-100"
             >
-              🔥 Lihat Penawaran Spesial
+              🔥 Promo Spesial Hari Ini
             </Link>
           </div>
         </div>
@@ -427,3 +486,4 @@ export default function Navbar() {
     </header>
   );
 }
+
