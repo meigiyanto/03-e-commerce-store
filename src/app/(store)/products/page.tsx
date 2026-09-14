@@ -17,6 +17,7 @@ import Navbar from "@/components/layout/Navbar";
 import ProductCard from "@/components/product/ProductCard";
 import { products } from "@/data/products";
 import { Product } from "@/types/product";
+import { useProductStore } from "@/stores/product-store";
 import { useCartStore } from "@/stores/cart-store";
 import { useWishlistStore } from "@/stores/wishlist-store";
 
@@ -141,6 +142,10 @@ export default function ProductsPage() {
     selectedCategory !== "Semua" ||
     minPrice !== "" ||
     maxPrice !== "";
+
+  const products = useProductStore(
+    (state) => state.products
+  );
 
   return (
     <main className="min-h-screen bg-gray-50">
