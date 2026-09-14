@@ -2,6 +2,29 @@
 
 import Link from "next/link";
 import {
+  ArrowLeft,
+  Minus,
+  Plus,
+  ShoppingBag,
+  Trash2,
+} from "lucide-react";
+
+import { useCartStore } from "@/stores/cart-store";
+
+export default function CartPage() {
+  const items = useCartStore((state) => state.items);
+
+  return (
+    <div>
+      <h1>Keranjang Belanja</h1>
+    </div>
+  );
+}
+/*
+"use client";
+
+import Link from "next/link";
+import {
     ArrowLeft,
     Minus,
     Plus,
@@ -59,14 +82,14 @@ const CartPage = () => {
             </div>
         
           <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
-            {/* Cart Items */}
+            
             <div className="space-y-4">
               {items.map((item) => (
                 <div
                   key={item.id}
                   className="flex flex-col gap-5 rounded-2xl bg-white p-5 shadow-sm sm:flex-row"
                 >
-                  {/* Product Image */}
+                  
                   <div className="h-32 w-full overflow-hidden rounded-xl bg-gray-100 sm:w-32">
                     <img
                       src={item.image}
@@ -75,7 +98,7 @@ const CartPage = () => {
                     />
                   </div>
         
-                  {/* Product Information */}
+                  
                   <div className="flex flex-1 flex-col">
                     <div className="flex items-start justify-between gap-4">
                       <div>
@@ -99,7 +122,7 @@ const CartPage = () => {
                     </div>
         
                     <div className="mt-auto flex flex-wrap items-end justify-between gap-4 pt-5">
-                      {/* Quantity */}
+                      
                       <div className="flex items-center rounded-xl border border-gray-200">
                         <button
                           type="button"
@@ -124,7 +147,7 @@ const CartPage = () => {
                         </button>
                       </div>
         
-                      {/* Item Total */}
+                      
                       <p className="text-lg font-bold text-gray-900">
                         Rp{" "}
                         {(item.price * item.quantity).toLocaleString("id-ID")}
@@ -143,7 +166,6 @@ const CartPage = () => {
               </button>
             </div>
         
-            {/* Order Summary */}
             <aside className="h-fit rounded-2xl bg-white p-6 shadow-sm">
               <h2 className="text-xl font-bold text-gray-900">
                 Ringkasan Pesanan
@@ -195,3 +217,4 @@ const CartPage = () => {
 }
 
 export default CartPage;
+*/
