@@ -22,7 +22,7 @@ export default function CartPage() {
 
     if(items.length === 0) {
         return (
-            <section className="mx-auto flex max-w-7xl flex-col items-center justify-center px-4 py-32 text-center">
+            <section className="mx-auto w-full max-w-7xl px-3 py-6 sm:px-4 md:px-8 md:py-10">
                 <div className="rounded-full bg-blue-100 p-6 text-blue-600">
                     <ShoppingBag size={48} />
                 </div>
@@ -57,140 +57,203 @@ export default function CartPage() {
                     {totalItems} produk di keranjang Anda
                 </p>
             </div>
-        
-          <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
-            {/* Cart Items */}
-            <div className="space-y-4">
-              {items.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex flex-col gap-5 rounded-2xl bg-white p-5 shadow-sm sm:flex-row"
-                >
-                  {/* Product Image */}
-                  <div className="h-32 w-full overflow-hidden rounded-xl bg-gray-100 sm:w-32">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-        
-                  {/* Product Information */}
-                  <div className="flex flex-1 flex-col">
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <p className="text-sm text-blue-600">
-                          {item.category}
-                        </p>
-        
-                        <h2 className="mt-1 text-lg font-semibold text-gray-900">
-                          {item.name}
-                        </h2>
-                      </div>
-        
-                      <button
-                        type="button"
-                        onClick={() => removeItem(item.id)}
-                        className="rounded-lg p-2 text-red-500 transition hover:bg-red-50"
-                        aria-label={`Hapus ${item.name}`}
-                      >
-                        <Trash2 size={20} />
-                      </button>
-                    </div>
-        
-                    <div className="mt-auto flex flex-wrap items-end justify-between gap-4 pt-5">
-                      {/* Quantity */}
-                      <div className="flex items-center rounded-xl border border-gray-200">
-                        <button
-                          type="button"
-                          onClick={() => decreaseQuantity(item.id)}
-                          className="p-2 text-gray-600 transition hover:bg-gray-100"
-                          aria-label={`Kurangi jumlah ${item.name}`}
+            <div className="grid gap-8 lg:grid-cols-[1fr_380px]">            
+                {/* Cart Items */}
+                <div className="space-y-4">
+                    {/*items.map((item) => (
+                        <div
+                          key={item.id}
+                          className="flex w-full flex-col gap-4 rounded-2xl bg-white p-3 shadow-sm sm:flex-row sm:p-5"
                         >
-                          <Minus size={18} />
-                        </button>
-        
-                        <span className="w-10 text-center font-semibold">
-                          {item.quantity}
-                        </span>
-        
-                        <button
-                          type="button"
-                          onClick={() => increaseQuantity(item.id)}
-                          className="p-2 text-gray-600 transition hover:bg-gray-100"
-                          aria-label={`Tambah jumlah ${item.name}`}
-                        >
-                          <Plus size={18} />
-                        </button>
-                      </div>
-        
-                      {/* Item Total */}
-                      <p className="text-lg font-bold text-gray-900">
-                        Rp{" "}
-                        {(item.price * item.quantity).toLocaleString("id-ID")}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-        
-              <button
-                type="button"
-                onClick={clearCart}
-                className="text-sm font-medium text-red-500 transition hover:text-red-600"
-              >
-                Kosongkan Keranjang
-              </button>
-            </div>
-        
-            {/* Order Summary */}
-            <aside className="h-fit rounded-2xl bg-white p-6 shadow-sm">
-              <h2 className="text-xl font-bold text-gray-900">
-                Ringkasan Pesanan
-              </h2>
-        
-              <div className="mt-6 space-y-4">
-                <div className="flex justify-between text-gray-600">
-                  <span>Subtotal</span>
-                  <span>
-                    Rp {subtotal.toLocaleString("id-ID")}
-                  </span>
-                </div>
-        
-                <div className="flex justify-between text-gray-600">
-                  <span>Pengiriman</span>
-                  <span className="text-green-600">Gratis</span>
-                </div>
-        
-                <div className="border-t pt-4">
-                  <div className="flex justify-between">
-                    <span className="text-lg font-semibold">
-                      Total
-                    </span>
-        
-                    <span className="text-xl font-bold text-blue-600">
-                      Rp {subtotal.toLocaleString("id-ID")}
-                    </span>
-                  </div>
-                </div>
-              </div>
-        
-              <button
-                type="button"
-                className="mt-6 w-full rounded-xl bg-blue-600 px-6 py-4 font-semibold text-white transition hover:bg-blue-700"
-              >
-                Lanjut ke Checkout
-              </button>
-        
-              <Link
-                href="/products"
-                className="mt-4 block text-center text-sm font-medium text-gray-500 transition hover:text-blue-600"
-              >
-                ← Lanjut Belanja
-              </Link>
-            </aside>
-          </div>
-        </section>
+                            <div className="h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-gray-100 sm:h-32 sm:w-32">
+                                <img
+                                    src={item.image}
+                                    alt={item.name}
+                                    className="h-full w-full object-cover"
+                                />
+                            </div>
+                
+                            <div className="flex min-w-0 flex-1 flex-col">
+                                <div className="flex items-start justify-between gap-4">
+                                <div>
+                                    <p className="text-sm text-blue-600">
+                                      {item.category}
+                                    </p>
+                    
+                                    <h2 className="mt-1 truncate text-lg font-semibold text-gray-900">
+                                      {item.name}
+                                    </h2>
+                                  </div>
+                    
+                                  <button
+                                    type="button"
+                                    onClick={() => removeItem(item.id)}
+                                    className="rounded-lg p-2 text-red-500 transition hover:bg-red-50"
+                                    aria-label={`Hapus ${item.name}`}
+                                  >
+                                    <Trash2 size={20} />
+                                  </button>
+                                </div>
+                                <div className="mt-auto flex flex-wrap items-end justify-between gap-4 pt-5">
+                                    <div className="flex items-center rounded-xl border border-gray-200">
+                                        <button
+                                          type="button"
+                                          onClick={() => decreaseQuantity(item.id)}
+                                          className="p-2 text-gray-600 transition hover:bg-gray-100"
+                                          aria-label={`Kurangi jumlah ${item.name}`}
+                                        >
+                                          <Minus size={18} />
+                                        </button>
+                
+                                        <span className="w-10 text-center font-semibold">
+                                            {item.quantity}
+                                        </span>
+                
+                                        <button
+                                            type="button"
+                                            onClick={() => increaseQuantity(item.id)}
+                                            className="p-2 text-gray-600 transition hover:bg-gray-100"
+                                            aria-label={`Tambah jumlah ${item.name}`}
+                                        >
+                                          <Plus size={18} />
+                                        </button>
+                                    </div>
+                
+                                    <p className="whitespace-nowrap text-sm font-bold text-gray-900 sm:text-lg">
+                                        Rp{" "}
+                                        {(item.price * item.quantity).toLocaleString("id-ID")}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    ))*/}
 
+                    {items.map((item) => (
+                      <div
+                        key={item.id}
+                        className="flex w-full flex-row gap-3 rounded-2xl bg-white p-3 shadow-sm sm:gap-5 sm:p-5"
+                      >
+                        {/* Product Image */}
+                        <div className="h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-gray-100 sm:h-32 sm:w-32">
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
+                    
+                        {/* Product Information */}
+                        <div className="flex min-w-0 flex-1 flex-col">
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="min-w-0">
+                              <p className="text-xs text-blue-600 sm:text-sm">
+                                {item.category}
+                              </p>
+                    
+                              <h2 className="mt-1 truncate text-base font-semibold text-gray-900 sm:text-lg">
+                                {item.name}
+                              </h2>
+                            </div>
+                    
+                            <button
+                              type="button"
+                              onClick={() => removeItem(item.id)}
+                              className="shrink-0 rounded-lg p-2 text-red-500 transition hover:bg-red-50"
+                              aria-label={`Hapus ${item.name}`}
+                            >
+                              <Trash2 size={18} />
+                            </button>
+                          </div>
+                    
+                          <div className="mt-auto flex items-center justify-between gap-2 pt-4">
+                            {/* Quantity */}
+                            <div className="flex shrink-0 items-center rounded-xl border border-gray-200">
+                              <button
+                                type="button"
+                                onClick={() => decreaseQuantity(item.id)}
+                                className="p-1.5 text-gray-600 transition hover:bg-gray-100 sm:p-2"
+                                aria-label={`Kurangi jumlah ${item.name}`}
+                              >
+                                <Minus size={16} />
+                              </button>
+                    
+                              <span className="w-8 text-center text-sm font-semibold sm:w-10">
+                                {item.quantity}
+                              </span>
+                    
+                              <button
+                                type="button"
+                                onClick={() => increaseQuantity(item.id)}
+                                className="p-1.5 text-gray-600 transition hover:bg-gray-100 sm:p-2"
+                                aria-label={`Tambah jumlah ${item.name}`}
+                              >
+                                <Plus size={16} />
+                              </button>
+                            </div>
+                    
+                            {/* Item Total */}
+                            <p className="whitespace-nowrap text-sm font-bold text-gray-900 sm:text-lg">
+                              Rp{" "}
+                              {(item.price * item.quantity).toLocaleString("id-ID")}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+        
+                    <button
+                        type="button"
+                        onClick={clearCart}
+                        className="text-sm font-medium text-red-500 transition hover:text-red-600"
+                    >
+                        Kosongkan Keranjang
+                    </button>
+                </div>        
+                
+                {/* Order Summary */}
+                <aside className="h-fit rounded-2xl bg-white p-6 shadow-sm">
+                    <h2 className="text-xl font-bold text-gray-900">
+                        Ringkasan Pesanan
+                    </h2>
+        
+                    <div className="mt-6 space-y-4">
+                        <div className="flex justify-between text-gray-600">
+                            <span>Subtotal</span>
+                            <span>
+                                Rp {subtotal.toLocaleString("id-ID")}
+                            </span>
+                        </div>
+                        <div className="flex justify-between text-gray-600">
+                          <span>Pengiriman</span>
+                          <span className="text-green-600">Gratis</span>
+                        </div>     
+                        <div className="border-t pt-4">
+                            <div className="flex justify-between">
+                                <span className="text-lg font-semibold">
+                                  Total
+                                </span>                    
+                                <span className="text-xl font-bold text-blue-600">
+                                  Rp {subtotal.toLocaleString("id-ID")}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <button
+                        type="button"
+                        className="mt-6 w-full rounded-xl bg-blue-600 px-6 py-4 font-semibold text-white transition hover:bg-blue-700"
+                    >
+                        Lanjut ke Checkout
+                    </button>
+        
+                    <Link
+                        href="/products"
+                        className="mt-4 block text-center text-sm font-medium text-gray-500 transition hover:text-blue-600"
+                    >
+                        ← Lanjut Belanja
+                    </Link>
+                </aside>
+            </div>
+        </section>
     )
 }
