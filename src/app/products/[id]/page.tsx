@@ -35,8 +35,10 @@ export default function ProductDetailPage() {
   const params = useParams();
   const router = useRouter();
 
-  const productId = Number(params.id);
-
+  const productId = String(params.id);
+  const [viewMode, setViewMode] = useState<"grid" | "list">(
+    "grid"
+  );
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] =
     useState("description");

@@ -5,15 +5,20 @@ import { useMemo, useState } from "react";
 import {
   ChevronRight,
   Grid2X2,
+  Heart,
   List,
   Search,
+  ShoppingCart,
   SlidersHorizontal,
+  Star,
   X,
 } from "lucide-react";
-
 import Navbar from "@/components/layout/Navbar";
 import ProductCard from "@/components/product/ProductCard";
 import { products } from "@/data/products";
+import { Product } from "@/types/product";
+import { useCartStore } from "@/stores/cart-store";
+import { useWishlistStore } from "@/stores/wishlist-store";
 
 const formatPrice = (price: number) =>
   new Intl.NumberFormat("id-ID", {
@@ -252,16 +257,28 @@ export default function ProductsPage() {
                 <div className="hidden items-center rounded-lg border border-gray-200 p-1 sm:flex">
                   <button
                     type="button"
-                    className="rounded-md bg-blue-50 p-2 text-blue-600"
+                    onClick={() => setViewMode("grid")}
+                    className={`rounded-md p-2 transition ${
+                      viewMode === "grid"
+                        ? "bg-blue-50 text-blue-600"
+                        : "text-gray-400 hover:text-gray-700"
+                    }`}
                     aria-label="Grid view"
+                    aria-pressed={viewMode === "grid"}
                   >
                     <Grid2X2 size={17} />
                   </button>
-
+                
                   <button
                     type="button"
-                    className="rounded-md p-2 text-gray-400 hover:text-gray-700"
+                    onClick={() => setViewMode("list")}
+                    className={`rounded-md p-2 transition ${
+                      viewMode === "list"
+                        ? "bg-blue-50 text-blue-600"
+                        : "text-gray-400 hover:text-gray-700"
+                    }`}
                     aria-label="List view"
+                    aria-pressed={viewMode === "list"}
                   >
                     <List size={17} />
                   </button>
@@ -365,20 +382,27 @@ export default function ProductsPage() {
 
             {/* Products Grid */}
             {filteredProducts.length > 0 ? (
-              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
-                {filteredProducts.map(
-                  (product) => (
+              viewMode === "grid" ? (
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                  {filteredProducts.map((product) => (
                     <ProductCard
                       key={product.id}
                       product={product}
                     />
-                  )
-                )}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {filteredProducts.map((product) => (
+                    <ProductListItem
+                      key={product.id}
+                      product={product}
+                    />
+                  ))}
+                </div>
+              )
             ) : (
-              <EmptyState
-                resetFilters={resetFilters}
-              />
+              <EmptyState resetFilters={resetFilters} />
             )}
           </div>
         </div>
@@ -575,8 +599,165 @@ function FilterSidebar({
   );
 }
 
-/* ================= EMPTY STATE ================= */
+type ProductListItemProps = {
+  product: Product;
+};
 
+function ProductListItem({
+  product,
+}: ProductListItemProps) {
+  const addItem = useCartStore(
+    (state) => state.addItem
+  );
+
+  const toggleItem = useWishlistStore(
+    (state) => state.toggleItem
+  );
+
+  const isFavorite = useWishlistStore(
+    (state) =>
+      state.items.some(
+        (item) => item.id === product.id
+      )
+  );
+
+  return (
+    <article className="group overflow-hidden rounded-xl border border-gray-200 bg-white transition hover:border-blue-200 hover:shadow-md">
+      <div className="flex flex-col sm:flex-row">
+
+        {/* Product Image */}
+        <Link
+          href={`/products/${product.id}`}
+          className="flex h-56 shrink-0 items-center justify-center bg-gray-50 p-5 sm:h-auto sm:w-56"
+        >
+          <img
+            src={product.image}
+            alt={product.name}
+            className="h-full w-full object-contain transition duration-300 group-hover:scale-105"
+          />
+        </Link>
+
+        {/* Product Information */}
+        <div className="flex min-w-0 flex-1 flex-col p-5">
+
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <Link
+                href="/products"
+                className="text-xs font-semibold uppercase tracking-wider text-blue-600"
+              >
+                {product.category}
+              </Link>
+
+              <Link
+                href={`/products/${product.id}`}
+                className="mt-2 block text-lg font-bold text-gray-900 transition hover:text-blue-600"
+              >
+                {product.name}
+              </Link>
+            </div>
+
+            {/* Wishlist */}
+            <button
+              type="button"
+              onClick={() =>
+                toggleItem(product)
+              }
+              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition ${
+                isFavorite
+                  ? "border-red-100 bg-red-50 text-red-500"
+                  : "border-gray-200 text-gray-500 hover:border-red-200 hover:text-red-500"
+              }`}
+              aria-label="Tambah ke wishlist"
+            >
+              <Heart
+                size={19}
+                className={
+                  isFavorite
+                    ? "fill-red-500"
+                    : ""
+                }
+              />
+            </button>
+          </div>
+
+          {/* Rating */}
+          <div className="mt-3 flex items-center gap-2">
+            <div className="flex">
+              {Array.from({
+                length: 5,
+              }).map((_, index) => (
+                <Star
+                  key={`${product.id}-star-${index}`}
+                  size={15}
+                  className={
+                    index <
+                    Math.round(
+                      product.rating ?? 0
+                    )
+                      ? "fill-yellow-400 text-yellow-400"
+                      : "text-gray-300"
+                  }
+                />
+              ))}
+            </div>
+
+            <span className="text-xs font-semibold text-gray-700">
+              {product.rating ?? 0}
+            </span>
+
+            <span className="text-xs text-gray-400">
+              ({product.reviewCount ?? 0} ulasan)
+            </span>
+          </div>
+
+          {/* Description */}
+          <p className="mt-4 line-clamp-2 text-sm leading-relaxed text-gray-500">
+            {product.description}
+          </p>
+
+          {/* Bottom */}
+          <div className="mt-5 flex flex-col gap-4 border-t pt-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-xl font-bold text-blue-600">
+                {formatPrice(product.price)}
+              </p>
+
+              <p className="mt-1 text-xs text-gray-400">
+                Produk berkualitas
+              </p>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() =>
+                  addItem(product)
+                }
+                className="flex items-center justify-center gap-2 rounded-lg border border-blue-600 px-4 py-2.5 text-sm font-semibold text-blue-600 transition hover:bg-blue-50"
+              >
+                <ShoppingCart size={18} />
+                Keranjang
+              </button>
+
+              <Link
+                href={`/products/${product.id}`}
+                className="flex items-center justify-center gap-1 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
+              >
+                Detail
+                <ChevronRight size={17} />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+
+
+/* ================= EMPTY STATE ================= */
 function EmptyState({
   resetFilters,
 }: {
