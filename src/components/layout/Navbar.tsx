@@ -9,8 +9,8 @@ import { useWishlistStore } from "@/stores/wishlist-store";
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
-    const items = useCartStore((state) => state.items)
-    const totalItems = items.reduce((total, item) => total + item.quantity, 0)
+    const items = useCartStore((state) => state.items);
+    const totalItems = items.reduce((total, item) => total + item.quantity,0);
     const wishlistItems = useWishlistStore((state) => state.items);
     
     return (
