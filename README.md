@@ -96,9 +96,9 @@ Run the Development Server
 npm run dev
 ```
 Open your browser and visit:
-
+```text
 http://localhost:3000
-
+```
 ---
 
 📜 Available Scripts
