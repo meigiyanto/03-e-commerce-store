@@ -78,8 +78,7 @@ export default function ProductDetailPage() {
   if (!product) {
     return (
       <main className="min-h-screen bg-gray-50">
-        <Navbar />
-
+        
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-center px-4 py-28 text-center">
           <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gray-100">
             <PackageCheck
