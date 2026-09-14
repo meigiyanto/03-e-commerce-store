@@ -323,7 +323,7 @@ export default function Navbar() {
           <nav className="ml-6 flex h-14 items-center gap-7">
             {navigationLinks.map((link) => (
               <Link
-                key={link.href}
+                key={link.id}
                 href={link.href}
                 className="text-sm font-medium text-gray-700 transition hover:text-blue-600"
               >
@@ -373,7 +373,7 @@ export default function Navbar() {
             <nav className="flex flex-col">
               {navigationLinks.map((link) => (
                 <Link
-                  key={link.href}
+                  key={link.id}
                   href={link.href}
                   onClick={() =>
                     setIsMobileMenuOpen(false)
