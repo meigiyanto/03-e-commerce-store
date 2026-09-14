@@ -7,6 +7,7 @@ import { Product } from "@/types/product";
 import { useCartStore } from "@/stores/cart-store";
 import { Heart } from "lucide-react";
 import { useWishlistStore } from "@/stores/wishlist-store";
+import { useCart } from "@/context/CartContext";
 
 type ProductCardProps = {
     product: Product;
@@ -22,7 +23,15 @@ export default function ProductCard({ product } : ProductCardProps) {
         event.stopPropagation();
         toggleItem(product);
     };
-
+    const { addToCart } = useCart();
+    const handleAddToCart = () => {
+        addToCart({
+            id: product.id,
+            title: product.title,
+            price: product.price,
+            image: product.image,
+        });
+    };
     
     return (
         <div className="group overflow-hidden rounded-2xl border bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
