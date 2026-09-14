@@ -15,7 +15,7 @@ type ProductCardProps = {
 
 export default function ProductCard({ product } : ProductCardProps) {
     const addItem = useCartStore((state) => state.addItem);
-    const handleAddToCart = () => { addItem(product) }
+    // const handleAddToCart = () => { addItem(product) }
     const toggleItem = useWishlistStore((state) => state.toggleItem);
     const isFavorite = useWishlistStore((state) => state.items.some((item) => item.id === product.id));
     const handleFavorite = (event: React.MouseEvent<HTMLButtonElement>) => {
