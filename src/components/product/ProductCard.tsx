@@ -1,30 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { ShoppingCart } from "lucide-react";
+import { Heart, ShoppingCart } from "lucide-react";
 import ProductRating from "@/components/product/ProductRating";
 import { Product } from "@/types/product";
 import { useCartStore } from "@/stores/cart-store";
-import { Heart } from "lucide-react";
 import { useWishlistStore } from "@/stores/wishlist-store";
-import { useCart } from "@/context/CartContext";
 
 type ProductCardProps = {
     product: Product;
 }
 
-export default function ProductCard({ product } : ProductCardProps) {
-    const addItem = useCartStore((state) => state.addItem);
-    const handleAddToCart = () => { addItem(product) }
-    const toggleItem = useWishlistStore((state) => state.toggleItem);
-    const isFavorite = useWishlistStore((state) => state.items.some((item) => item.id === product.id));
-    const handleFavorite = (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault();
-        event.stopPropagation();
-        toggleItem(product);
-    };
-    const { addToCart } = useCart();
-    
+export default function ProductCard({
+  product,
+}: ProductCardProps) {
+   const addItem = useCartStore((state) => state.addItem);
+   const toggleItem = useWishlistStore((state) => state.toggleItem);
+   const isFavorite = useWishlistStore((state) =>state.items.some((item) => item.id === product.id));
+   const handleAddToCart = () => {addItem(product);};
+
     return (
         <div className="group overflow-hidden rounded-2xl border bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
             <Link href={`/products/${product.id}`}>

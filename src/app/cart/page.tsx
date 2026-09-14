@@ -12,14 +12,16 @@ import {
 import { useCartStore } from "@/stores/cart-store";
 
 export default function CartPage() {
-  const items = useCartStore((state) => state.items);
-  const removeItem = useCartStore((state) => state.removeItem);
-  const increaseQuantity = useCartStore((state) => state.increaseQuantity);
-  const decreaseQuantity = useCartStore((state) => state.decreaseQuantity);
-  const clearCart = useCartStore((state) => state.clearCart);
+  const {
+      items,
+      removeItem,
+      increaseQuantity,
+      decreaseQuantity,
+      clearCart,
+  } = useCartStore();
   const subtotal = items.reduce((total, item) => total + item.price * item.quantity,0);
   const totalItems = items.reduce((total, item) => total + item.quantity,0);
-
+    
   // Empty Cart
   if (items.length === 0) {
     return (
