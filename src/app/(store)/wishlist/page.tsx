@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 
 import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
 import { useWishlistStore } from "@/stores/wishlist-store";
 import { useCartStore } from "@/stores/cart-store";
 
@@ -117,7 +118,6 @@ export default function WishlistPage() {
 
       {/* ================= CONTENT ================= */}
       <section className="mx-auto max-w-7xl px-4 py-8 md:px-8 md:py-10">
-
         {/* ================= EMPTY STATE ================= */}
         {items.length === 0 ? (
           <div className="flex min-h-[60vh] flex-col items-center justify-center rounded-2xl border border-dashed border-gray-300 bg-white px-6 py-16 text-center">
@@ -291,6 +291,9 @@ export default function WishlistPage() {
           </>
         )}
       </section>
+      
+      <Footer />
+      
     </main>
   );
 }

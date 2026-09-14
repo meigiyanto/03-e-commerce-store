@@ -15,7 +15,6 @@ import {
   Watch,
 } from "lucide-react";
 
-import Navbar from "@/components/layout/Navbar";
 import ProductCard from "@/components/product/ProductCard";
 import { products } from "@/data/products";
 
@@ -49,8 +48,6 @@ const categories = [
 export default function Home() {
   return (
     <main className="min-h-screen bg-gray-50">
-      <Navbar />
-
       {/* Top Promotion */}
       <div className="bg-gray-900 text-white">
         <div className="mx-auto flex max-w-7xl items-center justify-center px-4 py-2 text-center text-xs sm:text-sm md:px-8">
@@ -394,58 +391,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-gray-950 text-gray-400">
-        <div className="mx-auto max-w-7xl px-4 py-12 md:px-8">
-
-          <div className="grid gap-10 md:grid-cols-4">
-            <div>
-              <h2 className="text-2xl font-bold text-white">
-                NexaShop
-              </h2>
-
-              <p className="mt-4 text-sm leading-relaxed">
-                Marketplace modern untuk pengalaman belanja yang
-                mudah, aman, dan nyaman.
-              </p>
-            </div>
-
-            <FooterColumn
-              title="Belanja"
-              links={[
-                "Produk",
-                "Kategori",
-                "Promo",
-                "Produk Terbaru",
-              ]}
-            />
-
-            <FooterColumn
-              title="Bantuan"
-              links={[
-                "Pusat Bantuan",
-                "Cara Belanja",
-                "Pengiriman",
-                "Pengembalian",
-              ]}
-            />
-
-            <FooterColumn
-              title="Tentang"
-              links={[
-                "Tentang Kami",
-                "Kontak",
-                "Kebijakan Privasi",
-                "Syarat & Ketentuan",
-              ]}
-            />
-          </div>
-
-          <div className="mt-12 border-t border-gray-800 pt-6 text-center text-sm">
-            © 2026 NexaShop. All rights reserved.
-          </div>
-        </div>
-      </footer>
     </main>
   );
 }
