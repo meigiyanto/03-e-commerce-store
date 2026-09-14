@@ -22,6 +22,7 @@ import Navbar from "@/components/layout/Navbar";
 import ProductCard from "@/components/product/ProductCard";
 import { products } from "@/data/products";
 import { useCartStore } from "@/stores/cart-store";
+import { useProductStore } from "@/stores/product-store";
 import { useWishlistStore } from "@/stores/wishlist-store";
 
 const formatPrice = (price: number) =>
@@ -32,9 +33,8 @@ const formatPrice = (price: number) =>
   }).format(price);
 
 export default function ProductDetailPage() {
-  const params = useParams();
-  const router = useRouter();
-
+  const { params, router } = useParams();
+  const id = params.id as string;
   const productId = String(params.id);
   const [viewMode, setViewMode] = useState<"grid" | "list">(
     "grid"
@@ -43,8 +43,17 @@ export default function ProductDetailPage() {
   const [activeTab, setActiveTab] =
     useState("description");
 
+  /*
   const product = products.find(
     (item) => item.id === productId
+  );
+  */
+  
+  const product = useProductStore(
+    (state) =>
+      state.products.find(
+        (product) => product.id === id
+      )
   );
 
   const addItem = useCartStore(
@@ -75,6 +84,7 @@ export default function ProductDetailPage() {
       .slice(0, 4);
   }, [product]);
 
+  /*
   if (!product) {
     return (
       <main className="min-h-screen bg-gray-50">
@@ -103,6 +113,21 @@ export default function ProductDetailPage() {
             Kembali ke Produk
           </Link>
         </div>
+      </main>
+    );
+  }
+  */
+  
+  if (!product) {
+    return (
+      <main className="container mx-auto py-10">
+        <h1 className="text-2xl font-bold">
+          Product Not Found
+        </h1>
+
+        <p className="text-muted-foreground">
+          Produk yang Anda cari tidak ditemukan.
+        </p>
       </main>
     );
   }
@@ -180,6 +205,7 @@ export default function ProductDetailPage() {
           <span className="truncate font-medium text-gray-900">
             {product.name}
           </span>
+
         </div>
       </div>
 
@@ -309,6 +335,14 @@ export default function ProductDetailPage() {
               <p className="leading-relaxed text-gray-600">
                 {product.description}
               </p>
+            </div>
+
+            {/* Stock */}
+            <div className="mt-6">
+              <span className="font-medium">
+                Stock:
+              </span>{" "}
+              {product.stock}
             </div>
 
             {/* Divider */}

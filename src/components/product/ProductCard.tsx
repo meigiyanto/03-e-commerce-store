@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Heart, ShoppingCart } from "lucide-react";
 
 import ProductRating from "@/components/product/ProductRating";
@@ -48,12 +49,16 @@ export default function ProductCard({
       {/* Product Image */}
       <Link href={`/products/${product.id}`}>
         <div className="relative h-60 overflow-hidden bg-gray-100">
-          <img
+          <Image
             src={product.image}
             alt={product.name}
-            className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
+            fill
+            className="
+              object-cover
+              transition-transform
+              group-hover:scale-105
+            "
           />
-
           <button
             type="button"
             onClick={handleFavorite}
