@@ -489,7 +489,6 @@ type FilterSidebarProps = {
   ) => void;
 
   resetFilters: () => void;
-
   hasActiveFilters: boolean;
 };
 
