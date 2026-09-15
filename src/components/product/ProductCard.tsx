@@ -27,7 +27,7 @@ export default function ProductCard({product,}: ProductCardProps) {
   return (
     <div className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white transition duration-300 hover:-translate-y-1 hover:shadow-xl">
       {/* Product Image */}
-      <Link href={`/products/${product.slug}`}>
+      <Link href={`/products/${product.id}`}>
         <div className="relative h-60 overflow-hidden bg-gray-100">
           <Image
             src={product.image}
@@ -63,7 +63,7 @@ export default function ProductCard({product,}: ProductCardProps) {
           {product.category}
         </p>
 
-        <Link href={`/products/${product.slug}`}>
+        <Link href={`/products/${product.id}`}>
           <h3 className="mt-2 line-clamp-2 min-h-[48px] text-base font-semibold text-gray-900 transition hover:text-blue-600">
             {product.name}
           </h3>

@@ -1,21 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
-import {
-  ChevronRight,
-  Grid2X2,
-  Heart,
-  List,
-  Search,
-  ShoppingCart,
-  SlidersHorizontal,
-  Star,
-  X,
-} from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { ChevronRight, Grid2X2, Heart, List, Search, ShoppingCart, SlidersHorizontal, Star, X, } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import ProductCard from "@/components/product/ProductCard";
-// import { products } from "@/data/products";
 import { Product } from "@/types/product";
 import { useProductStore } from "@/stores/product-store";
 import { useCartStore } from "@/stores/cart-store";
@@ -37,6 +26,14 @@ export default function ProductsPage() {
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const products = useProductStore((state) => state.products);
+  const fetchProducts = useProductStore((state) => state.fetchProducts);
+  
+  useEffect(() => {
+    if (products.length === 0) {
+      fetchProducts();
+    }
+  }, [products.length, fetchProducts]);
+  
   const categories = [
     "Semua",
     ...Array.from(new Set(products.map((product) => product.category))),
@@ -97,6 +94,7 @@ export default function ProductsPage() {
 
     return result;
   }, [
+    products,
     search,
     selectedCategory,
     sortBy,
