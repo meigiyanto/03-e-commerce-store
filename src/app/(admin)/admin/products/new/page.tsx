@@ -7,14 +7,17 @@ import { useProductStore } from "@/stores/product-store";
 
 export default function CreateProductPage() {
   const router = useRouter();
+  const addProduct = useProductStore((state) => state.addProduct);
 
-  const addProduct = useProductStore(
-    (state) => state.addProduct
-  );
+  async function handleSubmit(data: ProductFormData) {
+    const product = await addProduct(data);
 
-  function handleSubmit(data: ProductFormData) {
-    addProduct(data);
+    if (!product) {
+      return;
+    }
+
     router.push("/admin/products");
+    router.refresh();
   }
 
   return (
