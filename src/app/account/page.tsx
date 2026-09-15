@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default async function AccountPage() {
   const { isAuthenticated } = await auth();
-
+  
   if (!isAuthenticated) {
     return (
       <main className="min-h-[calc(100vh-4rem)] bg-muted/30 px-4 py-12 sm:px-6 lg:px-8">
@@ -61,7 +61,7 @@ export default async function AccountPage() {
           <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-purple-700">
             NexaShop Account
           </p>
-    
+  
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
             My Account
           </h1>
