@@ -1,213 +1,420 @@
 "use client";
 
 import Link from "next/link";
-import {
-  ArrowLeft,
-  Minus,
-  Plus,
-  ShoppingBag,
-  Trash2,
-} from "lucide-react";
-
+import { ArrowLeft, ArrowRight,  Minus, Plus, ShoppingBag, Trash2, Truck, ShieldCheck, PackageCheck,} from "lucide-react";
 import { useCartStore } from "@/stores/cart-store";
 
 export default function CartPage() {
-  const {
-      items,
-      removeItem,
-      increaseQuantity,
-      decreaseQuantity,
-      clearCart,
-  } = useCartStore();
+  const { items, removeItem, increaseQuantity, decreaseQuantity, clearCart, } = useCartStore();
   const subtotal = items.reduce((total, item) => total + item.price * item.quantity,0);
   const totalItems = items.reduce((total, item) => total + item.quantity,0);
-    
+
+  const formatPrice = (price: number) => {
+    return `Rp ${price.toLocaleString("id-ID")}`;
+  };
+
   // Empty Cart
   if (items.length === 0) {
     return (
-      <section className="mx-auto flex min-h-[70vh] w-full max-w-7xl flex-col items-center justify-center px-4 py-16 text-center sm:px-6">
-        <div className="rounded-full bg-blue-100 p-5 text-blue-600 sm:p-6">
-          <ShoppingBag size={44} className="sm:hidden" />
-          <ShoppingBag size={48} className="hidden sm:block" />
-        </div>
-        <h1 className="mt-6 text-2xl font-bold text-gray-900 sm:text-3xl">
-          Keranjang Anda Kosong
-        </h1>
+      <main className="min-h-[80vh] bg-gray-50">
+        <div className="mx-auto flex min-h-[80vh] w-full max-w-7xl items-center justify-center px-4 py-16 sm:px-6 lg:px-8">
+          <div className="w-full max-w-lg text-center">
+            {/* Icon */}
+            <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-blue-50">
+              <ShoppingBag
+                size={44}
+                strokeWidth={1.6}
+                className="text-blue-600"
+              />
+            </div>
 
-        <p className="mt-3 max-w-md px-4 text-sm text-gray-500 sm:text-base">
-          Anda belum menambahkan produk ke keranjang.
-        </p>
-        <Link
-          href="/products"
-          className="mt-8 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 sm:px-6"
-        >
-          <ArrowLeft size={18} />
-          Mulai Belanja
-        </Link>
-      </section>
+            {/* Heading */}
+            <h1 className="mt-7 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+              Keranjang Anda Kosong
+            </h1>
+
+            <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-gray-500 sm:text-base">
+              Belum ada produk yang ditambahkan ke keranjang.
+              Yuk, temukan produk favorit Anda dan mulai berbelanja.
+            </p>
+
+            {/* CTA */}
+            <Link
+              href="/products"
+              className="mt-8 inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 hover:shadow-md"
+            >
+              <ShoppingBag size={18} />
+              Mulai Belanja
+              <ArrowRight size={17} />
+            </Link>
+          </div>
+        </div>
+      </main>
     );
   }
 
   return (
-    <section className="mx-auto w-full max-w-7xl px-3 py-6 sm:px-4 sm:py-8 md:px-8 md:py-10">
-      {/* Page Header */}
-      <div className="mb-6 sm:mb-8">
-      <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
-          Keranjang Belanja
-        </h1>
+    <main className="min-h-screen bg-gray-50">
+      <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
+        {/* Breadcrumb */}
+        <nav className="mb-5 flex items-center gap-2 text-sm text-gray-500">
+          <Link
+            href="/products"
+            className="transition hover:text-blue-600"
+          >
+            Produk
+          </Link>
 
-        <p className="mt-1 text-xs text-gray-500 sm:mt-2 sm:text-sm">
-          {totalItems} produk di keranjang Anda
-        </p>
-      </div>
+          <span>/</span>
 
-      <div className="grid w-full gap-6 lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-8">
-        {/* Cart Items */}
-        <div className="min-w-0 space-y-3 sm:space-y-4">
-            {items.map((item) => (
-            <div
-              key={item.id}
-              className="flex w-full min-w-0 gap-3 rounded-2xl bg-white p-3 shadow-sm sm:gap-5 sm:p-5"
-            >
-              {/* Product Image */}
-              <div className="h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-gray-100 sm:h-32 sm:w-32">
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="h-full w-full object-cover"
-                />
-              </div>
+          <span className="font-medium text-gray-900">
+            Keranjang
+          </span>
+        </nav>
 
-              {/* Product Information */}
-              <div className="flex min-w-0 flex-1 flex-col">
-                {/* Product Header */}
-                <div className="flex min-w-0 items-start justify-between gap-2">
-                  <div className="min-w-0">
-                    <p className="text-xs text-blue-600 sm:text-sm">
-                      {item.category}
-                    </p>
+        {/* Page Header */}
+        <div className="mb-7 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+              Keranjang Belanja
+            </h1>
 
-                    <h2 className="mt-1 truncate text-sm font-semibold text-gray-900 sm:text-lg">
-                      {item.name}
-                    </h2>
-                  </div>
-                  {/* Remove Button */}
-                  <button
-                    type="button"
-                    onClick={() => removeItem(item.id)}
-                    className="shrink-0 rounded-lg p-1.5 text-red-500 transition hover:bg-red-50 sm:p-2"
-                    aria-label={`Hapus ${item.name}`}
-                  >
-                    <Trash2 size={17} className="sm:hidden" />
-                    <Trash2 size={20} className="hidden sm:block" />
-                  </button>
+            <p className="mt-1.5 text-sm text-gray-500">
+              {totalItems} item{" "}
+              {totalItems === 1 ? "tersedia" : "tersedia"} di keranjang Anda
+            </p>
+          </div>
+
+          <Link
+            href="/products"
+            className="inline-flex w-fit items-center gap-2 text-sm font-medium text-gray-600 transition hover:text-blue-600"
+          >
+            <ArrowLeft size={17} />
+            Lanjut Belanja
+          </Link>
+        </div>
+
+        {/* Main Grid */}
+        <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px] xl:gap-8">
+          {/* Left - Cart Items */}
+          <div className="min-w-0">
+            <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+              {/* Card Header */}
+              <div className="flex items-center justify-between border-b border-gray-100 px-4 py-4 sm:px-6">
+                <div>
+                  <h2 className="font-semibold text-gray-900">
+                    Produk Anda
+                  </h2>
+
+                  <p className="mt-0.5 text-xs text-gray-500">
+                    Periksa produk dan jumlah sebelum checkout
+                  </p>
                 </div>
 
-                {/* Quantity and Price */}
-                <div className="mt-auto flex items-center justify-between gap-2 pt-3 sm:pt-5">
-                  {/* Quantity */}
-                  <div className="flex shrink-0 items-center overflow-hidden rounded-xl border border-gray-200">
-                    <button
-                      type="button"
-                      onClick={() => decreaseQuantity(item.id)}
-                      className="p-1.5 text-gray-600 transition hover:bg-gray-100 sm:p-2"
-                      aria-label={`Kurangi jumlah ${item.name}`}
-                    >
-                      <Minus size={15} className="sm:hidden" />
-                      <Minus size={18} className="hidden sm:block" />
-                    </button>
+                <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600">
+                  {items.length} produk
+                </span>
+              </div>
 
-                    <span className="w-7 text-center text-xs font-semibold sm:w-10 sm:text-base">
-                      {item.quantity}
-                    </span>
+              {/* Items */}
+              <div className="divide-y divide-gray-100">
+                {items.map((item) => (
+                  <div
+                    key={item.id}
+                    className="p-4 sm:p-6"
+                  >
+                    <div className="flex gap-3 sm:gap-5">
+                      {/* Product Image */}
+                      <Link
+                        href={`/products/${item.id}`}
+                        className="group h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-gray-100 sm:h-32 sm:w-32"
+                      >
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                        />
+                      </Link>
 
-                    <button
-                      type="button"
-                      onClick={() => increaseQuantity(item.id)}
-                      className="p-1.5 text-gray-600 transition hover:bg-gray-100 sm:p-2"
-                      aria-label={`Tambah jumlah ${item.name}`}
-                    >
-                      <Plus size={15} className="sm:hidden" />
-                      <Plus size={18} className="hidden sm:block" />
-                    </button>
+                      {/* Product Content */}
+                      <div className="flex min-w-0 flex-1 flex-col">
+                        {/* Top */}
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <Link
+                              href={`/products/${item.id}`}
+                              className="text-xs font-medium text-blue-600 transition hover:text-blue-700 sm:text-sm"
+                            >
+                              {item.category}
+                            </Link>
+
+                            <Link
+                              href={`/products/${item.id}`}
+                              className="mt-1 block"
+                            >
+                              <h3 className="line-clamp-2 text-sm font-semibold leading-5 text-gray-900 transition hover:text-blue-600 sm:text-base sm:leading-6">
+                                {item.name}
+                              </h3>
+                            </Link>
+                          </div>
+
+                          {/* Remove */}
+                          <button
+                            type="button"
+                            onClick={() => removeItem(item.id)}
+                            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-gray-400 transition hover:bg-red-50 hover:text-red-500"
+                            aria-label={`Hapus ${item.name}`}
+                          >
+                            <Trash2 size={17} />
+                          </button>
+                        </div>
+
+                        {/* Bottom */}
+                        <div className="mt-auto flex flex-wrap items-end justify-between gap-3 pt-4">
+                          {/* Quantity */}
+                          <div>
+                            <p className="mb-1.5 text-[11px] font-medium uppercase tracking-wide text-gray-400">
+                              Jumlah
+                            </p>
+
+                            <div className="flex h-9 items-center overflow-hidden rounded-lg border border-gray-200 bg-white">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  decreaseQuantity(item.id)
+                                }
+                                className="flex h-full w-9 items-center justify-center text-gray-500 transition hover:bg-gray-100 hover:text-gray-900"
+                                aria-label={`Kurangi jumlah ${item.name}`}
+                              >
+                                <Minus size={15} />
+                              </button>
+
+                              <span className="flex h-full min-w-9 items-center justify-center border-x border-gray-200 px-2 text-sm font-semibold text-gray-900">
+                                {item.quantity}
+                              </span>
+
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  increaseQuantity(item.id)
+                                }
+                                className="flex h-full w-9 items-center justify-center text-gray-500 transition hover:bg-gray-100 hover:text-gray-900"
+                                aria-label={`Tambah jumlah ${item.name}`}
+                              >
+                                <Plus size={15} />
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Price */}
+                          <div className="text-right">
+                            <p className="text-[11px] font-medium uppercase tracking-wide text-gray-400">
+                              Total
+                            </p>
+
+                            <p className="mt-1 text-base font-bold text-gray-900 sm:text-lg">
+                              {formatPrice(
+                                item.price * item.quantity
+                              )}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Unit Price */}
+                    <div className="mt-3 pl-[108px] sm:pl-[148px]">
+                      <p className="text-xs text-gray-400">
+                        {formatPrice(item.price)} / item
+                      </p>
+                    </div>
                   </div>
+                ))}
+              </div>
 
-                  {/* Item Total */}
-                  <p className="whitespace-nowrap text-xs font-bold text-gray-900 sm:text-lg">
-                    Rp{" "}
-                    {(item.price * item.quantity).toLocaleString("id-ID")}
+              {/* Clear Cart */}
+              <div className="border-t border-gray-100 px-4 py-4 sm:px-6">
+                <button
+                  type="button"
+                  onClick={clearCart}
+                  className="inline-flex items-center gap-2 text-xs font-medium text-red-500 transition hover:text-red-600 sm:text-sm"
+                >
+                  <Trash2 size={15} />
+                  Kosongkan Keranjang
+                </button>
+              </div>
+            </div>
+
+            {/* Benefits */}
+            <div className="mt-5 grid gap-3 sm:grid-cols-3">
+              <div className="flex items-center gap-3 rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-green-50">
+                  <Truck
+                    size={18}
+                    className="text-green-600"
+                  />
+                </div>
+
+                <div>
+                  <p className="text-xs font-semibold text-gray-900">
+                    Gratis Pengiriman
+                  </p>
+                  <p className="mt-0.5 text-[11px] text-gray-500">
+                    Untuk semua pesanan
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50">
+                  <ShieldCheck
+                    size={18}
+                    className="text-blue-600"
+                  />
+                </div>
+
+                <div>
+                  <p className="text-xs font-semibold text-gray-900">
+                    Pembayaran Aman
+                  </p>
+                  <p className="mt-0.5 text-[11px] text-gray-500">
+                    Data Anda terlindungi
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-purple-50">
+                  <PackageCheck
+                    size={18}
+                    className="text-purple-600"
+                  />
+                </div>
+
+                <div>
+                  <p className="text-xs font-semibold text-gray-900">
+                    Produk Berkualitas
+                  </p>
+                  <p className="mt-0.5 text-[11px] text-gray-500">
+                    Produk pilihan terbaik
                   </p>
                 </div>
               </div>
             </div>
-          ))}
-
-          {/* Clear Cart */}
-          <button
-            type="button"
-            onClick={clearCart}
-            className="px-1 py-2 text-xs font-medium text-red-500 transition hover:text-red-600 sm:text-sm"
-          >
-            Kosongkan Keranjang
-          </button>
-        </div>
-
-        {/* Order Summary */}
-        <aside className="h-fit w-full rounded-2xl bg-white p-4 shadow-sm sm:p-6">
-          <h2 className="text-lg font-bold text-gray-900 sm:text-xl">
-            Ringkasan Pesanan
-          </h2>
-
-          <div className="mt-5 space-y-3 sm:mt-6 sm:space-y-4">
-            {/* Subtotal */}
-            <div className="flex items-center justify-between gap-4 text-sm text-gray-600">
-              <span>Subtotal</span>
-
-              <span className="whitespace-nowrap">
-                Rp {subtotal.toLocaleString("id-ID")}
-              </span>
-
-              </div>
-
-            {/* Shipping */}
-            <div className="flex items-center justify-between gap-4 text-sm text-gray-600">
-              <span>Pengiriman</span>
-
-              <span className="font-medium text-green-600">
-                Gratis
-              </span>
-            </div>
-
-            {/* Total */}
-            <div className="border-t border-gray-200 pt-4">
-              <div className="flex items-center justify-between gap-4">
-                <span className="text-base font-semibold text-gray-900 sm:text-lg">
-                  Total
-                </span>
-                <span className="whitespace-nowrap text-lg font-bold text-blue-600 sm:text-xl">
-                  Rp {subtotal.toLocaleString("id-ID")}
-                </span>
-              </div>
-            </div>
           </div>
 
-          {/* Checkout Button */}
-          <button
-            type="button"
-            className="mt-6 w-full rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 sm:py-4"
-          >
-            Lanjut ke Checkout
-          </button>
+          {/* Right - Order Summary */}
+          <aside className="lg:sticky lg:top-24">
+            <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+              {/* Header */}
+              <div className="border-b border-gray-100 px-5 py-5 sm:px-6">
+                <h2 className="text-lg font-bold text-gray-900">
+                  Ringkasan Pesanan
+                </h2>
 
-          {/* Continue Shopping */}
-          <Link
-            href="/products"
-            className="mt-4 block py-1 text-center text-xs font-medium text-gray-500 transition hover:text-blue-600 sm:text-sm"
-          >
-            ← Lanjut Belanja
-          </Link>
-        </aside>
+                <p className="mt-1 text-xs text-gray-500">
+                  Detail pembayaran Anda
+                </p>
+              </div>
+
+              {/* Summary */}
+              <div className="px-5 py-5 sm:px-6">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between gap-4 text-sm">
+                    <span className="text-gray-500">
+                      Subtotal ({totalItems} item)
+                    </span>
+
+                    <span className="font-medium text-gray-900">
+                      {formatPrice(subtotal)}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-4 text-sm">
+                    <span className="text-gray-500">
+                      Pengiriman
+                    </span>
+
+                    <span className="font-semibold text-green-600">
+                      Gratis
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-4 text-sm">
+                    <span className="text-gray-500">
+                      Pajak
+                    </span>
+
+                    <span className="font-medium text-gray-900">
+                      Termasuk
+                    </span>
+                  </div>
+                </div>
+
+                {/* Divider */}
+                <div className="my-5 border-t border-dashed border-gray-200" />
+
+                {/* Total */}
+                <div className="flex items-end justify-between gap-4">
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900">
+                      Total Pembayaran
+                    </p>
+
+                    <p className="mt-1 text-xs text-gray-400">
+                      Sudah termasuk pengiriman
+                    </p>
+                  </div>
+
+                  <p className="text-xl font-bold text-blue-600">
+                    {formatPrice(subtotal)}
+                  </p>
+                </div>
+
+                {/* Checkout */}
+                <button
+                  type="button"
+                  className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 hover:shadow-md"
+                >
+                  Lanjut ke Checkout
+                  <ArrowRight size={17} />
+                </button>
+
+                {/* Continue Shopping */}
+                <Link
+                  href="/products"
+                  className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 px-5 py-3 text-sm font-medium text-gray-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
+                >
+                  <ShoppingBag size={16} />
+                  Lanjut Belanja
+                </Link>
+              </div>
+
+              {/* Security Note */}
+              <div className="border-t border-gray-100 bg-gray-50 px-5 py-4 sm:px-6">
+                <div className="flex gap-3">
+                  <ShieldCheck
+                    size={18}
+                    className="mt-0.5 shrink-0 text-green-600"
+                  />
+
+                  <div>
+                    <p className="text-xs font-semibold text-gray-800">
+                      Belanja dengan aman
+                    </p>
+
+                    <p className="mt-0.5 text-[11px] leading-4 text-gray-500">
+                      Informasi pembayaran Anda akan diproses
+                      dengan aman.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
       </div>
-    </section>
+    </main>
   );
 }
+
