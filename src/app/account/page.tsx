@@ -1,10 +1,10 @@
-import { SignedIn, SignedOut, SignIn, SignUp, UserProfile, } from "@clerk/nextjs";
+import { SignInButton, SignOutButton, SignIn, SignUp, UserProfile, } from "@clerk/nextjs";
 
 export default function AccountPage() {
   return (
     <main className="min-h-[calc(100vh-4rem)] bg-muted/30 px-4 py-10 sm:px-6 lg:px-8">
       <div className="mx-auto flex w-full max-w-6xl flex-col items-center">
-        <SignedOut>
+        <SignOutButton>
           <div className="mb-8 max-w-xl text-center">
             <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-purple-700">
             NexaShop Account
@@ -41,8 +41,8 @@ export default function AccountPage() {
               Create one
             </a>
           </p>
-        </SignedOut>
-        <SignedIn>
+        </SignOutButton>
+        <SignInButton>
           <div className="mb-8 w-full max-w-4xl">
             <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-purple-700">
               My Account
@@ -60,7 +60,7 @@ export default function AccountPage() {
           <div className="w-full max-w-4xl">
             <UserProfile />
           </div>
-        </SignedIn>
+        </SignInButton>
       </div>
     </main>
   );
