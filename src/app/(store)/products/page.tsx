@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import ProductCard from "@/components/product/ProductCard";
-import { products } from "@/data/products";
+// import { products } from "@/data/products";
 import { Product } from "@/types/product";
 import { useProductStore } from "@/stores/product-store";
 import { useCartStore } from "@/stores/cart-store";
@@ -29,31 +29,16 @@ const formatPrice = (price: number) =>
   }).format(price);
 
 export default function ProductsPage() {
-  const [viewMode, setViewMode] = useState<"grid" | "list">(
-      "grid"
-  );
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [search, setSearch] = useState("");
-  const [selectedCategory, setSelectedCategory] =
-    useState("Semua");
-
-  const [sortBy, setSortBy] =
-    useState("default");
-
-  const [isMobileFilterOpen, setIsMobileFilterOpen] =
-    useState(false);
-
+  const [selectedCategory, setSelectedCategory] =useState("Semua");
+  const [sortBy, setSortBy] = useState("default");
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
-
   const categories = [
     "Semua",
-    ...Array.from(
-      new Set(
-        products.map(
-          (product) => product.category
-        )
-      )
-    ),
+    ...Array.from(new Set(products.map((product) => product.category))),
   ];
 
   const filteredProducts = useMemo(() => {
@@ -90,30 +75,19 @@ export default function ProductsPage() {
 
     switch (sortBy) {
       case "price-low":
-        result = [...result].sort(
-          (a, b) => a.price - b.price
-        );
+        result = [...result].sort((a, b) => a.price - b.price);
         break;
 
       case "price-high":
-        result = [...result].sort(
-          (a, b) => b.price - a.price
-        );
+        result = [...result].sort((a, b) => b.price - a.price);
         break;
 
       case "name":
-        result = [...result].sort(
-          (a, b) =>
-            a.name.localeCompare(b.name)
-        );
+        result = [...result].sort((a, b) =>a.name.localeCompare(b.name));
         break;
 
       case "rating":
-        result = [...result].sort(
-          (a, b) =>
-            (b.rating ?? 0) -
-            (a.rating ?? 0)
-        );
+        result = [...result].sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
         break;
 
       default:
@@ -143,13 +117,10 @@ export default function ProductsPage() {
     minPrice !== "" ||
     maxPrice !== "";
 
-  const products = useProductStore(
-    (state) => state.products
-  );
+  const products = useProductStore((state) => state.products);
 
   return (
     <main className="min-h-screen bg-gray-50">
-      
       {/* ================= BREADCRUMB ================= */}
       <div className="border-b bg-white">
         <div className="mx-auto flex max-w-7xl items-center gap-2 px-4 py-4 text-sm md:px-8">
@@ -170,7 +141,6 @@ export default function ProductsPage() {
           </span>
         </div>
       </div>
-
       {/* ================= PAGE HEADER ================= */}
       <section className="border-b bg-white">
         <div className="mx-auto max-w-7xl px-4 py-10 md:px-8 md:py-14">
@@ -188,7 +158,6 @@ export default function ProductsPage() {
           </p>
         </div>
       </section>
-
       {/* ================= SEARCH ================= */}
       <section className="border-b bg-white">
         <div className="mx-auto max-w-7xl px-4 py-6 md:px-8">
@@ -210,11 +179,9 @@ export default function ProductsPage() {
           </div>
         </div>
       </section>
-
       {/* ================= PRODUCTS ================= */}
       <section className="mx-auto max-w-7xl px-4 py-8 md:px-8 md:py-10">
         <div className="flex gap-8">
-
           {/* ================= SIDEBAR ================= */}
           <aside className="hidden w-64 shrink-0 lg:block">
             <FilterSidebar
@@ -231,19 +198,14 @@ export default function ProductsPage() {
               hasActiveFilters={hasActiveFilters}
             />
           </aside>
-
           {/* ================= PRODUCT CONTENT ================= */}
           <div className="min-w-0 flex-1">
-
             {/* Toolbar */}
             <div className="mb-6 flex flex-col gap-4 rounded-xl border border-gray-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
-
               <div className="flex items-center gap-3">
                 <button
                   type="button"
-                  onClick={() =>
-                    setIsMobileFilterOpen(true)
-                  }
+                  onClick={() => setIsMobileFilterOpen(true) }
                   className="flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 lg:hidden"
                 >
                   <SlidersHorizontal size={18} />
@@ -258,7 +220,6 @@ export default function ProductsPage() {
                   produk
                 </p>
               </div>
-
               <div className="flex items-center gap-3">
                 {/* View Toggle */}
                 <div className="hidden items-center rounded-lg border border-gray-200 p-1 sm:flex">
@@ -294,27 +255,21 @@ export default function ProductsPage() {
                 {/* Sorting */}
                 <select
                   value={sortBy}
-                  onChange={(event) =>
-                    setSortBy(event.target.value)
-                  }
+                  onChange={(event) => setSortBy(event.target.value) }
                   className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 outline-none focus:border-blue-500"
                 >
                   <option value="default">
                     Urutkan Produk
                   </option>
-
                   <option value="price-low">
                     Harga Terendah
                   </option>
-
                   <option value="price-high">
                     Harga Tertinggi
                   </option>
-
                   <option value="name">
                     Nama A-Z
                   </option>
-
                   <option value="rating">
                     Rating Tertinggi
                   </option>
@@ -332,9 +287,7 @@ export default function ProductsPage() {
                 {selectedCategory !== "Semua" && (
                   <button
                     type="button"
-                    onClick={() =>
-                      setSelectedCategory("Semua")
-                    }
+                    onClick={() => setSelectedCategory("Semua")}
                     className="flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700"
                   >
                     {selectedCategory}
@@ -345,9 +298,7 @@ export default function ProductsPage() {
                 {search && (
                   <button
                     type="button"
-                    onClick={() =>
-                      setSearch("")
-                    }
+                    onClick={() =>setSearch("")}
                     className="flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700"
                   >
                     "{search}"
@@ -478,21 +429,11 @@ export default function ProductsPage() {
 type FilterSidebarProps = {
   categories: string[];
   selectedCategory: string;
-  setSelectedCategory: (
-    category: string
-  ) => void;
-
+  setSelectedCategory: (category: string) => void;
   minPrice: string;
   maxPrice: string;
-
-  setMinPrice: (
-    price: string
-  ) => void;
-
-  setMaxPrice: (
-    price: string
-  ) => void;
-
+  setMinPrice: (price: string) => void;
+  setMaxPrice: (price: string) => void;
   resetFilters: () => void;
   hasActiveFilters: boolean;
 };
@@ -542,16 +483,11 @@ function FilterSidebar({
         </h3>
 
         <div className="space-y-1">
-          {categories.map(
-            (category) => (
+          {categories.map((category) => (
               <button
                 key={category}
                 type="button"
-                onClick={() =>
-                  setSelectedCategory(
-                    category
-                  )
-                }
+                onClick={() =>setSelectedCategory(category)}
                 className={`flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left text-sm transition ${
                   selectedCategory ===
                   category
@@ -566,8 +502,7 @@ function FilterSidebar({
                   <span className="h-2 w-2 rounded-full bg-blue-600" />
                 )}
               </button>
-            )
-          )}
+            ))}
         </div>
       </div>
 
@@ -581,9 +516,7 @@ function FilterSidebar({
           <input
             type="number"
             value={minPrice}
-            onChange={(event) =>
-              setMinPrice(event.target.value)
-            }
+            onChange={(event) => setMinPrice(event.target.value)}
             placeholder="Harga minimum"
             min="0"
             className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-blue-500"
@@ -592,9 +525,7 @@ function FilterSidebar({
           <input
             type="number"
             value={maxPrice}
-            onChange={(event) =>
-              setMaxPrice(event.target.value)
-            }
+            onChange={(event) =>setMaxPrice(event.target.value)}
             placeholder="Harga maksimum"
             min="0"
             className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-blue-500"
@@ -609,23 +540,10 @@ type ProductListItemProps = {
   product: Product;
 };
 
-function ProductListItem({
-  product,
-}: ProductListItemProps) {
-  const addItem = useCartStore(
-    (state) => state.addItem
-  );
-
-  const toggleItem = useWishlistStore(
-    (state) => state.toggleItem
-  );
-
-  const isFavorite = useWishlistStore(
-    (state) =>
-      state.items.some(
-        (item) => item.id === product.id
-      )
-  );
+function ProductListItem({ product, }: ProductListItemProps) {
+  const addItem = useCartStore((state) => state.addItem);
+  const toggleItem = useWishlistStore((state) => state.toggleItem);
+  const isFavorite = useWishlistStore((state) =>state.items.some((item) => item.id === product.id));
 
   return (
     <article className="group overflow-hidden rounded-xl border border-gray-200 bg-white transition hover:border-blue-200 hover:shadow-md">

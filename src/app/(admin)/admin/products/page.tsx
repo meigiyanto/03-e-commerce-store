@@ -1,11 +1,8 @@
 "use client";
 
 import Link from "next/link";
-
 import { useProductStore } from "@/stores/product-store";
-
 import { ProductTable } from "@/components/admin/products/product-table";
-
 import { Button } from "@/components/ui/button";
 
 export default function AdminProductsPage() {

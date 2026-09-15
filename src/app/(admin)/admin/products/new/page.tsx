@@ -1,11 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-
 import { ProductForm } from "@/components/admin/products/product-form";
-
 import { ProductFormData } from "@/schemas/product-schema";
-
 import { useProductStore } from "@/stores/product-store";
 
 export default function CreateProductPage() {
@@ -17,7 +14,6 @@ export default function CreateProductPage() {
 
   function handleSubmit(data: ProductFormData) {
     addProduct(data);
-
     router.push("/admin/products");
   }
 

@@ -1,28 +1,18 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-
+import { products as initialProducts } from "@/data/products";
 import {
   Product,
   ProductInput,
 } from "@/types/product";
 
-import { products as initialProducts } from "@/data/products";
-
 interface ProductState {
   products: Product[];
-
-  addProduct: (
-    product: ProductInput
-  ) => void;
-
-  updateProduct: (
-    id: string,
-    product: Partial<ProductInput>
-  ) => void;
-
-  deleteProduct: (
-    id: string
-  ) => void;
+  hasHydrated: boolean;
+  setHasHydrated: (state: boolean) => void;
+  addProduct: (product: ProductInput) => void;
+  updateProduct: (id: string,product: Partial<ProductInput>) => void;
+  deleteProduct: (id: string) => void;
 }
 
 export const useProductStore =
@@ -30,7 +20,10 @@ export const useProductStore =
     persist(
       (set) => ({
         products: initialProducts,
-
+        hasHydrated: false,
+        setHasHydrated: (state) => {
+          set({hasHydrated: state,});
+        },
         addProduct: (product) => {
           const newProduct: Product = {
             id: crypto.randomUUID(),
@@ -44,7 +37,6 @@ export const useProductStore =
             ],
           }));
         },
-
         updateProduct: (
           id,
           updatedProduct
@@ -61,18 +53,19 @@ export const useProductStore =
             ),
           }));
         },
-
         deleteProduct: (id) => {
           set((state) => ({
             products: state.products.filter(
-              (product) =>
-                product.id !== id
+              (product) => product.id !== id
             ),
           }));
         },
       }),
       {
         name: "product-storage",
+        onRehydrateStorage: () => (state) => {
+          state?.setHasHydrated(true);
+        },
       }
     )
   );
