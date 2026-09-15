@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get("search");
     const products = await prisma.product.findMany({
       where: {
-        ...(category ? { category,}} : {}),
+        ...(category ? { category, } : {}),
         ...(search
           ? {
               OR: [
