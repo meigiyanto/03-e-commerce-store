@@ -4,19 +4,11 @@ import prisma from "@/lib/prisma";
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-
     const category = searchParams.get("category");
     const search = searchParams.get("search");
-
     const products = await prisma.product.findMany({
       where: {
-        ...(category
-          ? {
-              category,
-            }
-          }
-          : {}),
-
+        ...(category ? { category,}} : {}),
         ...(search
           ? {
               OR: [
@@ -67,15 +59,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    const {
-      name,
-      price,
-      description,
-      image,
-      category,
-      rating,
-      stock,
-    } = body;
+    const { name, price, description, image, category, rating, stock, } = body;
 
     if (
       !name ||
@@ -97,8 +81,7 @@ export async function POST(request: NextRequest) {
 
     const numericPrice = Number(price);
     const numericStock = Number(stock);
-    const numericRating =
-      rating === undefined ? 0 : Number(rating);
+    const numericRating = rating === undefined ? 0 : Number(rating);
 
     if (
       !Number.isFinite(numericPrice) ||

@@ -1,12 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ChevronRight, Heart, Minus, Plus, Share2, ShieldCheck, ShoppingCart, Star, Truck, PackageCheck, Store, Check,} from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import ProductCard from "@/components/product/ProductCard";
-import { products } from "@/data/products";
 import { useCartStore } from "@/stores/cart-store";
 import { useProductStore } from "@/stores/product-store";
 import { useWishlistStore } from "@/stores/wishlist-store";
@@ -24,6 +23,14 @@ export default function ProductDetailPage() {
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState("description");
   const products = useProductStore((state) => state.products);
+  const fetchProducts = useProductStore((state) => state.fetchProducts);
+
+  useEffect(() => {
+    if (products.length === 0) {
+      fetchProducts();
+    }
+  }, [products.length, fetchProducts]);
+  
   const product = products.find((item) => item.id === id);
   const addItem = useCartStore((state) => state.addItem);
   const toggleItem = useWishlistStore((state) => state.toggleItem)
@@ -33,19 +40,42 @@ export default function ProductDetailPage() {
     if (!product) return [];
 
     return products
-      .filter(
-        (item) =>
-          item.category === product.category &&
-          item.id !== product.id
-      )
+      .filter((item) => item.category === product.category && item.id !== product.id)
       .slice(0, 4);
   }, [products, product]);
 
+  const isLoading = useProductStore((state) => state.isLoading);
+  const error = useProductStore((state) => state.error);
+
+  if (isLoading && products.length === 0) {
+    return (
+      <main className="container mx-auto py-10">
+        <h1 className="text-2xl font-bold">
+          Memuat produk...
+        </h1>
+      </main>
+    );
+  }
+  
+  if (error && products.length === 0) {
+    return (
+      <main className="container mx-auto py-10">
+        <h1 className="text-2xl font-bold">
+          Gagal memuat produk
+        </h1>
+  
+        <p className="mt-2 text-red-500">
+          {error}
+        </p>
+      </main>
+    );
+  }
+  
   if (!product) {
     return (
       <main className="container mx-auto py-10">
         <h1 className="text-2xl font-bold">
-          Product Not Found
+          Produk Tidak Ditemukan
         </h1>
 
         <p className="text-muted-foreground">
@@ -62,19 +92,14 @@ export default function ProductDetailPage() {
     );
   }
 
-  const increaseQuantity = () => {
-    setQuantity((current) => current + 1);
-  };
-  const decreaseQuantity = () => {
-    setQuantity((current) =>
-      current > 1 ? current - 1 : 1
-    );
-  };
+  const increaseQuantity = () => { setQuantity((current) => current + 1); };
+  const decreaseQuantity = () => { setQuantity((current) => current > 1 ? current - 1 : 1 ); };
   const handleAddToCart = () => {
     for (let i = 0; i < quantity; i++) {
       addItem(product);
     }
   };
+  
   const handleBuyNow = () => {
     for (let i = 0; i < quantity; i++) {
       addItem(product);

@@ -3,7 +3,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Heart, ShoppingCart } from "lucide-react";
-
 import ProductRating from "@/components/product/ProductRating";
 import { Product } from "@/types/product";
 import { useCartStore } from "@/stores/cart-store";
