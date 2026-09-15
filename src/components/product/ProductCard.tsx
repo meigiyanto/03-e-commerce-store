@@ -12,31 +12,12 @@ type ProductCardProps = {
   product: Product;
 };
 
-export default function ProductCard({
-  product,
-}: ProductCardProps) {
-  const addItem = useCartStore(
-    (state) => state.addItem
-  );
-
-  const toggleItem = useWishlistStore(
-    (state) => state.toggleItem
-  );
-
-  const isFavorite = useWishlistStore(
-    (state) =>
-      state.items.some(
-        (item) => item.id === product.id
-      )
-  );
-
-  const handleAddToCart = () => {
-    addItem(product);
-  };
-
-  const handleFavorite = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
+export default function ProductCard({product,}: ProductCardProps) {
+  const addItem = useCartStore((state) => state.addItem);
+  const toggleItem = useWishlistStore((state) => state.toggleItem);
+  const isFavorite = useWishlistStore((state) => state.items.some((item) => item.id === product.id));
+  const handleAddToCart = () => { addItem(product); };
+  const handleFavorite = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     event.stopPropagation();
 
@@ -46,7 +27,7 @@ export default function ProductCard({
   return (
     <div className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white transition duration-300 hover:-translate-y-1 hover:shadow-xl">
       {/* Product Image */}
-      <Link href={`/products/${product.id}`}>
+      <Link href={`/products/${product.slug}`}>
         <div className="relative h-60 overflow-hidden bg-gray-100">
           <Image
             src={product.image}
@@ -82,7 +63,7 @@ export default function ProductCard({
           {product.category}
         </p>
 
-        <Link href={`/products/${product.id}`}>
+        <Link href={`/products/${product.slug}`}>
           <h3 className="mt-2 line-clamp-2 min-h-[48px] text-base font-semibold text-gray-900 transition hover:text-blue-600">
             {product.name}
           </h3>
