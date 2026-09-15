@@ -29,6 +29,7 @@ const formatPrice = (price: number) =>
   }).format(price);
 
 export default function ProductsPage() {
+  const products = useProductStore((state) => state.products);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] =useState("Semua");
@@ -116,8 +117,6 @@ export default function ProductsPage() {
     selectedCategory !== "Semua" ||
     minPrice !== "" ||
     maxPrice !== "";
-
-  const products = useProductStore((state) => state.products);
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -496,7 +495,6 @@ function FilterSidebar({
                 }`}
               >
                 {category}
-
                 {selectedCategory ===
                   category && (
                   <span className="h-2 w-2 rounded-full bg-blue-600" />
