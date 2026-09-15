@@ -29,7 +29,6 @@ const formatPrice = (price: number) =>
   }).format(price);
 
 export default function ProductsPage() {
-  const products = useProductStore((state) => state.products);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] =useState("Semua");
@@ -37,6 +36,7 @@ export default function ProductsPage() {
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
+  const products = useProductStore((state) => state.products);
   const categories = [
     "Semua",
     ...Array.from(new Set(products.map((product) => product.category))),
@@ -364,7 +364,6 @@ export default function ProductsPage() {
           </div>
         </div>
       </section>
-
       {/* ================= MOBILE FILTER ================= */}
       {isMobileFilterOpen && (
         <div className="fixed inset-0 z-[100] bg-black/40 lg:hidden">
