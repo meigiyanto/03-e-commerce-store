@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
   images: {
-    remotePatterns: [new URL('https://assets.example.com/account123/**')],
+    remotePatterns: [new URL('https://images.unsplash.com/**')],
   },
 };
 
