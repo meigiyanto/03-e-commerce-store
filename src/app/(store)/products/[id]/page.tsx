@@ -3,21 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import {
-  ChevronRight,
-  Heart,
-  Minus,
-  Plus,
-  Share2,
-  ShieldCheck,
-  ShoppingCart,
-  Star,
-  Truck,
-  PackageCheck,
-  Store,
-  Check,
-} from "lucide-react";
-
+import { ChevronRight, Heart, Minus, Plus, Share2, ShieldCheck, ShoppingCart, Star, Truck, PackageCheck, Store, Check,} from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import ProductCard from "@/components/product/ProductCard";
 import { products } from "@/data/products";
@@ -33,45 +19,16 @@ const formatPrice = (price: number) =>
   }).format(price);
 
 export default function ProductDetailPage() {
-  const { params, router } = useParams();
-  const id = params.id as string;
-  const productId = String(params.id);
-  const [viewMode, setViewMode] = useState<"grid" | "list">(
-    "grid"
-  );
+  const { id } = useParams<{ id: string }>();
+  const router = useRouter();
   const [quantity, setQuantity] = useState(1);
-  const [activeTab, setActiveTab] =
-    useState("description");
-
-  /*
-  const product = products.find(
-    (item) => item.id === productId
-  );
-  */
-  
-  const product = useProductStore(
-    (state) =>
-      state.products.find(
-        (product) => product.id === id
-      )
-  );
-
-  const addItem = useCartStore(
-    (state) => state.addItem
-  );
-
-  const toggleItem = useWishlistStore(
-    (state) => state.toggleItem
-  );
-
-  const wishlistItems = useWishlistStore(
-    (state) => state.items
-  );
-
-  const isFavorite = wishlistItems.some(
-    (item) => item.id === productId
-  );
-
+  const [activeTab, setActiveTab] = useState("description");
+  const products = useProductStore((state) => state.products);
+  const product = products.find((item) => item.id === id);
+  const addItem = useCartStore((state) => state.addItem);
+  const toggleItem = useWishlistStore((state) => state.toggleItem)
+  const wishlistItems = useWishlistStore((state) => state.items);
+  const isFavorite = wishlistItems.some((item) => item.id === id);
   const relatedProducts = useMemo(() => {
     if (!product) return [];
 
@@ -82,42 +39,8 @@ export default function ProductDetailPage() {
           item.id !== product.id
       )
       .slice(0, 4);
-  }, [product]);
+  }, [products, product]);
 
-  /*
-  if (!product) {
-    return (
-      <main className="min-h-screen bg-gray-50">
-        
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-center px-4 py-28 text-center">
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gray-100">
-            <PackageCheck
-              size={36}
-              className="text-gray-400"
-            />
-          </div>
-
-          <h1 className="mt-6 text-2xl font-bold text-gray-900">
-            Produk Tidak Ditemukan
-          </h1>
-
-          <p className="mt-3 max-w-md text-sm text-gray-500">
-            Produk yang Anda cari mungkin sudah tidak tersedia
-            atau alamat halaman tidak valid.
-          </p>
-
-          <Link
-            href="/products"
-            className="mt-6 rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
-          >
-            Kembali ke Produk
-          </Link>
-        </div>
-      </main>
-    );
-  }
-  */
-  
   if (!product) {
     return (
       <main className="container mx-auto py-10">
@@ -128,6 +51,13 @@ export default function ProductDetailPage() {
         <p className="text-muted-foreground">
           Produk yang Anda cari tidak ditemukan.
         </p>
+
+        <Link
+          href="/products"
+          className="mt-4 inline-block rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
+        >
+          Kembali ke Produk
+        </Link>
       </main>
     );
   }
@@ -135,19 +65,16 @@ export default function ProductDetailPage() {
   const increaseQuantity = () => {
     setQuantity((current) => current + 1);
   };
-
   const decreaseQuantity = () => {
     setQuantity((current) =>
       current > 1 ? current - 1 : 1
     );
   };
-
   const handleAddToCart = () => {
     for (let i = 0; i < quantity; i++) {
       addItem(product);
     }
   };
-
   const handleBuyNow = () => {
     for (let i = 0; i < quantity; i++) {
       addItem(product);
@@ -156,10 +83,8 @@ export default function ProductDetailPage() {
     router.push("/cart");
   };
 
-  const handleWishlist = () => {
-    toggleItem(product);
-  };
-
+  const handleWishlist = () => { toggleItem(product); };
+  
   return (
     <main className="min-h-screen bg-gray-50">
       
@@ -468,7 +393,6 @@ export default function ProductDetailPage() {
       {/* ================= PRODUCT DETAILS TABS ================= */}
       <section className="mx-auto max-w-7xl px-4 py-8 md:px-8 md:py-10">
         <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
-
           {/* Tabs */}
           <div className="flex overflow-x-auto border-b">
             <TabButton
@@ -480,7 +404,6 @@ export default function ProductDetailPage() {
                 setActiveTab("description")
               }
             />
-
             <TabButton
               label="Spesifikasi"
               isActive={
@@ -490,7 +413,6 @@ export default function ProductDetailPage() {
                 setActiveTab("specification")
               }
             />
-
             <TabButton
               label="Ulasan"
               isActive={
@@ -501,7 +423,6 @@ export default function ProductDetailPage() {
               }
             />
           </div>
-
           {/* Tab Content */}
           <div className="p-6 md:p-8">
             {activeTab === "description" && (
@@ -673,11 +594,7 @@ export default function ProductDetailPage() {
 
 /* ================= COMPONENTS ================= */
 
-function ProductFeature({
-  icon,
-  title,
-  description,
-}: {
+function ProductFeature({ icon, title, description, }: {
   icon: React.ReactNode;
   title: string;
   description: string;
@@ -701,11 +618,7 @@ function ProductFeature({
   );
 }
 
-function TabButton({
-  label,
-  isActive,
-  onClick,
-}: {
+function TabButton({ label, isActive, onClick, }: {
   label: string;
   isActive: boolean;
   onClick: () => void;
@@ -725,10 +638,7 @@ function TabButton({
   );
 }
 
-function SpecificationRow({
-  label,
-  value,
-}: {
+function SpecificationRow({ label, value, }: {
   label: string;
   value: string;
 }) {
