@@ -69,48 +69,75 @@ export default async function AccountPage() {
     <main className="min-h-[calc(100vh-4rem)] bg-muted/30">
       <div className="mx-auto flex w-full max-w-7xl flex-col lg:flex-row">
         {/* Sidebar */}
-        <nav className="space-y-1">
-          <AccountNavItem
-            href="/account"
-            icon={<Home className="h-4 w-4" />}
-            label="Overview"
-            active
-          />
+        <aside className="w-full border-b bg-background lg:min-h-[calc(100vh-4rem)] lg:w-64 lg:border-b-0 lg:border-r">
+          <div className="p-4 sm:p-6 lg:sticky lg:top-16">
+            <div className="mb-6 flex items-center gap-3 lg:hidden">
+              <UserButton
+                appearance={{
+                  elements: {
+                    avatarBox: "h-10 w-10",
+                  },
+                }}
+              />
         
-          <AccountNavItem
-            href="/account/orders"
-            icon={<ShoppingBag className="h-4 w-4" />}
-            label="Orders"
-          />
+              <div>
+                <p className="text-sm font-semibold">{fullName}</p>
+                <p className="text-xs text-muted-foreground">{email}</p>
+              </div>
+            </div>
         
-          <AccountNavItem
-            href="/account/addresses"
-            icon={<MapPin className="h-4 w-4" />}
-            label="Addresses"
-          />
+            <nav className="space-y-1">
+              <AccountNavItem
+                href="/account"
+                icon={<Home className="h-4 w-4" />}
+                label="Overview"
+                active
+              />
         
-          <AccountNavItem
-            href="/account/reviews"
-            icon={<Star className="h-4 w-4" />}
-            label="Reviews"
-          />
+              <AccountNavItem
+                href="/account/orders"
+                icon={<ShoppingBag className="h-4 w-4" />}
+                label="Orders"
+              />
         
-          <AccountNavItem
-            href="/account/downloads"
-            icon={<Download className="h-4 w-4" />}
-            label="Downloads"
-          />
+              <AccountNavItem
+                href="/account/addresses"
+                icon={<MapPin className="h-4 w-4" />}
+                label="Addresses"
+              />
         
-          <AccountNavItem
-            href="/account/settings"
-            icon={<Settings className="h-4 w-4" />}
-            label="Account Settings"
-          />
+              <AccountNavItem
+                href="/account/reviews"
+                icon={<Star className="h-4 w-4" />}
+                label="Reviews"
+              />
         
-          <div className="my-3 border-t" />
+              <AccountNavItem
+                href="/account/downloads"
+                icon={<Download className="h-4 w-4" />}
+                label="Downloads"
+              />
         
-          <SignOutButton />
-        </nav>
+              <AccountNavItem
+                href="/account/settings"
+                icon={<Settings className="h-4 w-4" />}
+                label="Account Settings"
+              />
+        
+              <div className="my-3 border-t" />
+        
+              <SignOutButton>
+                <button
+                  type="button"
+                  className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-red-50 hover:text-red-600"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Logout
+                </button>
+              </SignOutButton>
+            </nav>
+          </div>
+        </aside>
 
         {/* Content */}
         <section className="min-w-0 flex-1 p-4 sm:p-6 lg:p-8">
