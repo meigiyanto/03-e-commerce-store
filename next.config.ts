@@ -1,10 +1,18 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   reactCompiler: true,
+
+  allowedDevOrigins: ["*.app.github.dev"],
+
+  experimental: {
+    serverActions: {
+      allowedOrigins: ["*.app.github.dev"],
+    },
+  },
+
   images: {
-    remotePatterns: [new URL('https://images.unsplash.com/**')],
+    remotePatterns: [new URL("https://images.unsplash.com/**")],
   },
 };
 

@@ -130,49 +130,6 @@ export default async function AccountPage() {
             </nav>
           </div>
         </aside>
-        
-        {/*<nav className="space-y-1">
-          <AccountNavItem
-            href="/account"
-            icon={<Home className="h-4 w-4" />}
-            label="Overview"
-            active
-          />
-        
-          <AccountNavItem
-            href="/account/orders"
-            icon={<ShoppingBag className="h-4 w-4" />}
-            label="Orders"
-          />
-        
-          <AccountNavItem
-            href="/account/addresses"
-            icon={<MapPin className="h-4 w-4" />}
-            label="Addresses"
-          />
-        
-          <AccountNavItem
-            href="/account/reviews"
-            icon={<Star className="h-4 w-4" />}
-            label="Reviews"
-          />
-        
-          <AccountNavItem
-            href="/account/downloads"
-            icon={<Download className="h-4 w-4" />}
-            label="Downloads"
-          />
-        
-          <AccountNavItem
-            href="/account/settings"
-            icon={<Settings className="h-4 w-4" />}
-            label="Account Settings"
-          />
-        
-          <div className="my-3 border-t" />
-        
-          <SignOutButton />
-        </nav>*/}
 
         {/* Content */}
         <section className="min-w-0 flex-1 p-4 sm:p-6 lg:p-8">
