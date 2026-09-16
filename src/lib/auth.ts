@@ -2,9 +2,14 @@ import { auth } from "@clerk/nextjs/server";
 
 export type UserRole = "admin" | "customer";
 
+type SessionMetadata = {
+  role?: string;
+};
+
 export async function requireAdmin() {
   const { userId, sessionClaims } = await auth();
 
+  // Belum login
   if (!userId) {
     return {
       ok: false as const,
@@ -14,15 +19,16 @@ export async function requireAdmin() {
     };
   }
 
-  const metadata = sessionClaims?.metadata as
-    | { role?: UserRole }
-    | undefined;
+  const metadata =
+    sessionClaims?.metadata as SessionMetadata | undefined;
 
+  // Default semua user adalah customer
   const role: UserRole =
     metadata?.role === "admin"
       ? "admin"
       : "customer";
 
+  // Bukan admin
   if (role !== "admin") {
     return {
       ok: false as const,
@@ -32,6 +38,7 @@ export async function requireAdmin() {
     };
   }
 
+  // Admin
   return {
     ok: true as const,
     status: 200,

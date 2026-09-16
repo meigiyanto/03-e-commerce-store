@@ -69,14 +69,22 @@ export async function POST(request: NextRequest) {
       },
       {
         status: authorization.status,
-      },
+      }
     );
   }
 
   try {
     const body = await request.json();
 
-    const { name, price, description, image, category, rating, stock, } = body;
+    const {
+      name,
+      price,
+      description,
+      image,
+      category,
+      rating,
+      stock,
+    } = body;
 
     if (
       !name ||
@@ -98,7 +106,8 @@ export async function POST(request: NextRequest) {
 
     const numericPrice = Number(price);
     const numericStock = Number(stock);
-    const numericRating = rating === undefined ? 0 : Number(rating);
+    const numericRating =
+      rating === undefined ? 0 : Number(rating);
 
     if (
       !Number.isFinite(numericPrice) ||
@@ -135,7 +144,8 @@ export async function POST(request: NextRequest) {
     ) {
       return NextResponse.json(
         {
-          message: "Rating harus berada di antara 0 dan 5.",
+          message:
+            "Rating harus berada di antara 0 dan 5.",
         },
         {
           status: 400,
@@ -143,23 +153,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const product = await prisma.product.create({
-      data: {
-        name: String(name).trim(),
-        price: numericPrice,
-        description: String(description).trim(),
-        image: String(image).trim(),
-        category: String(category).trim(),
-        rating: numericRating,
-        stock: numericStock,
-      },
-    });
+    const product =
+      await prisma.product.create({
+        data: {
+          name: String(name).trim(),
+          price: numericPrice,
+          description: String(description).trim(),
+          image: String(image).trim(),
+          category: String(category).trim(),
+          rating: numericRating,
+          stock: numericStock,
+        },
+      });
 
     return NextResponse.json(product, {
       status: 201,
     });
   } catch (error) {
-    console.error("POST /api/products error:", error);
+    console.error(
+      "POST /api/products error:",
+      error
+    );
 
     return NextResponse.json(
       {

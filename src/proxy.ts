@@ -1,4 +1,4 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import {clerkMiddleware, createRouteMatcher, } from "@clerk/nextjs/server";
 
 const isAdminRoute = createRouteMatcher([
   "/admin(.*)",
@@ -9,7 +9,16 @@ export default clerkMiddleware(async (auth, req) => {
     return;
   }
 
-  const { sessionClaims } = await auth();
+  const { userId, sessionClaims } = await auth();
+
+  // Belum login
+  if (!userId) {
+    const signInUrl = new URL("/sign-in", req.url);
+
+    signInUrl.searchParams.set("redirect_url", req.nextUrl.pathname);
+
+    return Response.redirect(signInUrl);
+  }
 
   const metadata = sessionClaims?.metadata as
     | { role?: string }
@@ -17,8 +26,10 @@ export default clerkMiddleware(async (auth, req) => {
 
   const role = metadata?.role;
 
+  // Bukan admin
   if (role !== "admin") {
     const url = new URL("/", req.url);
+
     return Response.redirect(url);
   }
 });
