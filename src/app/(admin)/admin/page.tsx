@@ -10,7 +10,10 @@ import {
   Star,
   TriangleAlert,
 } from "lucide-react";
-
+import {
+  UserButton,
+  useUser,
+} from "@clerk/nextjs";
 import { useProductStore } from "@/stores/product-store";
 
 function formatRupiah(value: number) {
@@ -79,7 +82,8 @@ export default function AdminDashboardPage() {
   }, [products]);
 
   const recentProducts = products.slice(0, 5);
-
+  const { user } = useUser();
+  
   return (
     <div className="container mx-auto max-w-7xl px-4 py-8 md:px-8">
       {/* Header */}

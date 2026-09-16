@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { requireAdmin } from "@/lib/auth";
 
 export async function GET(request: NextRequest) {
   try {
@@ -56,6 +57,22 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const authorization = await requireAdmin();
+
+  if (!authorization.ok) {
+    return NextResponse.json(
+      {
+        message:
+          authorization.status === 401
+            ? "Anda harus login."
+            : "Anda tidak memiliki akses admin.",
+      },
+      {
+        status: authorization.status,
+      },
+    );
+  }
+
   try {
     const body = await request.json();
 

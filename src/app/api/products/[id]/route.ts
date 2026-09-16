@@ -1,24 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { requireAdmin } from "@/lib/auth";
 
 type RouteContext = {
-  params: Promise<{
-    id: string;
-  }>;
+  params: Promise<{id: string;}>;
 };
 
 export async function GET(
   _request: NextRequest,
   context: RouteContext
 ) {
+
+  const authorization = await requireAdmin();
+
+  if (!authorization.ok) {
+    return NextResponse.json(
+      {
+        message: authorization.status === 401 ? "Anda harus login." : "Anda tidak memiliki akses admin.",
+      },
+      {
+        status: authorization.status,
+      },
+    );
+  }
+  
   try {
     const { id } = await context.params;
-
-    const product = await prisma.product.findUnique({
-      where: {
-        id,
-      },
-    });
+    const product = await prisma.product.findUnique({ where: { id, }, });
 
     if (!product) {
       return NextResponse.json(
@@ -33,10 +41,7 @@ export async function GET(
 
     return NextResponse.json(product);
   } catch (error) {
-    console.error(
-      "GET /api/products/[id] error:",
-      error
-    );
+    console.error("GET /api/products/[id] error:",error);
 
     return NextResponse.json(
       {
@@ -55,15 +60,9 @@ export async function PATCH(
 ) {
   try {
     const { id } = await context.params;
-
     const body = await request.json();
-
     const existingProduct =
-      await prisma.product.findUnique({
-        where: {
-          id,
-        },
-      });
+      await prisma.product.findUnique({ where: { id, }, });
 
     if (!existingProduct) {
       return NextResponse.json(
@@ -76,16 +75,7 @@ export async function PATCH(
       );
     }
 
-    const {
-      name,
-      price,
-      description,
-      image,
-      category,
-      rating,
-      stock,
-    } = body;
-
+    const { name, price, description, image, category, rating, stock, } = body;
     const data: {
       name?: string;
       price?: number;
@@ -165,8 +155,7 @@ export async function PATCH(
       ) {
         return NextResponse.json(
           {
-            message:
-              "Rating harus berada di antara 0 dan 5.",
+            message: "Rating harus berada di antara 0 dan 5.",
           },
           {
             status: 400,
@@ -197,19 +186,11 @@ export async function PATCH(
       data.stock = value;
     }
 
-    const product = await prisma.product.update({
-      where: {
-        id,
-      },
-      data,
-    });
+    const product = await prisma.product.update({ where: { id, }, data, });
 
     return NextResponse.json(product);
   } catch (error) {
-    console.error(
-      "PATCH /api/products/[id] error:",
-      error
-    );
+    console.error("PATCH /api/products/[id] error:", error);
 
     return NextResponse.json(
       {
@@ -226,6 +207,22 @@ export async function DELETE(
   _request: NextRequest,
   context: RouteContext
 ) {
+  const authorization = await requireAdmin();
+
+  if (!authorization.ok) {
+    return NextResponse.json(
+      {
+        message:
+          authorization.status === 401
+            ? "Anda harus login."
+            : "Anda tidak memiliki akses admin.",
+      },
+      {
+        status: authorization.status,
+      },
+    );
+  }
+
   try {
     const { id } = await context.params;
 
