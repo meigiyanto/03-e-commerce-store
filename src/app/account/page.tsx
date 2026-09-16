@@ -1,24 +1,7 @@
-import {
-  SignIn,
-  SignOutButton,
-  UserButton,
-} from "@clerk/nextjs";
+import { SignIn, UserButton, } from "@/components/auth/SignOutButton";
+import { SignIn, SignOutButton, UserButton, } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
-import {
-  ArrowRight,
-  CalendarDays,
-  Download,
-  FileText,
-  HelpCircle,
-  Home,
-  LogOut,
-  MapPin,
-  Package,
-  Settings,
-  ShoppingBag,
-  Star,
-  UserRound,
-} from "lucide-react";
+import { ArrowRight, CalendarDays, Download, FileText, HelpCircle, Home, LogOut, MapPin, Package, Settings, ShoppingBag, Star, UserRound, } from "lucide-react";
 import Link from "next/link";
 
 export default async function AccountPage() {
