@@ -1,3 +1,22 @@
+import { requireAdmin } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import AdminDashboard from "./AdminDashboard";
+
+export default async function AdminPage() {
+  const authorization = await requireAdmin();
+
+  if (!authorization.ok) {
+    if (authorization.status === 401) {
+      redirect("/sign-in");
+    }
+
+    redirect("/");
+  }
+
+  return <AdminDashboard />;
+}
+
+/*
 "use client";
 
 import { useEffect, useMemo } from "react";
@@ -91,7 +110,7 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
+      {/* Header *\/}
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
           <h1 className="text-2xl font-bold">
@@ -111,14 +130,14 @@ export default function AdminDashboardPage() {
         </Link>
       </div>
 
-      {/* Error */}
+      {/* Error *\/}
       {error && (
         <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
           {error}
         </div>
       )}
 
-      {/* Statistics */}
+      {/* Statistics *\/}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           title="Total Produk"
@@ -147,9 +166,9 @@ export default function AdminDashboardPage() {
         />
       </div>
 
-      {/* Content */}
+      {/* Content *\/}
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Recent Products */}
+        {/* Recent Products *\/}
         <section className="rounded-xl border bg-white">
           <div className="flex items-center justify-between border-b p-5">
             <div>
@@ -222,7 +241,7 @@ export default function AdminDashboardPage() {
           </div>
         </section>
 
-        {/* Low Stock */}
+        {/* Low Stock *\/}
         <section className="rounded-xl border bg-white">
           <div className="flex items-center gap-3 border-b p-5">
             <div className="rounded-lg bg-orange-100 p-2 text-orange-600">
@@ -299,3 +318,4 @@ function StatCard({
     </div>
   );
 }
+*/
