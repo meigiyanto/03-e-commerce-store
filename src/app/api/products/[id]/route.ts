@@ -15,10 +15,7 @@ export async function PATCH(
   if (!authorization.ok) {
     return NextResponse.json(
       {
-        message:
-          authorization.status === 401
-            ? "Anda harus login."
-            : "Anda tidak memiliki akses admin.",
+        message: authorization.status === 401 ? "Anda harus login." : "Anda tidak memiliki akses admin.",
       },
       {
         status: authorization.status,
@@ -28,9 +25,7 @@ export async function PATCH(
 
   try {
     const { id } = await context.params;
-
     const body = await request.json();
-
     const existingProduct =
       await prisma.product.findUnique({
         where: {
@@ -49,15 +44,7 @@ export async function PATCH(
       );
     }
 
-    const {
-      name,
-      price,
-      description,
-      image,
-      category,
-      rating,
-      stock,
-    } = body;
+    const { name, price, description, image, category, rating, stock, } = body;
 
     const data: {
       name?: string;
@@ -107,14 +94,12 @@ export async function PATCH(
     }
 
     if (description !== undefined) {
-      const value =
-        String(description).trim();
+      const value = String(description).trim();
 
       if (!value) {
         return NextResponse.json(
           {
-            message:
-              "Deskripsi wajib diisi.",
+            message: "Deskripsi wajib diisi.",
           },
           {
             status: 400,
@@ -130,8 +115,7 @@ export async function PATCH(
     }
 
     if (category !== undefined) {
-      data.category =
-        String(category).trim();
+      data.category = String(category).trim();
     }
 
     if (rating !== undefined) {
@@ -144,8 +128,7 @@ export async function PATCH(
       ) {
         return NextResponse.json(
           {
-            message:
-              "Rating harus berada di antara 0 dan 5.",
+            message: "Rating harus berada di antara 0 dan 5.",
           },
           {
             status: 400,
@@ -178,23 +161,17 @@ export async function PATCH(
 
     const product =
       await prisma.product.update({
-        where: {
-          id,
-        },
+        where: { id, },
         data,
       });
 
     return NextResponse.json(product);
   } catch (error) {
-    console.error(
-      "PATCH /api/products/[id] error:",
-      error
-    );
+    console.error("PATCH /api/products/[id] error:",error);
 
     return NextResponse.json(
       {
-        message:
-          "Gagal memperbarui produk.",
+        message: "Gagal memperbarui produk.",
       },
       {
         status: 500,
@@ -260,10 +237,7 @@ export async function DELETE(
   if (!authorization.ok) {
     return NextResponse.json(
       {
-        message:
-          authorization.status === 401
-            ? "Anda harus login."
-            : "Anda tidak memiliki akses admin.",
+        message: authorization.status === 401 ? "Anda harus login." : "Anda tidak memiliki akses admin.",
       },
       {
         status: authorization.status,
@@ -276,16 +250,13 @@ export async function DELETE(
 
     const existingProduct =
       await prisma.product.findUnique({
-        where: {
-          id,
-        },
+        where: { id, },
       });
 
     if (!existingProduct) {
       return NextResponse.json(
         {
-          message:
-            "Produk tidak ditemukan.",
+          message: "Produk tidak ditemukan.",
         },
         {
           status: 404,
@@ -294,25 +265,18 @@ export async function DELETE(
     }
 
     await prisma.product.delete({
-      where: {
-        id,
-      },
+      where: { id, },
     });
 
     return NextResponse.json({
-      message:
-        "Produk berhasil dihapus.",
+      message: "Produk berhasil dihapus.",
     });
   } catch (error) {
-    console.error(
-      "DELETE /api/products/[id] error:",
-      error
-    );
+    console.error("DELETE /api/products/[id] error:", error);
 
     return NextResponse.json(
       {
-        message:
-          "Gagal menghapus produk.",
+        message: "Gagal menghapus produk.",
       },
       {
         status: 500,
