@@ -38,6 +38,18 @@ export async function requireAdmin() {
   };
 }
 
+export async function getUserRole(): Promise<UserRole | null> {
+  const user = await currentUser();
+
+  if (!user) {
+    return null;
+  }
+
+  return user.publicMetadata?.role === "admin"
+    ? "admin"
+    : "customer";
+}
+
 /*
 import { auth, currentUser } from "@clerk/nextjs/server";
 
