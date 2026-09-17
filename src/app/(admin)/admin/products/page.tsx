@@ -1,6 +1,6 @@
 import { requireAdmin } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import ProductsClient from "./ProductsClient";
+import ProductClient from "./ProductClient";
 
 export default async function ProductsPage() {
   const authorization = await requireAdmin();
@@ -13,5 +13,5 @@ export default async function ProductsPage() {
     redirect("/");
   }
 
-  return <ProductsClient />;
+  return <ProductClient />;
 }
