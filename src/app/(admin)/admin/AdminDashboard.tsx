@@ -2,15 +2,7 @@
 
 import { useEffect, useMemo } from "react";
 import Link from "next/link";
-import {
-  Package,
-  Boxes,
-  DollarSign,
-  Star,
-  Plus,
-  AlertTriangle,
-} from "lucide-react";
-
+import { Package, Boxes, DollarSign, Star, Plus, AlertTriangle, } from "lucide-react";
 import { useProductStore } from "@/stores/product-store";
 
 function formatRupiah(value: number) {
@@ -22,12 +14,7 @@ function formatRupiah(value: number) {
 }
 
 export default function AdminDashboard() {
-  const {
-    products,
-    loading,
-    error,
-    fetchProducts,
-  } = useProductStore();
+  const { products, loading, error, fetchProducts, } = useProductStore();
 
   useEffect(() => {
     fetchProducts();
@@ -67,12 +54,7 @@ export default function AdminDashboard() {
     };
   }, [products]);
 
-  const lowStockProducts = products
-    .filter(
-      (product) =>
-        Number(product.stock || 0) <= 5
-    )
-    .slice(0, 5);
+  const lowStockProducts = products.filter((product) => Number(product.stock || 0) <= 5).slice(0, 5);
 
   if (loading) {
     return (
@@ -176,11 +158,7 @@ export default function AdminDashboard() {
   );
 }
 
-function StatCard({
-  title,
-  value,
-  icon,
-}: {
+function StatCard({ title, value, icon, }: {
   title: string;
   value: string | number;
   icon: React.ReactNode;

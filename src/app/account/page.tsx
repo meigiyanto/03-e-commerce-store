@@ -1,4 +1,4 @@
-import { SignIn, UserButton,} from "@clerk/nextjs";
+import { SignIn, UserButton, useUser } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
 import { ArrowRight, CalendarDays, Download, FileText, HelpCircle, Home, MapPin,  Package, Settings, ShoppingBag,Star, UserRound, } from "lucide-react";
 import Link from "next/link";
@@ -6,7 +6,20 @@ import Link from "next/link";
 import SignOutButton from "@/components/auth/SignOutButton";
 
 export default async function AccountPage() {
-  const user = await currentUser();
+  const { isLoaded, isSignedIn, user } = useUser();
+  
+  if (!isLoaded) {
+    return <p>Loading...</p>;
+  }
+
+  if (!isSignedIn) {
+    return <p>Belum login</p>;
+  }
+
+  const role =
+    user.publicMetadata?.role === "admin"
+      ? "admin"
+      : "customer";
 
   /*
    * Guest state
@@ -159,7 +172,7 @@ export default async function AccountPage() {
                   </p>
 
                   <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                    Welcome back, {user.firstName || fullName}!
+                    Welcome back, {user.firstName || fullName} ({role})!
                   </h1>
 
                   <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
@@ -169,6 +182,24 @@ export default async function AccountPage() {
                 </div>
               </div>
             </section>
+
+            <div>
+              <h1>Akun Saya</h1>
+        
+              <p>
+                Nama: {user.fullName}
+              </p>
+        
+              <p>
+                Role: <strong>{role}</strong>
+              </p>
+        
+              {role === "admin" && (
+                <a href="/admin">
+                  Buka Admin Dashboard
+                </a>
+              )}
+            </div>
 
             {/* Profile information */}
             <section className="rounded-2xl border bg-background shadow-sm">

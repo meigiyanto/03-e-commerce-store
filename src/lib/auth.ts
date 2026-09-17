@@ -1,41 +1,10 @@
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 
 export type UserRole = "admin" | "customer";
 
-type SessionMetadata = {
-  role?: string;
-};
-
 export async function requireAdmin() {
-  const { userId, sessionClaims } = await auth();
+  const { userId } = await auth();
 
-  if (!userId) {
-    return { ok: false as const, status: 401, userId: null, role: null, };
-  }
-
-  const metadata = sessionClaims?.metadata as SessionMetadata | undefined;
-  const role: UserRole = metadata?.role === "admin" ? "admin" : "customer";
-
-  if (role !== "admin") {
-    return { ok: false as const, status: 403, userId, role, };
-  }
-
-  return { ok: true as const, status: 200, userId, role, };
-}
-
-/*
-import { auth } from "@clerk/nextjs/server";
-
-export type UserRole = "admin" | "customer";
-
-type SessionMetadata = {
-  role?: string;
-};
-
-export async function requireAdmin() {
-  const { userId, sessionClaims } = await auth();
-
-  // Belum login
   if (!userId) {
     return {
       ok: false as const,
@@ -45,15 +14,13 @@ export async function requireAdmin() {
     };
   }
 
-  const metadata = sessionClaims?.metadata as SessionMetadata | undefined;
+  const user = await currentUser();
 
-  // Default semua user adalah customer
   const role: UserRole =
-    metadata?.role === "admin"
+    user?.publicMetadata?.role === "admin"
       ? "admin"
       : "customer";
 
-  // Bukan admin
   if (role !== "admin") {
     return {
       ok: false as const,
@@ -63,7 +30,47 @@ export async function requireAdmin() {
     };
   }
 
-  // Admin
+  return {
+    ok: true as const,
+    status: 200,
+    userId,
+    role,
+  };
+}
+
+/*
+import { auth, currentUser } from "@clerk/nextjs/server";
+
+export type UserRole = "admin" | "customer";
+
+export async function requireAdmin() {
+  const { userId } = await auth();
+
+  if (!userId) {
+    return {
+      ok: false as const,
+      status: 401,
+      userId: null,
+      role: null,
+    };
+  }
+
+  const user = await currentUser();
+
+  const role: UserRole =
+    user?.publicMetadata?.role === "admin"
+      ? "admin"
+      : "customer";
+
+  if (role !== "admin") {
+    return {
+      ok: false as const,
+      status: 403,
+      userId,
+      role,
+    };
+  }
+
   return {
     ok: true as const,
     status: 200,
