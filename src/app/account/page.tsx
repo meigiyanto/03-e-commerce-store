@@ -1,8 +1,9 @@
+"use client";
+
 import { SignIn, UserButton, useUser } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
 import { ArrowRight, CalendarDays, Download, FileText, HelpCircle, Home, MapPin,  Package, Settings, ShoppingBag,Star, UserRound, } from "lucide-react";
 import Link from "next/link";
-
 import SignOutButton from "@/components/auth/SignOutButton";
 
 export default async function AccountPage() {
