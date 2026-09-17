@@ -53,7 +53,6 @@ export default function AdminDashboard() {
       averageRating,
     };
   }, [products]);
-
   const lowStockProducts = products.filter((product) => Number(product.stock || 0) <= 5).slice(0, 5);
 
   if (loading) {

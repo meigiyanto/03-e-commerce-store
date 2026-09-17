@@ -1,26 +1,13 @@
 // "use client";
 
-import { SignIn, UserButton, useUser } from "@clerk/nextjs";
+import { SignIn, UserButton } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
 import { ArrowRight, CalendarDays, Download, FileText, HelpCircle, Home, MapPin,  Package, Settings, ShoppingBag,Star, UserRound, } from "lucide-react";
 import Link from "next/link";
 import SignOutButton from "@/components/auth/SignOutButton";
 
 export default async function AccountPage() {
-  const { isLoaded, isSignedIn, user } = useUser();
-  
-  if (!isLoaded) {
-    return <p>Loading...</p>;
-  }
-
-  if (!isSignedIn) {
-    return <p>Belum login</p>;
-  }
-
-  const role =
-    user.publicMetadata?.role === "admin"
-      ? "admin"
-      : "customer";
+  const { user } = currentUser();
 
   /*
    * Guest state
