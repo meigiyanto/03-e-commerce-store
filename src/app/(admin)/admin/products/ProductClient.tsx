@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { useProductStore } from "@/stores/product-store";
 import { ProductTable } from "@/components/admin/products/product-table";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 
 export default function AdminProductsPage() {
   const products = useProductStore((state) => state.products);
@@ -18,7 +18,9 @@ export default function AdminProductsPage() {
   }, [fetchProducts]);
 
   async function handleDelete(id: string) {
-    const confirmed = window.confirm("Apakah Anda yakin ingin menghapus produk ini?");
+    const confirmed = window.confirm(
+      "Apakah Anda yakin ingin menghapus produk ini?"
+    );
 
     if (!confirmed) {
       return;
@@ -40,11 +42,12 @@ export default function AdminProductsPage() {
           </p>
         </div>
 
-        <Button asChild>
-          <Link href="/admin/products/new">
-            + Add Product
-          </Link>
-        </Button>
+        <Link
+          href="/admin/products/new"
+          className={buttonVariants({ variant: "default" })}
+        >
+          + Add Product
+        </Link>
       </div>
 
       {error && (
