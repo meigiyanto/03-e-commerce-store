@@ -1,0 +1,222 @@
+[
+  {
+    "id": "1",
+    "name": "Kaos Polos Hitam Premium",
+    "slug": "kaos-polos-hitam-premium",
+    "description": "Kaos katun premium nyaman digunakan sehari-hari.",
+    "price": 99000,
+    "stock": 50,
+    "category": "Fashion",
+    "image": "https://picsum.photos/500/500?random=1",
+    "featured": true
+  },
+  {
+    "id": "2",
+    "name": "Kemeja Flanel Pria",
+    "slug": "kemeja-flanel-pria",
+    "description": "Kemeja flanel stylish untuk aktivitas santai.",
+    "price": 179000,
+    "stock": 30,
+    "category": "Fashion",
+    "image": "https://picsum.photos/500/500?random=2",
+    "featured": false
+  },
+  {
+    "id": "3",
+    "name": "Sepatu Sneakers Putih",
+    "slug": "sepatu-sneakers-putih",
+    "description": "Sneakers modern dengan desain minimalis.",
+    "price": 349000,
+    "stock": 25,
+    "category": "Fashion",
+    "image": "https://picsum.photos/500/500?random=3",
+    "featured": true
+  },
+  {
+    "id": "4",
+    "name": "Headset Bluetooth",
+    "slug": "headset-bluetooth",
+    "description": "Headset wireless dengan kualitas suara jernih.",
+    "price": 259000,
+    "stock": 40,
+    "category": "Elektronik",
+    "image": "https://picsum.photos/500/500?random=4",
+    "featured": true
+  },
+  {
+    "id": "5",
+    "name": "Mouse Gaming RGB",
+    "slug": "mouse-gaming-rgb",
+    "description": "Mouse gaming dengan lampu RGB dan DPI tinggi.",
+    "price": 189000,
+    "stock": 35,
+    "category": "Elektronik",
+    "image": "https://picsum.photos/500/500?random=5",
+    "featured": false
+  },
+  {
+    "id": "6",
+    "name": "Keyboard Mechanical",
+    "slug": "keyboard-mechanical",
+    "description": "Keyboard mechanical dengan switch biru.",
+    "price": 499000,
+    "stock": 20,
+    "category": "Elektronik",
+    "image": "https://picsum.photos/500/500?random=6",
+    "featured": true
+  },
+  {
+    "id": "7",
+    "name": "Jam Tangan Digital",
+    "slug": "jam-tangan-digital",
+    "description": "Jam tangan multifungsi tahan air.",
+    "price": 229000,
+    "stock": 15,
+    "category": "Aksesoris",
+    "image": "https://picsum.photos/500/500?random=7",
+    "featured": false
+  },
+  {
+    "id": "8",
+    "name": "Tas Ransel Laptop",
+    "slug": "tas-ransel-laptop",
+    "description": "Tas laptop anti air kapasitas besar.",
+    "price": 275000,
+    "stock": 22,
+    "category": "Aksesoris",
+    "image": "https://picsum.photos/500/500?random=8",
+    "featured": true
+  },
+  {
+    "id": "9",
+    "name": "Botol Minum Stainless",
+    "slug": "botol-minum-stainless",
+    "description": "Botol minum 500ml tahan panas dan dingin.",
+    "price": 89000,
+    "stock": 60,
+    "category": "Rumah Tangga",
+    "image": "https://picsum.photos/500/500?random=9",
+    "featured": false
+  },
+  {
+    "id": "10",
+    "name": "Lampu Meja LED",
+    "slug": "lampu-meja-led",
+    "description": "Lampu meja hemat energi dengan 3 mode cahaya.",
+    "price": 149000,
+    "stock": 18,
+    "category": "Rumah Tangga",
+    "image": "https://picsum.photos/500/500?random=10",
+    "featured": true
+  },
+  {
+    "id": "11",
+    "name": "Power Bank 10000mAh",
+    "slug": "power-bank-10000mah",
+    "description": "Power bank fast charging kapasitas besar.",
+    "price": 215000,
+    "stock": 45,
+    "category": "Elektronik",
+    "image": "https://picsum.photos/500/500?random=11",
+    "featured": true
+  },
+  {
+    "id": "12",
+    "name": "Speaker Bluetooth Mini",
+    "slug": "speaker-bluetooth-mini",
+    "description": "Speaker portable dengan suara bass kuat.",
+    "price": 169000,
+    "stock": 28,
+    "category": "Elektronik",
+    "image": "https://picsum.photos/500/500?random=12",
+    "featured": false
+  },
+  {
+    "id": "13",
+    "name": "Celana Jeans Slim Fit",
+    "slug": "celana-jeans-slim-fit",
+    "description": "Celana jeans nyaman untuk aktivitas harian.",
+    "price": 249000,
+    "stock": 33,
+    "category": "Fashion",
+    "image": "https://picsum.photos/500/500?random=13",
+    "featured": false
+  },
+  {
+    "id": "14",
+    "name": "Dompet Kulit Pria",
+    "slug": "dompet-kulit-pria",
+    "description": "Dompet kulit sintetis elegan.",
+    "price": 119000,
+    "stock": 40,
+    "category": "Aksesoris",
+    "image": "https://picsum.photos/500/500?random=14",
+    "featured": false
+  },
+  {
+    "id": "15",
+    "name": "Kacamata Fashion",
+    "slug": "kacamata-fashion",
+    "description": "Kacamata dengan desain modern.",
+    "price": 99000,
+    "stock": 50,
+    "category": "Aksesoris",
+    "image": "https://picsum.photos/500/500?random=15",
+    "featured": true
+  },
+  {
+    "id": "16",
+    "name": "Smartwatch Sport",
+    "slug": "smartwatch-sport",
+    "description": "Smartwatch dengan fitur kesehatan lengkap.",
+    "price": 599000,
+    "stock": 12,
+    "category": "Elektronik",
+    "image": "https://picsum.photos/500/500?random=16",
+    "featured": true
+  },
+  {
+    "id": "17",
+    "name": "Buku Catatan Premium",
+    "slug": "buku-catatan-premium",
+    "description": "Notebook hardcover untuk mencatat aktivitas.",
+    "price": 49000,
+    "stock": 100,
+    "category": "Alat Tulis",
+    "image": "https://picsum.photos/500/500?random=17",
+    "featured": false
+  },
+  {
+    "id": "18",
+    "name": "Pulpen Gel Set",
+    "slug": "pulpen-gel-set",
+    "description": "Set pulpen warna-warni kualitas premium.",
+    "price": 39000,
+    "stock": 80,
+    "category": "Alat Tulis",
+    "image": "https://picsum.photos/500/500?random=18",
+    "featured": false
+  },
+  {
+    "id": "19",
+    "name": "Kursi Gaming",
+    "slug": "kursi-gaming",
+    "description": "Kursi ergonomis untuk gaming dan kerja.",
+    "price": 1499000,
+    "stock": 10,
+    "category": "Furniture",
+    "image": "https://picsum.photos/500/500?random=19",
+    "featured": true
+  },
+  {
+    "id": "20",
+    "name": "Meja Kerja Minimalis",
+    "slug": "meja-kerja-minimalis",
+    "description": "Meja kerja modern dengan desain minimalis.",
+    "price": 899000,
+    "stock": 8,
+    "category": "Furniture",
+    "image": "https://picsum.photos/500/500?random=20",
+    "featured": true
+  }
+]

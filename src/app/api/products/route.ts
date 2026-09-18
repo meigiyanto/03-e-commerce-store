@@ -35,7 +35,6 @@ export async function GET(request: NextRequest) {
             }
           : {}),
       },
-
       orderBy: {
         createdAt: "desc",
       },
@@ -62,10 +61,7 @@ export async function POST(request: NextRequest) {
   if (!authorization.ok) {
     return NextResponse.json(
       {
-        message:
-          authorization.status === 401
-            ? "Anda harus login."
-            : "Anda tidak memiliki akses admin.",
+        message: authorization.status === 401 ? "Anda harus login." : "Anda tidak memiliki akses admin.",
       },
       {
         status: authorization.status,
@@ -75,16 +71,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-
-    const {
-      name,
-      price,
-      description,
-      image,
-      category,
-      rating,
-      stock,
-    } = body;
+    const { name, price, description, image, category, rating, stock, } = body;
 
     if (
       !name ||
@@ -106,8 +93,7 @@ export async function POST(request: NextRequest) {
 
     const numericPrice = Number(price);
     const numericStock = Number(stock);
-    const numericRating =
-      rating === undefined ? 0 : Number(rating);
+    const numericRating = rating === undefined ? 0 : Number(rating);
 
     if (
       !Number.isFinite(numericPrice) ||
@@ -144,8 +130,7 @@ export async function POST(request: NextRequest) {
     ) {
       return NextResponse.json(
         {
-          message:
-            "Rating harus berada di antara 0 dan 5.",
+          message: "Rating harus berada di antara 0 dan 5.",
         },
         {
           status: 400,
@@ -170,9 +155,7 @@ export async function POST(request: NextRequest) {
       status: 201,
     });
   } catch (error) {
-    console.error(
-      "POST /api/products error:",
-      error
+    console.error("POST /api/products error:", error
     );
 
     return NextResponse.json(

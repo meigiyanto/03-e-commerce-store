@@ -6,43 +6,24 @@ interface ProductState {
   hasHydrated: boolean;
   isLoading: boolean;
   error: string | null;
-
   fetchProducts: () => Promise<void>;
-
-  addProduct: (
-    product: ProductInput
-  ) => Promise<Product | null>;
-
-  updateProduct: (
-    id: string,
-    product: Partial<ProductInput>
-  ) => Promise<Product | null>;
-
-  deleteProduct: (
-    id: string
-  ) => Promise<boolean>;
-
-  setHasHydrated: (
-    state: boolean
-  ) => void;
+  addProduct: (product: ProductInput) => Promise<Product | null>;
+  updateProduct: (id: string,product: Partial<ProductInput>) => Promise<Product | null>;
+  deleteProduct: (id: string) => Promise<boolean>;
+  setHasHydrated: (state: boolean) => void;
 }
 
 export const useProductStore =
   create<ProductState>((set) => ({
     products: [],
-
     hasHydrated: false,
-
     isLoading: false,
-
     error: null,
-
     setHasHydrated: (state) => {
       set({
         hasHydrated: state,
       });
     },
-
     fetchProducts: async () => {
       set({
         isLoading: true,
@@ -89,7 +70,6 @@ export const useProductStore =
         });
       }
     },
-
     addProduct: async (product) => {
       set({
         isLoading: true,
@@ -143,11 +123,7 @@ export const useProductStore =
         return null;
       }
     },
-
-    updateProduct: async (
-      id,
-      product
-    ) => {
+    updateProduct: async (id, product) => {
       set({
         isLoading: true,
         error: null,
@@ -202,7 +178,6 @@ export const useProductStore =
         return null;
       }
     },
-
     deleteProduct: async (id) => {
       set({
         isLoading: true,
