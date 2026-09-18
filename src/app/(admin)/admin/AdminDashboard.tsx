@@ -36,7 +36,7 @@ function StatCard({ title, value, icon, }: {
 }
 
 export default function AdminDashboard() {
-  const { products, loading, error, fetchProducts, } = useProductStore();
+  const { products, isLoading, error, fetchProducts, } = useProductStore();
 
   useEffect(() => {
     fetchProducts();
@@ -77,7 +77,7 @@ export default function AdminDashboard() {
   }, [products]);
   const lowStockProducts = products.filter((product) => Number(product.stock || 0) <= 5).slice(0, 5);
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
         Memuat dashboard...
