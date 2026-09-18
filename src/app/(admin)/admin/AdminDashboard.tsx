@@ -13,6 +13,28 @@ function formatRupiah(value: number) {
   }).format(value);
 }
 
+function StatCard({ title, value, icon, }: {
+  title: string;
+  value: string | number;
+  icon: React.ReactNode;
+}) {
+  return (
+    <div className="rounded-xl border bg-white p-5">
+      <div className="rounded-lg bg-gray-100 p-2.5 w-fit">
+        {icon}
+      </div>
+
+      <p className="mt-4 text-sm text-gray-500">
+        {title}
+      </p>
+
+      <p className="mt-1 text-2xl font-bold">
+        {value}
+      </p>
+    </div>
+  );
+}
+
 export default function AdminDashboard() {
   const { products, loading, error, fetchProducts, } = useProductStore();
 
@@ -76,13 +98,6 @@ export default function AdminDashboard() {
           </p>
         </div>
 
-        <Link
-          href="/admin/products/new"
-          className="inline-flex items-center gap-2 rounded-lg bg-black px-4 py-2.5 text-sm font-medium text-white"
-        >
-          <Plus size={18} />
-          Tambah Produk
-        </Link>
       </div>
 
       {error && (
@@ -153,28 +168,6 @@ export default function AdminDashboard() {
           )}
         </div>
       </section>
-    </div>
-  );
-}
-
-function StatCard({ title, value, icon, }: {
-  title: string;
-  value: string | number;
-  icon: React.ReactNode;
-}) {
-  return (
-    <div className="rounded-xl border bg-white p-5">
-      <div className="rounded-lg bg-gray-100 p-2.5 w-fit">
-        {icon}
-      </div>
-
-      <p className="mt-4 text-sm text-gray-500">
-        {title}
-      </p>
-
-      <p className="mt-1 text-2xl font-bold">
-        {value}
-      </p>
     </div>
   );
 }
