@@ -19,6 +19,8 @@ import {
 } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import ProductCard from "@/components/product/ProductCard";
+import RecentlyViewed from "@/components/product/RecentlyViewed";
+import { useRecentlyViewedStore } from "@/stores/recently-viewed-store";
 import { useCartStore } from "@/stores/cart-store";
 import { useProductStore } from "@/stores/product-store";
 import { useWishlistStore } from "@/stores/wishlist-store";
@@ -41,16 +43,10 @@ export default function ProductDetailPage() {
   const fetchProducts = useProductStore((state) => state.fetchProducts);
   const isLoading = useProductStore((state) => state.isLoading);
   const error = useProductStore((state) => state.error);
-
+  const addRecentlyViewed = useRecentlyViewedStore((state) => state.addItem);
   const addItem = useCartStore((state) => state.addItem);
-
-  const toggleItem = useWishlistStore(
-    (state) => state.toggleItem
-  );
-
-  const wishlistItems = useWishlistStore(
-    (state) => state.items
-  );
+  const toggleItem = useWishlistStore((state) => state.toggleItem);
+  const wishlistItems = useWishlistStore((state) => state.items);
 
   useEffect(() => {
     if (products.length === 0) {
@@ -58,14 +54,14 @@ export default function ProductDetailPage() {
     }
   }, [products.length, fetchProducts]);
 
-  const product = products.find(
-    (item) => item.id === id
-  );
-
-  const isFavorite = wishlistItems.some(
-    (item) => item.id === id
-  );
-
+  const product = products.find((item) => item.id === id);
+  useEffect(() => {
+    if (product) {
+      addRecentlyViewed(product);
+    }
+  }, [product, addRecentlyViewed]);
+  
+  const isFavorite = wishlistItems.some((item) => item.id === id);
   const relatedProducts = useMemo(() => {
     if (!product) return [];
 
@@ -683,9 +679,11 @@ export default function ProductDetailPage() {
             ))}
 
           </div>
-
         </section>
       )}
+      
+      {/* RECENTLY VIEWED */}
+      <RecentlyViewed excludeId={product.id} />
 
     </main>
   );
