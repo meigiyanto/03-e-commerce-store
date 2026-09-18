@@ -1,206 +1,248 @@
-import { SignIn, UserButton } from "@clerk/nextjs";
+/*
 import { currentUser } from "@clerk/nextjs/server";
-import { ArrowRight, CalendarDays, Download, FileText, HelpCircle, Home, MapPin,  Package, Settings, ShoppingBag,Star, UserRound, } from "lucide-react";
 import Link from "next/link";
+import {
+  ArrowRight,
+  CalendarDays,
+  FileText,
+  HelpCircle,
+  Home,
+  MapPin,
+  Package,
+  Settings,
+  ShoppingBag,
+  Star,
+  UserRound,
+} from "lucide-react";
+
 import SignOutButton from "@/components/auth/SignOutButton";
+*/
 
-export default async function AccountPage() {
-  const { user } = currentUser();
+import { redirect } from 'next/navigation';
 
+export default function AccountPage() {
+  redirect('/account/settings');
+}
   /*
-   * Guest state
-   */
+  const user = await currentUser();
+  
   if (!user) {
     return (
-      <main className="min-h-[calc(100vh-4rem)] bg-muted/30 px-4 py-12 sm:px-6 lg:px-8">
-        <div className="mx-auto flex w-full max-w-md flex-col items-center">
-          <div className="mb-8 text-center">
-            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-purple-700 text-xl font-bold text-white shadow-sm">
-              N
-            </div>
-
-            <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-purple-700">
-              NexaShop Account
-            </p>
-
-            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-              Welcome to NexaShop
-            </h1>
-
-            <p className="mt-3 text-sm leading-6 text-muted-foreground">
-              Sign in to manage your account, view your orders, and enjoy a
-              better shopping experience.
-            </p>
+      <main className="min-h-[calc(100vh-4rem)] bg-gray-50 px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-xl text-center">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-purple-700 text-2xl font-bold text-white shadow-sm">
+            N
           </div>
 
-          <div className="w-full">
-            <SignIn
-              routing="hash"
-              fallbackRedirectUrl="/account"
-              appearance={{
-                elements: {
-                  rootBox: "w-full",
-                  card: "w-full rounded-2xl border shadow-sm",
-                },
-              }}
-            />
-          </div>
+          <p className="mt-6 text-sm font-semibold uppercase tracking-wider text-purple-700">
+            NexaShop Account
+          </p>
 
-          <Link
-            href="/products"
-            className="mt-6 text-sm font-medium text-purple-700 hover:underline"
-          >
-            ← Continue shopping
-          </Link>
+          <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+            Selamat Datang di NexaShop
+          </h1>
+
+          <p className="mx-auto mt-4 max-w-md text-sm leading-6 text-gray-500">
+            Masuk ke akun Anda untuk melihat pesanan,
+            mengatur profil, alamat pengiriman, dan
+            pengaturan akun.
+          </p>
+
+          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+            <Link
+              href="/sign-in?redirect_url=/account"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-purple-700 px-6 py-3 text-sm font-semibold text-white transition hover:bg-purple-800"
+            >
+              Masuk ke Akun
+              <ArrowRight size={17} />
+            </Link>
+
+            <Link
+              href="/products"
+              className="inline-flex items-center justify-center rounded-xl border border-gray-200 bg-white px-6 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+            >
+              Lanjut Belanja
+            </Link>
+          </div>
         </div>
       </main>
     );
   }
 
-  const fullName = [user.firstName, user.lastName].filter(Boolean).join(" ") || user.username || "NexaShop User";
-  const email = user.emailAddresses[0]?.emailAddress ?? "No email address";
-  const memberSince = new Date(user.createdAt).toLocaleDateString("en-US", {
+  const fullName =
+    [user.firstName, user.lastName]
+      .filter(Boolean)
+      .join(" ") ||
+    user.username ||
+    "NexaShop User";
+
+  const email =
+    user.emailAddresses[0]?.emailAddress ??
+    "Email belum tersedia";
+
+  const role =
+    typeof user.publicMetadata?.role === "string"
+      ? user.publicMetadata.role
+      : "user";
+
+  const memberSince = new Date(
+    user.createdAt
+  ).toLocaleDateString("id-ID", {
     month: "long",
     year: "numeric",
   });
 
   return (
-    <main className="min-h-[calc(100vh-4rem)] bg-muted/30">
+    <main className="min-h-[calc(100vh-4rem)] bg-gray-50">
       <div className="mx-auto flex w-full max-w-7xl flex-col lg:flex-row">
-        {/* Sidebar */}
-        <aside className="w-full border-b bg-background lg:min-h-[calc(100vh-4rem)] lg:w-64 lg:border-b-0 lg:border-r">
-          <div className="p-4 sm:p-6 lg:sticky lg:top-16">
+        {/* Sidebar *\/}
+        <aside className="w-full border-b border-gray-100 bg-white lg:min-h-[calc(100vh-4rem)] lg:w-64 lg:border-b-0 lg:border-r">
+          <div className="p-4 sm:p-6 lg:sticky lg:top-20">
+            {/* Mobile profile *\/}
             <div className="mb-6 flex items-center gap-3 lg:hidden">
-              <UserButton
-                appearance={{
-                  elements: {
-                    avatarBox: "h-10 w-10",
-                  },
-                }}
-              />
-        
-              <div>
-                <p className="text-sm font-semibold">{fullName}</p>
-                <p className="text-xs text-muted-foreground">{email}</p>
+              {user.imageUrl ? (
+                <img
+                  src={user.imageUrl}
+                  alt={fullName}
+                  className="h-11 w-11 rounded-full object-cover"
+                />
+              ) : (
+                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-purple-100 text-purple-700">
+                  <UserRound size={21} />
+                </div>
+              )}
+
+              <div className="min-w-0">
+                <p className="truncate text-sm font-semibold text-gray-900">
+                  {fullName}
+                </p>
+
+                <p className="truncate text-xs text-gray-500">
+                  {email}
+                </p>
               </div>
             </div>
-        
+
             <nav className="space-y-1">
               <AccountNavItem
                 href="/account"
-                icon={<Home className="h-4 w-4" />}
+                icon={<Home size={17} />}
                 label="Overview"
                 active
               />
-        
+
               <AccountNavItem
                 href="/account/orders"
-                icon={<ShoppingBag className="h-4 w-4" />}
-                label="Orders"
+                icon={<ShoppingBag size={17} />}
+                label="Pesanan"
               />
-        
+
               <AccountNavItem
                 href="/account/addresses"
-                icon={<MapPin className="h-4 w-4" />}
-                label="Addresses"
+                icon={<MapPin size={17} />}
+                label="Alamat"
               />
-        
+
               <AccountNavItem
                 href="/account/reviews"
-                icon={<Star className="h-4 w-4" />}
-                label="Reviews"
+                icon={<Star size={17} />}
+                label="Review"
               />
-        
+
               <AccountNavItem
                 href="/account/downloads"
-                icon={<Download className="h-4 w-4" />}
+                icon={<FileText size={17} />}
                 label="Downloads"
               />
-        
+
               <AccountNavItem
                 href="/account/settings"
-                icon={<Settings className="h-4 w-4" />}
-                label="Account Settings"
+                icon={<Settings size={17} />}
+                label="Pengaturan"
               />
-        
-              <div className="my-3 border-t" />
-        
+
+              {role === "admin" && (
+                <>
+                  <div className="my-3 border-t border-gray-100" />
+
+                  <AccountNavItem
+                    href="/admin"
+                    icon={<Package size={17} />}
+                    label="Admin Dashboard"
+                  />
+                </>
+              )}
+
+              <div className="my-3 border-t border-gray-100" />
+
               <SignOutButton />
             </nav>
           </div>
         </aside>
 
-        {/* Content */}
+        {/* Main *\/}
         <section className="min-w-0 flex-1 p-4 sm:p-6 lg:p-8">
           <div className="mx-auto max-w-5xl space-y-6">
-            {/* Welcome */}
-            <section className="relative overflow-hidden rounded-2xl border bg-purple-50 p-6 sm:p-8">
-              <div className="absolute -right-20 -top-20 h-48 w-48 rounded-full bg-purple-200/40 blur-3xl" />
+            {/* Welcome *\/}
+            <section className="relative overflow-hidden rounded-2xl border border-purple-100 bg-purple-50 p-6 sm:p-8">
+              <div className="absolute -right-20 -top-20 h-48 w-48 rounded-full bg-purple-200/50 blur-3xl" />
 
               <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center">
-                <div className="shrink-0">
-                  {user.imageUrl ? (
-                    <img
-                      src={user.imageUrl}
-                      alt={fullName}
-                      className="h-20 w-20 rounded-full border-4 border-white object-cover shadow-sm"
-                    />
-                  ) : (
-                    <div className="flex h-20 w-20 items-center justify-center rounded-full border-4 border-white bg-purple-100 text-purple-700 shadow-sm">
-                      <UserRound className="h-9 w-9" />
-                    </div>
-                  )}
-                </div>
+                {user.imageUrl ? (
+                  <img
+                    src={user.imageUrl}
+                    alt={fullName}
+                    className="h-20 w-20 shrink-0 rounded-full border-4 border-white object-cover shadow-sm"
+                  />
+                ) : (
+                  <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full border-4 border-white bg-purple-100 text-purple-700 shadow-sm">
+                    <UserRound size={36} />
+                  </div>
+                )}
 
-                <div>
-                  <p className="mb-1 text-sm font-semibold text-purple-700">
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-purple-700">
                     NexaShop Account
                   </p>
 
-                  <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                    Welcome back, {user.firstName || fullName} ({role})!
+                  <h1 className="mt-1 text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+                    Welcome back,{" "}
+                    {user.firstName || fullName}!
                   </h1>
 
-                  <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
-                    Manage your account, view orders, and update your
-                    preferences from your personal dashboard.
+                  <p className="mt-2 max-w-xl text-sm leading-6 text-gray-500">
+                    Kelola profil, pesanan, alamat, dan
+                    pengaturan akun Anda dari halaman ini.
                   </p>
+
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-purple-700 shadow-sm">
+                      {role === "admin"
+                        ? "Administrator"
+                        : "Customer"}
+                    </span>
+
+                    <span className="rounded-full bg-white px-3 py-1 text-xs text-gray-500 shadow-sm">
+                      Member sejak {memberSince}
+                    </span>
+                  </div>
                 </div>
               </div>
             </section>
 
-            <div>
-              <h1>Akun Saya</h1>
-        
-              <p>
-                Nama: {user.fullName}
-              </p>
-        
-              <p>
-                Role: <strong>{role}</strong>
-              </p>
-        
-              {role === "admin" && (
-                <a href="/admin">
-                  Buka Admin Dashboard
-                </a>
-              )}
-            </div>
-
-            {/* Profile information */}
-            <section className="rounded-2xl border bg-background shadow-sm">
-              <div className="border-b px-6 py-5">
-                <h2 className="text-lg font-semibold">
-                  Profile Information
+            {/* Profile *\/}
+            <section className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+              <div className="border-b border-gray-100 px-6 py-5">
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Informasi Profil
                 </h2>
 
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Your personal account information.
+                <p className="mt-1 text-sm text-gray-500">
+                  Informasi dasar akun NexaShop Anda.
                 </p>
               </div>
 
               <div className="grid md:grid-cols-[220px_1fr]">
-                {/* Profile */}
                 <div className="flex flex-col items-center justify-center border-b p-6 text-center md:border-b-0 md:border-r">
                   {user.imageUrl ? (
                     <img
@@ -210,85 +252,142 @@ export default async function AccountPage() {
                     />
                   ) : (
                     <div className="flex h-28 w-28 items-center justify-center rounded-full bg-purple-100 text-purple-700">
-                      <UserRound className="h-12 w-12" />
+                      <UserRound size={48} />
                     </div>
                   )}
 
-                  <h3 className="mt-4 font-semibold">{fullName}</h3>
+                  <h3 className="mt-4 font-semibold text-gray-900">
+                    {fullName}
+                  </h3>
 
-                  <p className="mt-1 max-w-full truncate text-sm text-muted-foreground">
+                  <p className="mt-1 max-w-full truncate text-sm text-gray-500">
                     {email}
                   </p>
 
                   <Link
                     href="/account/settings"
-                    className="mt-4 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors hover:bg-muted"
+                    className="mt-4 inline-flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
                   >
-                    <Settings className="h-4 w-4" />
-                    Edit Profile
+                    <Settings size={16} />
+                    Edit Profil
                   </Link>
                 </div>
 
-                {/* Details */}
-                <div className="divide-y">
+                <div className="divide-y divide-gray-100">
                   <ProfileRow
-                    icon={<UserRound className="h-5 w-5" />}
-                    label="Full Name"
+                    icon={
+                      <UserRound size={19} />
+                    }
+                    label="Nama Lengkap"
                     value={fullName}
                   />
 
                   <ProfileRow
-                    icon={<FileText className="h-5 w-5" />}
-                    label="Email Address"
+                    icon={
+                      <FileText size={19} />
+                    }
+                    label="Email"
                     value={email}
                   />
 
                   <ProfileRow
-                    icon={<CalendarDays className="h-5 w-5" />}
-                    label="Member Since"
+                    icon={
+                      <CalendarDays size={19} />
+                    }
+                    label="Member Sejak"
                     value={memberSince}
+                  />
+
+                  <ProfileRow
+                    icon={
+                      <Settings size={19} />
+                    }
+                    label="Role"
+                    value={
+                      role === "admin"
+                        ? "Administrator"
+                        : "Customer"
+                    }
                   />
                 </div>
               </div>
             </section>
 
-            {/* Quick actions */}
-            <section className="grid gap-4 sm:grid-cols-3">
-              <QuickActionCard
-                href="/account/orders"
-                icon={<Package className="h-6 w-6" />}
-                title="View Orders"
-                description="Track your recent orders and order history."
-                button="View Orders"
-                variant="purple"
-              />
+            {/* Quick Actions *\/}
+            <section>
+              <h2 className="mb-4 text-lg font-bold text-gray-900">
+                Menu Akun
+              </h2>
 
-              <QuickActionCard
-                href="/account/addresses"
-                icon={<MapPin className="h-6 w-6" />}
-                title="Manage Addresses"
-                description="Update your shipping and billing addresses."
-                button="Manage Addresses"
-                variant="green"
-              />
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <QuickActionCard
+                  href="/account/orders"
+                  icon={
+                    <ShoppingBag size={22} />
+                  }
+                  title="Pesanan Saya"
+                  description="Lihat pesanan dan status pembelian Anda."
+                />
 
-              <QuickActionCard
-                href="/account/settings"
-                icon={<Settings className="h-6 w-6" />}
-                title="Account Settings"
-                description="Edit your profile and account details."
-                button="Edit Account"
-                variant="yellow"
-              />
+                <QuickActionCard
+                  href="/account/addresses"
+                  icon={
+                    <MapPin size={22} />
+                  }
+                  title="Alamat"
+                  description="Kelola alamat pengiriman Anda."
+                />
+
+                <QuickActionCard
+                  href="/account/reviews"
+                  icon={
+                    <Star size={22} />
+                  }
+                  title="Review"
+                  description="Kelola review produk yang pernah dibeli."
+                />
+
+                <QuickActionCard
+                  href="/account/settings"
+                  icon={
+                    <Settings size={22} />
+                  }
+                  title="Pengaturan"
+                  description="Ubah informasi dan pengaturan akun."
+                />
+
+                <QuickActionCard
+                  href="/products"
+                  icon={
+                    <ShoppingBag size={22} />
+                  }
+                  title="Belanja Lagi"
+                  description="Temukan produk menarik di NexaShop."
+                />
+
+                {role === "admin" && (
+                  <QuickActionCard
+                    href="/admin"
+                    icon={
+                      <Package size={22} />
+                    }
+                    title="Admin Dashboard"
+                    description="Kelola produk dan operasional toko."
+                  />
+                )}
+              </div>
             </section>
 
-            {/* Recent Orders */}
-            <section className="rounded-2xl border bg-background shadow-sm">
-              <div className="flex items-center justify-between border-b px-6 py-5">
+            {/* Orders placeholder *\/}
+            <section className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+              <div className="flex items-center justify-between border-b border-gray-100 px-6 py-5">
                 <div>
-                  <h2 className="text-lg font-semibold">Recent Orders</h2>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    Your latest purchases.
+                  <h2 className="text-lg font-semibold text-gray-900">
+                    Pesanan Terbaru
+                  </h2>
+
+                  <p className="mt-1 text-sm text-gray-500">
+                    Pesanan terbaru Anda akan muncul di sini.
                   </p>
                 </div>
 
@@ -296,56 +395,60 @@ export default async function AccountPage() {
                   href="/account/orders"
                   className="hidden items-center gap-1 text-sm font-medium text-purple-700 hover:underline sm:flex"
                 >
-                  View All Orders
-                  <ArrowRight className="h-4 w-4" />
+                  Lihat Semua
+                  <ArrowRight size={16} />
                 </Link>
               </div>
 
               <div className="px-6 py-10 text-center">
                 <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-purple-50 text-purple-700">
-                  <ShoppingBag className="h-6 w-6" />
+                  <ShoppingBag size={24} />
                 </div>
 
-                <h3 className="mt-4 font-semibold">
-                  No orders yet
+                <h3 className="mt-4 font-semibold text-gray-900">
+                  Riwayat pesanan tersedia di menu Pesanan
                 </h3>
 
-                <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
-                  Your recent orders will appear here after you make a
-                  purchase.
+                <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-gray-500">
+                  Gunakan halaman Pesanan Saya untuk melihat
+                  daftar pembelian dan detail pesanan.
                 </p>
 
                 <Link
-                  href="/products"
-                  className="mt-5 inline-flex items-center gap-2 rounded-full bg-purple-700 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-purple-800"
+                  href="/account/orders"
+                  className="mt-5 inline-flex items-center gap-2 rounded-xl bg-purple-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-purple-800"
                 >
-                  Start Shopping
-                  <ArrowRight className="h-4 w-4" />
+                  Lihat Pesanan
+                  <ArrowRight size={16} />
                 </Link>
               </div>
             </section>
 
-            {/* Help */}
-            <section className="flex flex-col gap-4 rounded-2xl border bg-purple-50 p-6 sm:flex-row sm:items-center sm:justify-between">
+            {/* Help *\/}
+            <section className="flex flex-col gap-4 rounded-2xl border border-purple-100 bg-purple-50 p-6 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-4">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-purple-100 text-purple-700">
-                  <HelpCircle className="h-6 w-6" />
+                  <HelpCircle size={23} />
                 </div>
 
                 <div>
-                  <h2 className="font-semibold">Need help?</h2>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    Visit our help center or contact our support team.
+                  <h2 className="font-semibold text-gray-900">
+                    Butuh bantuan?
+                  </h2>
+
+                  <p className="mt-1 text-sm text-gray-500">
+                    Hubungi support NexaShop jika Anda mengalami
+                    masalah.
                   </p>
                 </div>
               </div>
 
               <Link
                 href="/"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-purple-700 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-purple-800"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-purple-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-purple-800"
               >
-                Get Support
-                <ArrowRight className="h-4 w-4" />
+                Bantuan
+                <ArrowRight size={16} />
               </Link>
             </section>
           </div>
@@ -353,13 +456,18 @@ export default async function AccountPage() {
       </div>
     </main>
   );
-}
+}*/
 
 /* -------------------------------------------------------------------------- */
 /* Components                                                                 */
 /* -------------------------------------------------------------------------- */
-
-function AccountNavItem({ href, icon, label, active = false,}: {
+/*
+function AccountNavItem({
+  href,
+  icon,
+  label,
+  active = false,
+}: {
   href: string;
   icon: React.ReactNode;
   label: string;
@@ -368,10 +476,10 @@ function AccountNavItem({ href, icon, label, active = false,}: {
   return (
     <Link
       href={href}
-      className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors ${
+      className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition ${
         active
           ? "bg-purple-50 text-purple-700"
-          : "text-muted-foreground hover:bg-muted hover:text-foreground"
+          : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
       }`}
     >
       {icon}
@@ -380,7 +488,11 @@ function AccountNavItem({ href, icon, label, active = false,}: {
   );
 }
 
-function ProfileRow({ icon, label, value, }: {
+function ProfileRow({
+  icon,
+  label,
+  value,
+}: {
   icon: React.ReactNode;
   label: string;
   value: string;
@@ -392,11 +504,11 @@ function ProfileRow({ icon, label, value, }: {
       </div>
 
       <div className="min-w-0">
-        <p className="text-xs font-medium text-muted-foreground">
+        <p className="text-xs font-medium text-gray-500">
           {label}
         </p>
 
-        <p className="mt-1 truncate text-sm font-medium">
+        <p className="mt-1 truncate text-sm font-semibold text-gray-900">
           {value}
         </p>
       </div>
@@ -409,56 +521,37 @@ function QuickActionCard({
   icon,
   title,
   description,
-  button,
-  variant,
 }: {
   href: string;
   icon: React.ReactNode;
   title: string;
   description: string;
-  button: string;
-  variant: "purple" | "green" | "yellow";
 }) {
-  const styles = {
-    purple: {
-      card: "bg-purple-50 border-purple-100",
-      icon: "bg-purple-600 text-white",
-      button: "bg-purple-700 hover:bg-purple-800",
-    },
-    green: {
-      card: "bg-emerald-50 border-emerald-100",
-      icon: "bg-emerald-600 text-white",
-      button: "bg-emerald-600 hover:bg-emerald-700",
-    },
-    yellow: {
-      card: "bg-amber-50 border-amber-100",
-      icon: "bg-amber-500 text-white",
-      button: "bg-amber-500 hover:bg-amber-600",
-    },
-  };
-  const style = styles[variant];
-
   return (
-    <div className={`rounded-2xl border p-5 ${style.card}`}>
-      <div
-        className={`flex h-12 w-12 items-center justify-center rounded-full ${style.icon}`}
-      >
+    <Link
+      href={href}
+      className="group rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-purple-200 hover:shadow-md"
+    >
+      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-purple-50 text-purple-700 transition group-hover:bg-purple-700 group-hover:text-white">
         {icon}
       </div>
 
-      <h3 className="mt-5 font-semibold">{title}</h3>
+      <h3 className="mt-4 font-semibold text-gray-900">
+        {title}
+      </h3>
 
-      <p className="mt-2 min-h-12 text-sm leading-6 text-muted-foreground">
+      <p className="mt-2 text-sm leading-6 text-gray-500">
         {description}
       </p>
 
-      <Link
-        href={href}
-        className={`mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium text-white transition-colors ${style.button}`}
-      >
-        {button}
-        <ArrowRight className="h-4 w-4" />
-      </Link>
-    </div>
+      <div className="mt-4 flex items-center gap-1 text-sm font-semibold text-purple-700">
+        Buka
+        <ArrowRight
+          size={15}
+          className="transition-transform group-hover:translate-x-1"
+        />
+      </div>
+    </Link>
   );
 }
+*/
