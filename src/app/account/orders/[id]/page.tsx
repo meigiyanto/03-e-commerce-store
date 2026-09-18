@@ -12,8 +12,7 @@ import {
 
 import prisma from "@/lib/prisma";
 
-const formatPrice = (price: number) =>
-  `Rp ${price.toLocaleString("id-ID")}`;
+const formatPrice = (price: number) => `Rp ${price.toLocaleString("id-ID")}`;
 
 const formatDate = (date: Date) =>
   new Intl.DateTimeFormat("id-ID", {
@@ -119,14 +118,28 @@ export default async function OrderDetailPage({
             </p>
           </div>
 
-          <span className="rounded-full bg-blue-100 px-4 py-2 text-sm font-semibold text-blue-700">
+          <span
+            className={`w-fit rounded-full px-4 py-2 text-sm font-semibold ${
+              order.orderStatus === "PROCESSING"
+                ? "bg-blue-100 text-blue-700"
+                : order.orderStatus === "SHIPPED"
+                  ? "bg-purple-100 text-purple-700"
+                  : order.orderStatus === "DELIVERED"
+                    ? "bg-green-100 text-green-700"
+                    : order.orderStatus === "CANCELLED"
+                      ? "bg-red-100 text-red-700"
+                      : "bg-gray-100 text-gray-700"
+            }`}
+          >
             {order.orderStatus === "PROCESSING"
               ? "Diproses"
               : order.orderStatus === "SHIPPED"
                 ? "Dikirim"
                 : order.orderStatus === "DELIVERED"
                   ? "Selesai"
-                  : order.orderStatus}
+                  : order.orderStatus === "CANCELLED"
+                    ? "Dibatalkan"
+                    : order.orderStatus}
           </span>
         </div>
 
@@ -136,69 +149,144 @@ export default async function OrderDetailPage({
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-purple-50 text-purple-700">
               <Truck size={21} />
             </div>
-
+        
             <div>
               <h2 className="font-bold text-gray-900">
-                Tracking Pesanan
+                Lacak Pesanan
               </h2>
-
+        
               <p className="text-sm text-gray-500">
-                Status perjalanan pesanan Anda.
+                Pantau perjalanan pesanan Anda.
               </p>
             </div>
           </div>
-
-          <div className="mt-8">
-            {steps.map((step, index) => {
-              const Icon = step.icon;
-              const completed = index <= currentStep;
-
-              return (
-                <div
-                  key={step.status}
-                  className="relative flex gap-4 pb-8 last:pb-0"
-                >
-                  {index < steps.length - 1 && (
-                    <div
-                      className={`absolute left-5 top-10 h-full w-0.5 ${
-                        index < currentStep
-                          ? "bg-purple-600"
-                          : "bg-gray-200"
-                      }`}
-                    />
-                  )}
-
+        
+          {order.orderStatus === "CANCELLED" ? (
+            <div className="mt-6 rounded-xl border border-red-100 bg-red-50 p-5">
+              <div className="flex items-start gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-100 text-red-600">
+                  <Package size={18} />
+                </div>
+        
+                <div>
+                  <h3 className="font-semibold text-red-800">
+                    Pesanan Dibatalkan
+                  </h3>
+        
+                  <p className="mt-1 text-sm text-red-700">
+                    Pesanan ini telah dibatalkan dan tidak akan
+                    dilanjutkan ke proses pengiriman.
+                  </p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="mt-8">
+              {steps.map((step, index) => {
+                const Icon = step.icon;
+                const completed = index <= currentStep;
+                const current = index === currentStep;
+        
+                return (
                   <div
-                    className={`relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
-                      completed
-                        ? "bg-purple-600 text-white"
-                        : "bg-gray-100 text-gray-400"
-                    }`}
+                    key={step.status}
+                    className="relative flex gap-4 pb-9 last:pb-0"
                   >
-                    <Icon size={18} />
-                  </div>
-
-                  <div>
-                    <h3
-                      className={`font-semibold ${
+                    {index < steps.length - 1 && (
+                      <div
+                        className={`absolute left-5 top-10 h-full w-0.5 ${
+                          index < currentStep
+                            ? "bg-purple-600"
+                            : "bg-gray-200"
+                        }`}
+                      />
+                    )}
+        
+                    <div
+                      className={`relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition ${
                         completed
-                          ? "text-gray-900"
-                          : "text-gray-400"
+                          ? "bg-purple-600 text-white"
+                          : "bg-gray-100 text-gray-400"
+                      } ${
+                        current
+                          ? "ring-4 ring-purple-100"
+                          : ""
                       }`}
                     >
-                      {step.title}
-                    </h3>
-
-                    <p className="mt-1 text-sm text-gray-500">
-                      {step.description}
-                    </p>
+                      <Icon size={18} />
+                    </div>
+        
+                    <div className="min-w-0 pt-0.5">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h3
+                          className={`font-semibold ${
+                            completed
+                              ? "text-gray-900"
+                              : "text-gray-400"
+                          }`}
+                        >
+                          {step.title}
+                        </h3>
+        
+                        {current && (
+                          <span className="rounded-full bg-purple-100 px-2.5 py-1 text-[11px] font-semibold text-purple-700">
+                            Status Saat Ini
+                          </span>
+                        )}
+                      </div>
+        
+                      <p className="mt-1 text-sm leading-5 text-gray-500">
+                        {step.description}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
+        
+          {order.orderStatus === "PROCESSING" && (
+            <div className="mt-6 rounded-2xl border border-blue-100 bg-blue-50 p-5">
+              <h3 className="font-semibold text-blue-900">
+                Pesanan sedang diproses
+              </h3>
+          
+              <p className="mt-1 text-sm leading-6 text-blue-700">
+                Pesanan Anda sedang dipersiapkan oleh toko.
+                Setelah siap, pesanan akan dikirim ke alamat
+                yang Anda berikan.
+              </p>
+            </div>
+          )}
+          
+          {order.orderStatus === "SHIPPED" && (
+            <div className="mt-6 rounded-2xl border border-purple-100 bg-purple-50 p-5">
+              <h3 className="font-semibold text-purple-900">
+                Pesanan sedang dalam perjalanan
+              </h3>
+          
+              <p className="mt-1 text-sm leading-6 text-purple-700">
+                Pesanan Anda sudah dikirim. Silakan pantau
+                statusnya sampai pesanan diterima.
+              </p>
+            </div>
+          )}
+          
+          {order.orderStatus === "DELIVERED" && (
+            <div className="mt-6 rounded-2xl border border-green-100 bg-green-50 p-5">
+              <h3 className="font-semibold text-green-900">
+                Pesanan telah diterima
+              </h3>
+          
+              <p className="mt-1 text-sm leading-6 text-green-700">
+                Terima kasih telah berbelanja di NexaShop.
+                Jangan lupa berikan review untuk produk yang
+                Anda beli.
+              </p>
+            </div>
+          )}
         </section>
-
+                
         {/* Products */}
         <section className="mt-6 rounded-2xl border border-gray-100 bg-white shadow-sm">
           <div className="border-b border-gray-100 px-6 py-5">
@@ -313,6 +401,32 @@ export default async function OrderDetailPage({
                   value={formatPrice(order.total)}
                   bold
                 />
+
+                <div className="mt-4 border-t pt-4">
+                  <SummaryRow
+                    label="Metode Pembayaran"
+                    value={
+                      order.paymentMethod === "bank_transfer"
+                        ? "Transfer Bank"
+                        : order.paymentMethod === "e_wallet"
+                          ? "E-Wallet"
+                          : order.paymentMethod === "cod"
+                            ? "COD"
+                            : order.paymentMethod
+                    }
+                  />
+                  <div className="mt-3">
+                    <SummaryRow
+                      label="Status Pembayaran"
+                      value={
+                        order.paymentStatus === "PAID"
+                          ? "Sudah Dibayar"
+                          : order.paymentStatus
+                      }
+                    />
+                  </div>
+                </div>
+                
               </div>
             </div>
           </section>

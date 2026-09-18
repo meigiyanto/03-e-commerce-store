@@ -15,6 +15,8 @@ import ProductQuickView from "@/components/product/ProductQuickView";
 import { Product } from "@/types/product";
 import { useCartStore } from "@/stores/cart-store";
 import { useWishlistStore } from "@/stores/wishlist-store";
+import { Scale } from "lucide-react";
+import { useComparisonStore } from "@/stores/comparison-store";
 
 type ProductCardProps = {
   product: Product;
@@ -23,23 +25,10 @@ type ProductCardProps = {
 export default function ProductCard({
   product,
 }: ProductCardProps) {
-  const [isQuickViewOpen, setIsQuickViewOpen] =
-    useState(false);
-
-  const addItem = useCartStore(
-    (state) => state.addItem
-  );
-
-  const toggleItem = useWishlistStore(
-    (state) => state.toggleItem
-  );
-
-  const isFavorite = useWishlistStore(
-    (state) =>
-      state.items.some(
-        (item) => item.id === product.id
-      )
-  );
+  const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
+  const addItem = useCartStore((state) => state.addItem);
+  const toggleItem = useWishlistStore((state) => state.toggleItem);
+  const isFavorite = useWishlistStore((state) => state.items.some((item) => item.id === product.id));
 
   const handleAddToCart = () => {
     if (product.stock <= 0) {
@@ -66,6 +55,10 @@ export default function ProductCard({
 
     setIsQuickViewOpen(true);
   };
+
+  const toggleCompare = useComparisonStore((state) => state.toggleItem);
+  const isCompared = useComparisonStore((state) => state.isSelected(product.id));
+  const compareItems = useComparisonStore((state) => state.items);
 
   return (
     <>
@@ -187,6 +180,37 @@ export default function ProductCard({
           setIsQuickViewOpen(false)
         }
       />
+
+      <button
+        type="button"
+        onClick={() => toggleCompare(product)}
+        disabled={
+          !isCompared && compareItems.length >= 4
+        }
+        className={`flex h-9 w-9 items-center justify-center rounded-lg border transition ${
+          isCompared
+            ? "border-blue-600 bg-blue-600 text-white"
+            : "border-gray-200 bg-white text-gray-500 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600"
+        } ${
+          !isCompared && compareItems.length >= 4
+            ? "cursor-not-allowed opacity-50"
+            : ""
+        }`}
+        title={
+          isCompared
+            ? "Hapus dari perbandingan"
+            : compareItems.length >= 4
+              ? "Maksimal 4 produk"
+              : "Bandingkan produk"
+        }
+        aria-label={
+          isCompared
+            ? `Hapus ${product.name} dari perbandingan`
+            : `Bandingkan ${product.name}`
+        }
+      >
+        <Scale size={17} />
+      </button>
     </>
   );
 }
