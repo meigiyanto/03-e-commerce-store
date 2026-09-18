@@ -1,51 +1,64 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { ChevronDown, RotateCcw } from "lucide-react"
+import { useState } from "react";
+import { ChevronDown, RotateCcw } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 interface FilterSidebarProps {
-  categories: string[]
-  selectedCategory: string
-  onCategoryChange: (category: string) => void
-  minPrice: string
-  maxPrice: string
-  onMinPriceChange: (value: string) => void
-  onMaxPriceChange: (value: string) => void
-  minRating: string
-  onMinRatingChange: (value: string) => void
-  inStockOnly: boolean
-  onInStockOnlyChange: (value: boolean) => void
-  onReset: () => void
+  categories: string[];
+  selectedCategory: string;
+  onCategoryChange: (category: string) => void;
+
+  minPrice: string;
+  maxPrice: string;
+  onMinPriceChange: (value: string) => void;
+  onMaxPriceChange: (value: string) => void;
+
+  minRating: string;
+  onMinRatingChange: (value: string) => void;
+
+  inStockOnly: boolean;
+  onInStockOnlyChange: (value: boolean) => void;
+
+  onReset: () => void;
 }
 
 export default function FilterSidebar({
   categories,
   selectedCategory,
   onCategoryChange,
+
   minPrice,
   maxPrice,
   onMinPriceChange,
   onMaxPriceChange,
+
   minRating,
   onMinRatingChange,
+
   inStockOnly,
   onInStockOnlyChange,
+
   onReset,
 }: FilterSidebarProps) {
-  const [categoryOpen, setCategoryOpen] = useState(true)
-  const [priceOpen, setPriceOpen] = useState(true)
-  const [ratingOpen, setRatingOpen] = useState(true)
-  const [stockOpen, setStockOpen] = useState(true)
+  const [categoryOpen, setCategoryOpen] = useState(true);
+  const [priceOpen, setPriceOpen] = useState(true);
+  const [ratingOpen, setRatingOpen] = useState(true);
+  const [stockOpen, setStockOpen] = useState(true);
 
   return (
     <aside className="w-full space-y-4">
-      {/* Header */}
+      {/* =====================================================
+          HEADER
+      ===================================================== */}
+
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Filter</h2>
+        <h2 className="text-lg font-semibold text-gray-900">
+          Filter
+        </h2>
 
         <Button
           type="button"
@@ -59,11 +72,16 @@ export default function FilterSidebar({
         </Button>
       </div>
 
-      {/* Category */}
+      {/* =====================================================
+          CATEGORY
+      ===================================================== */}
+
       <div className="border-b pb-4">
         <button
           type="button"
-          onClick={() => setCategoryOpen((prev) => !prev)}
+          onClick={() =>
+            setCategoryOpen((previous) => !previous)
+          }
           className="flex w-full items-center justify-between py-2 text-left font-medium"
         >
           <span>Kategori</span>
@@ -77,45 +95,50 @@ export default function FilterSidebar({
 
         {categoryOpen && (
           <div className="mt-3 space-y-2">
-            <label className="flex cursor-pointer items-center gap-2 text-sm">
-              <input
-                type="radio"
-                name="category"
-                value=""
-                checked={selectedCategory === ""}
-                onChange={() => onCategoryChange("")}
-                className="h-4 w-4"
-              />
+            {/* SEMUA KATEGORI */}
 
-              <span>Semua kategori</span>
-            </label>
+            <RadioOption
+              name="category"
+              value="Semua"
+              label="Semua kategori"
+              checked={selectedCategory === "Semua"}
+              onChange={() =>
+                onCategoryChange("Semua")
+              }
+            />
 
-            {categories.map((category) => (
-              <label
-                key={category}
-                className="flex cursor-pointer items-center gap-2 text-sm"
-              >
-                <input
-                  type="radio"
+            {/* CATEGORIES */}
+
+            {categories
+              .filter((category) => category !== "Semua")
+              .map((category) => (
+                <RadioOption
+                  key={category}
                   name="category"
                   value={category}
-                  checked={selectedCategory === category}
-                  onChange={() => onCategoryChange(category)}
-                  className="h-4 w-4"
+                  label={category}
+                  checked={
+                    selectedCategory === category
+                  }
+                  onChange={() =>
+                    onCategoryChange(category)
+                  }
                 />
-
-                <span>{category}</span>
-              </label>
-            ))}
+              ))}
           </div>
         )}
       </div>
 
-      {/* Price */}
+      {/* =====================================================
+          PRICE
+      ===================================================== */}
+
       <div className="border-b pb-4">
         <button
           type="button"
-          onClick={() => setPriceOpen((prev) => !prev)}
+          onClick={() =>
+            setPriceOpen((previous) => !previous)
+          }
           className="flex w-full items-center justify-between py-2 text-left font-medium"
         >
           <span>Harga</span>
@@ -130,7 +153,10 @@ export default function FilterSidebar({
         {priceOpen && (
           <div className="mt-3 grid grid-cols-2 gap-2">
             <div className="space-y-1">
-              <Label htmlFor="min-price" className="text-xs">
+              <Label
+                htmlFor="min-price"
+                className="text-xs"
+              >
                 Minimum
               </Label>
 
@@ -141,13 +167,18 @@ export default function FilterSidebar({
                 placeholder="Rp 0"
                 value={minPrice}
                 onChange={(event) =>
-                  onMinPriceChange(event.target.value)
+                  onMinPriceChange(
+                    event.target.value
+                  )
                 }
               />
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="max-price" className="text-xs">
+              <Label
+                htmlFor="max-price"
+                className="text-xs"
+              >
                 Maksimum
               </Label>
 
@@ -158,7 +189,9 @@ export default function FilterSidebar({
                 placeholder="Tanpa batas"
                 value={maxPrice}
                 onChange={(event) =>
-                  onMaxPriceChange(event.target.value)
+                  onMaxPriceChange(
+                    event.target.value
+                  )
                 }
               />
             </div>
@@ -166,11 +199,16 @@ export default function FilterSidebar({
         )}
       </div>
 
-      {/* Rating */}
+      {/* =====================================================
+          RATING
+      ===================================================== */}
+
       <div className="border-b pb-4">
         <button
           type="button"
-          onClick={() => setRatingOpen((prev) => !prev)}
+          onClick={() =>
+            setRatingOpen((previous) => !previous)
+          }
           className="flex w-full items-center justify-between py-2 text-left font-medium"
         >
           <span>Rating</span>
@@ -184,40 +222,69 @@ export default function FilterSidebar({
 
         {ratingOpen && (
           <div className="mt-3 space-y-2">
-            {[
-              { value: "", label: "Semua rating" },
-              { value: "4", label: "⭐ 4 ke atas" },
-              { value: "3", label: "⭐ 3 ke atas" },
-              { value: "2", label: "⭐ 2 ke atas" },
-              { value: "1", label: "⭐ 1 ke atas" },
-            ].map((rating) => (
-              <label
-                key={rating.value || "all"}
-                className="flex cursor-pointer items-center gap-2 text-sm"
-              >
-                <input
-                  type="radio"
-                  name="min-rating"
-                  value={rating.value}
-                  checked={minRating === rating.value}
-                  onChange={() =>
-                    onMinRatingChange(rating.value)
-                  }
-                  className="h-4 w-4"
-                />
+            <RadioOption
+              name="rating"
+              value="0"
+              label="Semua rating"
+              checked={minRating === "0"}
+              onChange={() =>
+                onMinRatingChange("0")
+              }
+            />
 
-                <span>{rating.label}</span>
-              </label>
-            ))}
+            <RadioOption
+              name="rating"
+              value="4"
+              label="⭐ 4 ke atas"
+              checked={minRating === "4"}
+              onChange={() =>
+                onMinRatingChange("4")
+              }
+            />
+
+            <RadioOption
+              name="rating"
+              value="3"
+              label="⭐ 3 ke atas"
+              checked={minRating === "3"}
+              onChange={() =>
+                onMinRatingChange("3")
+              }
+            />
+
+            <RadioOption
+              name="rating"
+              value="2"
+              label="⭐ 2 ke atas"
+              checked={minRating === "2"}
+              onChange={() =>
+                onMinRatingChange("2")
+              }
+            />
+
+            <RadioOption
+              name="rating"
+              value="1"
+              label="⭐ 1 ke atas"
+              checked={minRating === "1"}
+              onChange={() =>
+                onMinRatingChange("1")
+              }
+            />
           </div>
         )}
       </div>
 
-      {/* Stock */}
+      {/* =====================================================
+          STOCK
+      ===================================================== */}
+
       <div className="pb-2">
         <button
           type="button"
-          onClick={() => setStockOpen((prev) => !prev)}
+          onClick={() =>
+            setStockOpen((previous) => !previous)
+          }
           className="flex w-full items-center justify-between py-2 text-left font-medium"
         >
           <span>Ketersediaan</span>
@@ -230,20 +297,86 @@ export default function FilterSidebar({
         </button>
 
         {stockOpen && (
-          <label className="mt-3 flex cursor-pointer items-center gap-2 text-sm">
+          <label className="mt-3 flex cursor-pointer items-center gap-3 text-sm">
             <input
               type="checkbox"
               checked={inStockOnly}
               onChange={(event) =>
-                onInStockOnlyChange(event.target.checked)
+                onInStockOnlyChange(
+                  event.target.checked
+                )
               }
-              className="h-4 w-4 rounded"
+              className="h-4 w-4 rounded border-gray-300 accent-blue-600"
             />
 
-            <span>Hanya produk tersedia</span>
+            <span>
+              Hanya produk tersedia
+            </span>
           </label>
         )}
       </div>
     </aside>
-  )
+  );
+}
+
+/* =========================================================
+   CUSTOM RADIO OPTION
+========================================================= */
+
+interface RadioOptionProps {
+  name: string;
+  value: string;
+  label: string;
+  checked: boolean;
+  onChange: () => void;
+}
+
+function RadioOption({
+  name,
+  value,
+  label,
+  checked,
+  onChange,
+}: RadioOptionProps) {
+  return (
+    <label
+      className={`flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition ${
+        checked
+          ? "bg-blue-50 font-semibold text-blue-700"
+          : "text-gray-600 hover:bg-gray-50"
+      }`}
+    >
+      {/* Hidden native radio */}
+
+      <input
+        type="radio"
+        name={name}
+        value={value}
+        checked={checked}
+        onChange={onChange}
+        className="sr-only"
+      />
+
+      {/* Custom radio */}
+
+      <span
+        aria-hidden="true"
+        className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition ${
+          checked
+            ? "border-blue-600"
+            : "border-gray-300 bg-white"
+        }`}
+      >
+        {checked && (
+          <span className="h-2.5 w-2.5 rounded-full bg-blue-600" />
+        )}
+      </span>
+
+      {/* Label */}
+
+      <span className="flex-1">
+        {label}
+      </span>
+    </label>
+  );
 }
