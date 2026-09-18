@@ -29,14 +29,9 @@ export async function POST(
 ) {
   try {
     const body = await request.json();
-
     const { userId } = await auth();
-
-    const items =
-      body.items as OrderRequestItem[];
-
-    const shipping =
-      body.shipping as ShippingPayload;
+    const items = body.items as OrderRequestItem[];
+    const shipping = body.shipping as ShippingPayload;
 
     const couponCode = body.couponCode
       ? String(body.couponCode)
@@ -47,6 +42,26 @@ export async function POST(
         body.paymentMethod ??
           "bank_transfer"
       );
+
+    const allowedPaymentMethods = [
+      "bank_transfer",
+      "e_wallet",
+      "cod",
+    ];
+    
+    if (
+      !allowedPaymentMethods.includes(
+        paymentMethod
+      )
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Metode pembayaran tidak valid.",
+        },
+        { status: 400 }
+      );
+    }
 
     if (
       !Array.isArray(items) ||
