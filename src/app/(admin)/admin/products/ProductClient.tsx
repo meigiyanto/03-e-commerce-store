@@ -1,37 +1,77 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import {
+  Search,
+  Download,
+  Trash2,
+  Plus,
+  Package,
+  Boxes,
+  AlertTriangle,
+  Wallet,
+  X,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 
 import { useProductStore } from "@/stores/product-store";
 import { ProductTable } from "@/components/admin/products/product-table";
 import { buttonVariants } from "@/components/ui/button";
 import { Product } from "@/types/product";
+import { cn } from "@/lib/utils";
 
-const PAGE_SIZE_OPTIONS = [10, 15, 25, 50];
+const PAGE_SIZE_OPTIONS = [
+  10,
+  15,
+  25,
+  50,
+];
 
-type SortKey = "name" | "price" | "category";
-type SortDirection = "asc" | "desc";
+type SortKey =
+  | "name"
+  | "price"
+  | "category";
+
+type SortDirection =
+  | "asc"
+  | "desc";
 
 export default function AdminProductsPage() {
-  const products = useProductStore((state) => state.products);
+  const products = useProductStore(
+    (state) => state.products
+  );
+
   const fetchProducts = useProductStore(
     (state) => state.fetchProducts
   );
+
   const deleteProduct = useProductStore(
     (state) => state.deleteProduct
   );
+
   const isLoading = useProductStore(
     (state) => state.isLoading
   );
+
   const error = useProductStore(
     (state) => state.error
   );
 
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] =
+    useState(10);
 
-  const [search, setSearch] = useState("");
+  const [search, setSearch] =
+    useState("");
+
+  const [categoryFilter, setCategoryFilter] =
+    useState("all");
 
   const [sortKey, setSortKey] =
     useState<SortKey>("name");
@@ -47,17 +87,30 @@ export default function AdminProductsPage() {
   }, [fetchProducts]);
 
   /*
-   * SEARCH
+   * CATEGORY OPTIONS
+   */
+  const categories = useMemo(() => {
+    return Array.from(
+      new Set(
+        products
+          .map((product) => product.category)
+          .filter(Boolean)
+      )
+    ).sort((a, b) =>
+      a.localeCompare(b, "id-ID")
+    );
+  }, [products]);
+
+  /*
+   * SEARCH + FILTER
    */
   const filteredProducts = useMemo(() => {
-    const keyword = search.trim().toLowerCase();
-
-    if (!keyword) {
-      return products;
-    }
+    const keyword =
+      search.trim().toLowerCase();
 
     return products.filter((product) => {
-      return (
+      const matchesSearch =
+        !keyword ||
         product.name
           .toLowerCase()
           .includes(keyword) ||
@@ -66,48 +119,68 @@ export default function AdminProductsPage() {
           .includes(keyword) ||
         product.id
           .toLowerCase()
-          .includes(keyword)
+          .includes(keyword);
+
+      const matchesCategory =
+        categoryFilter === "all" ||
+        product.category ===
+          categoryFilter;
+
+      return (
+        matchesSearch &&
+        matchesCategory
       );
     });
-  }, [products, search]);
+  }, [
+    products,
+    search,
+    categoryFilter,
+  ]);
 
   /*
    * SORT
    */
   const sortedProducts = useMemo(() => {
-    const sorted = [...filteredProducts];
+    const sorted = [
+      ...filteredProducts,
+    ];
 
-    sorted.sort((a: Product, b: Product) => {
-      let comparison = 0;
+    sorted.sort(
+      (a: Product, b: Product) => {
+        let comparison = 0;
 
-      if (sortKey === "name") {
-        comparison = a.name.localeCompare(
-          b.name,
-          "id-ID",
-          {
-            sensitivity: "base",
-          }
-        );
+        if (sortKey === "name") {
+          comparison =
+            a.name.localeCompare(
+              b.name,
+              "id-ID",
+              {
+                sensitivity: "base",
+              }
+            );
+        }
+
+        if (sortKey === "category") {
+          comparison =
+            a.category.localeCompare(
+              b.category,
+              "id-ID",
+              {
+                sensitivity: "base",
+              }
+            );
+        }
+
+        if (sortKey === "price") {
+          comparison =
+            a.price - b.price;
+        }
+
+        return sortDirection === "asc"
+          ? comparison
+          : -comparison;
       }
-
-      if (sortKey === "category") {
-        comparison = a.category.localeCompare(
-          b.category,
-          "id-ID",
-          {
-            sensitivity: "base",
-          }
-        );
-      }
-
-      if (sortKey === "price") {
-        comparison = a.price - b.price;
-      }
-
-      return sortDirection === "asc"
-        ? comparison
-        : -comparison;
-    });
+    );
 
     return sorted;
   }, [
@@ -122,7 +195,8 @@ export default function AdminProductsPage() {
   const totalPages = Math.max(
     1,
     Math.ceil(
-      sortedProducts.length / pageSize
+      sortedProducts.length /
+        pageSize
     )
   );
 
@@ -131,27 +205,28 @@ export default function AdminProductsPage() {
     totalPages
   );
 
-  const paginatedProducts = useMemo(() => {
-    const startIndex =
-      (currentPage - 1) * pageSize;
+  const paginatedProducts =
+    useMemo(() => {
+      const start =
+        (currentPage - 1) *
+        pageSize;
 
-    const endIndex =
-      startIndex + pageSize;
-
-    return sortedProducts.slice(
-      startIndex,
-      endIndex
-    );
-  }, [
-    sortedProducts,
-    currentPage,
-    pageSize,
-  ]);
+      return sortedProducts.slice(
+        start,
+        start + pageSize
+      );
+    }, [
+      sortedProducts,
+      currentPage,
+      pageSize,
+    ]);
 
   const startItem =
     sortedProducts.length === 0
       ? 0
-      : (currentPage - 1) * pageSize + 1;
+      : (currentPage - 1) *
+          pageSize +
+        1;
 
   const endItem = Math.min(
     currentPage * pageSize,
@@ -159,14 +234,51 @@ export default function AdminProductsPage() {
   );
 
   /*
-   * SORT HANDLER
+   * STATISTICS
    */
-  function handleSort(key: SortKey) {
+  const totalStock = useMemo(
+    () =>
+      products.reduce(
+        (total, product) =>
+          total + product.stock,
+        0
+      ),
+    [products]
+  );
+
+  const lowStockCount = useMemo(
+    () =>
+      products.filter(
+        (product) =>
+          product.stock <= 5
+      ).length,
+    [products]
+  );
+
+  const inventoryValue = useMemo(
+    () =>
+      products.reduce(
+        (total, product) =>
+          total +
+          product.price *
+            product.stock,
+        0
+      ),
+    [products]
+  );
+
+  /*
+   * SORT
+   */
+  function handleSort(
+    key: SortKey
+  ) {
     if (sortKey === key) {
-      setSortDirection((current) =>
-        current === "asc"
-          ? "desc"
-          : "asc"
+      setSortDirection(
+        (current) =>
+          current === "asc"
+            ? "desc"
+            : "asc"
       );
     } else {
       setSortKey(key);
@@ -177,12 +289,26 @@ export default function AdminProductsPage() {
   }
 
   /*
-   * SEARCH HANDLER
+   * SEARCH
    */
   function handleSearch(
     event: React.ChangeEvent<HTMLInputElement>
   ) {
-    setSearch(event.target.value);
+    setSearch(
+      event.target.value
+    );
+    setPage(1);
+  }
+
+  /*
+   * CATEGORY
+   */
+  function handleCategoryChange(
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) {
+    setCategoryFilter(
+      event.target.value
+    );
     setPage(1);
   }
 
@@ -199,7 +325,7 @@ export default function AdminProductsPage() {
   }
 
   /*
-   * SELECT SINGLE PRODUCT
+   * SELECT SINGLE
    */
   function handleSelect(
     id: string,
@@ -222,8 +348,7 @@ export default function AdminProductsPage() {
   }
 
   /*
-   * SELECT ALL PRODUCTS
-   * Hanya memilih produk pada halaman aktif.
+   * SELECT ALL CURRENT PAGE
    */
   function handleSelectAll(
     checked: boolean
@@ -234,73 +359,91 @@ export default function AdminProductsPage() {
       );
 
     if (checked) {
-      setSelectedIds((current) => {
-        return Array.from(
+      setSelectedIds((current) =>
+        Array.from(
           new Set([
             ...current,
             ...pageIds,
           ])
-        );
-      });
+        )
+      );
     } else {
       setSelectedIds((current) =>
         current.filter(
-          (id) => !pageIds.includes(id)
+          (id) =>
+            !pageIds.includes(id)
         )
       );
     }
   }
 
   /*
-   * DELETE SINGLE PRODUCT
+   * DELETE SINGLE
    */
   async function handleDelete(
     id: string
   ) {
-    const confirmed = window.confirm(
-      "Apakah Anda yakin ingin menghapus produk ini?"
-    );
+    const product =
+      products.find(
+        (item) => item.id === id
+      );
+
+    const confirmed =
+      window.confirm(
+        `Hapus produk "${product?.name ?? ""}"?`
+      );
 
     if (!confirmed) {
       return;
     }
 
-    await deleteProduct(id);
+    const success =
+      await deleteProduct(id);
 
-    setSelectedIds((current) =>
-      current.filter(
-        (selectedId) =>
-          selectedId !== id
-      )
-    );
+    if (success) {
+      setSelectedIds(
+        (current) =>
+          current.filter(
+            (selectedId) =>
+              selectedId !== id
+          )
+      );
+    }
   }
 
   /*
-   * DELETE SELECTED PRODUCTS
+   * BULK DELETE
    */
   async function handleBulkDelete() {
-    if (selectedIds.length === 0) {
+    if (
+      selectedIds.length === 0
+    ) {
       return;
     }
 
-    const confirmed = window.confirm(
-      `Apakah Anda yakin ingin menghapus ${selectedIds.length} produk yang dipilih?`
-    );
+    const confirmed =
+      window.confirm(
+        `Apakah Anda yakin ingin menghapus ${selectedIds.length} produk yang dipilih?`
+      );
 
     if (!confirmed) {
       return;
     }
 
-    /*
-     * Hapus satu per satu menggunakan
-     * action deleteProduct yang sudah ada
-     * di Zustand store.
-     */
     for (const id of selectedIds) {
       await deleteProduct(id);
     }
 
     setSelectedIds([]);
+  }
+
+  /*
+   * CLEAR FILTER
+   */
+  function clearFilters() {
+    setSearch("");
+    setCategoryFilter("all");
+    setPage(1);
   }
 
   /*
@@ -317,8 +460,10 @@ export default function AdminProductsPage() {
           )
         : sortedProducts;
 
-    if (selectedProducts.length === 0) {
-      alert(
+    if (
+      selectedProducts.length === 0
+    ) {
+      window.alert(
         "Tidak ada data produk untuk diekspor."
       );
       return;
@@ -330,34 +475,36 @@ export default function AdminProductsPage() {
       "Kategori",
       "Harga",
       "Stock",
+      "Rating",
+      "Jumlah Review",
     ];
 
-    const rows = selectedProducts.map(
-      (product) => [
-        product.id,
-        product.name,
-        product.category,
-        product.price,
-        product.stock,
-      ]
-    );
+    const rows =
+      selectedProducts.map(
+        (product) => [
+          product.id,
+          product.name,
+          product.category,
+          product.price,
+          product.stock,
+          product.rating,
+          product.reviewCount ?? 0,
+        ]
+      );
 
-    /*
-     * Escape karakter CSV.
-     */
-    const escapeCsvValue = (
+    function escapeCsvValue(
       value: unknown
-    ) => {
-      const stringValue = String(value);
-
-      return `"${stringValue.replace(
+    ) {
+      return `"${String(value).replace(
         /"/g,
         '""'
       )}"`;
-    };
+    }
 
     const csvContent = [
-      headers.map(escapeCsvValue).join(","),
+      headers
+        .map(escapeCsvValue)
+        .join(","),
       ...rows.map((row) =>
         row
           .map(escapeCsvValue)
@@ -365,10 +512,6 @@ export default function AdminProductsPage() {
       ),
     ].join("\n");
 
-    /*
-     * BOM agar Excel membaca UTF-8
-     * dengan benar.
-     */
     const blob = new Blob(
       ["\uFEFF" + csvContent],
       {
@@ -383,22 +526,19 @@ export default function AdminProductsPage() {
       document.createElement("a");
 
     link.href = url;
-
     link.download = `products-${new Date()
       .toISOString()
       .slice(0, 10)}.csv`;
 
     document.body.appendChild(link);
-
     link.click();
-
     document.body.removeChild(link);
 
     URL.revokeObjectURL(url);
   }
 
   /*
-   * STATUS CHECKBOX HALAMAN AKTIF
+   * SELECTION STATE
    */
   const pageIds =
     paginatedProducts.map(
@@ -420,222 +560,521 @@ export default function AdminProductsPage() {
     selectedOnPage <
       paginatedProducts.length;
 
+  const hasFilters =
+    search.trim() !== "" ||
+    categoryFilter !== "all";
+
   return (
-    <div className="container mx-auto py-10">
-      {/* HEADER */}
-      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">
-            Products
-          </h1>
+    <div className="min-h-screen">
+      <div className="mx-auto max-w-[1600px] space-y-6">
+        {/* ================= HEADER ================= */}
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <div className="mb-2 flex items-center gap-2 text-sm text-muted-foreground">
+              <Link
+                href="/admin"
+                className="hover:text-foreground"
+              >
+                Dashboard
+              </Link>
 
-          <p className="text-muted-foreground">
-            Kelola produk toko Anda.
-          </p>
-        </div>
+              <span>/</span>
 
-        <Link
-          href="/admin/products/new"
-          className={buttonVariants({
-            variant: "default",
-          })}
-        >
-          + Add Product
-        </Link>
-      </div>
+              <span className="text-foreground">
+                Products
+              </span>
+            </div>
 
-      {error && (
-        <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600">
-          {error}
-        </div>
-      )}
+            <h1 className="text-3xl font-bold tracking-tight">
+              Products
+            </h1>
 
-      {/* TOOLBAR */}
-      <div className="mb-4 flex flex-col gap-3 rounded-lg border bg-white p-4 lg:flex-row lg:items-center lg:justify-between">
-        {/* SEARCH */}
-        <div className="relative w-full lg:max-w-md">
-          <input
-            type="search"
-            value={search}
-            onChange={handleSearch}
-            placeholder="Cari nama, kategori, atau ID produk..."
-            className="w-full rounded-md border bg-white px-4 py-2.5 text-sm outline-none transition focus:ring-2 focus:ring-ring"
-          />
-        </div>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Kelola seluruh produk,
+              stok, harga, dan
+              inventori toko Anda.
+            </p>
+          </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          {/* SELECTED COUNT */}
-          {selectedIds.length > 0 && (
-            <span className="rounded-md bg-muted px-3 py-2 text-sm font-medium">
-              {selectedIds.length} dipilih
-            </span>
-          )}
-
-          {/* BULK DELETE */}
-          <button
-            type="button"
-            onClick={handleBulkDelete}
-            disabled={
-              selectedIds.length === 0
-            }
-            className="rounded-md border border-red-200 px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            Hapus Terpilih
-          </button>
-
-          {/* EXPORT */}
-          <button
-            type="button"
-            onClick={handleExport}
-            disabled={
-              sortedProducts.length === 0
-            }
-            className="rounded-md border px-3 py-2 text-sm font-medium transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            Export CSV
-          </button>
-        </div>
-      </div>
-
-      {isLoading && products.length === 0 ? (
-        <div className="rounded-lg border bg-white p-10 text-center">
-          Memuat produk...
-        </div>
-      ) : (
-        <>
-          <ProductTable
-            products={paginatedProducts}
-            onDelete={handleDelete}
-            sortKey={sortKey}
-            sortDirection={
-              sortDirection
-            }
-            onSort={handleSort}
-            selectedIds={selectedIds}
-            onSelect={handleSelect}
-            onSelectAll={
-              handleSelectAll
-            }
-            allPageSelected={
-              allPageSelected
-            }
-            somePageSelected={
-              somePageSelected
-            }
-          />
-
-          {/* NO SEARCH RESULT */}
-          {sortedProducts.length === 0 &&
-            products.length > 0 && (
-              <div className="mt-4 rounded-lg border bg-white py-10 text-center text-muted-foreground">
-                Tidak ada produk yang
-                sesuai dengan pencarian.
-              </div>
+          <Link
+            href="/admin/products/new"
+            className={cn(
+              buttonVariants({
+                size: "lg",
+              }),
+              "gap-2"
             )}
+          >
+            <Plus size={18} />
+            Tambah Produk
+          </Link>
+        </div>
 
-          {/* PAGINATION */}
-          {sortedProducts.length > 0 && (
-            <div className="mt-4 flex flex-col gap-4 rounded-lg border bg-white p-4 lg:flex-row lg:items-center lg:justify-between">
-              {/* PAGE SIZE */}
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <span>Tampilkan</span>
+        {/* ================= ERROR ================= */}
+        {error && (
+          <div className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+            <AlertTriangle
+              size={18}
+              className="mt-0.5 shrink-0"
+            />
 
+            <div>
+              <p className="font-semibold">
+                Terjadi kesalahan
+              </p>
+
+              <p className="mt-1">
+                {error}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* ================= STATS ================= */}
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {/* Total products */}
+          <div className="rounded-2xl border bg-background p-5 shadow-sm">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Total Produk
+                </p>
+
+                <p className="mt-2 text-2xl font-bold">
+                  {products.length.toLocaleString(
+                    "id-ID"
+                  )}
+                </p>
+
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Produk terdaftar
+                </p>
+              </div>
+
+              <div className="flex size-11 items-center justify-center rounded-xl bg-muted">
+                <Package
+                  size={21}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Stock */}
+          <div className="rounded-2xl border bg-background p-5 shadow-sm">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Total Stok
+                </p>
+
+                <p className="mt-2 text-2xl font-bold">
+                  {totalStock.toLocaleString(
+                    "id-ID"
+                  )}
+                </p>
+
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Unit tersedia
+                </p>
+              </div>
+
+              <div className="flex size-11 items-center justify-center rounded-xl bg-muted">
+                <Boxes
+                  size={21}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Low stock */}
+          <div className="rounded-2xl border bg-background p-5 shadow-sm">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Stok Menipis
+                </p>
+
+                <p className="mt-2 text-2xl font-bold">
+                  {lowStockCount}
+                </p>
+
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Stok ≤ 5 unit
+                </p>
+              </div>
+
+              <div className="flex size-11 items-center justify-center rounded-xl bg-muted">
+                <AlertTriangle
+                  size={21}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Inventory value */}
+          <div className="rounded-2xl border bg-background p-5 shadow-sm">
+            <div className="flex items-start justify-between">
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-muted-foreground">
+                  Nilai Inventori
+                </p>
+
+                <p className="mt-2 truncate text-xl font-bold">
+                  Rp{" "}
+                  {inventoryValue.toLocaleString(
+                    "id-ID"
+                  )}
+                </p>
+
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Harga × stok
+                </p>
+              </div>
+
+              <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-muted">
+                <Wallet
+                  size={21}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ================= MAIN PANEL ================= */}
+        <div className="overflow-hidden rounded-2xl border bg-background shadow-sm">
+          {/* TOOLBAR */}
+          <div className="border-b p-4 lg:p-5">
+            <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+              {/* Search */}
+              <div className="relative w-full xl:max-w-xl">
+                <Search
+                  size={18}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                />
+
+                <input
+                  type="search"
+                  value={search}
+                  onChange={handleSearch}
+                  placeholder="Cari nama, kategori, atau ID produk..."
+                  className="h-10 w-full rounded-lg border bg-background pl-10 pr-10 text-sm outline-none transition placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring/20"
+                />
+
+                {search && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearch("");
+                      setPage(1);
+                    }}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition hover:text-foreground"
+                    aria-label="Hapus pencarian"
+                  >
+                    <X size={16} />
+                  </button>
+                )}
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                {/* Category */}
                 <select
-                  value={pageSize}
+                  value={categoryFilter}
                   onChange={
-                    handlePageSizeChange
+                    handleCategoryChange
                   }
-                  className="rounded-md border bg-white px-3 py-2 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring"
-                  aria-label="Jumlah produk per halaman"
+                  className="h-10 rounded-lg border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring/20"
+                  aria-label="Filter kategori"
                 >
-                  {PAGE_SIZE_OPTIONS.map(
-                    (size) => (
+                  <option value="all">
+                    Semua kategori
+                  </option>
+
+                  {categories.map(
+                    (category) => (
                       <option
-                        key={size}
-                        value={size}
+                        key={category}
+                        value={category}
                       >
-                        {size}
+                        {category}
                       </option>
                     )
                   )}
                 </select>
 
-                <span>per halaman</span>
-              </div>
-
-              {/* INFORMATION */}
-              <div className="text-sm text-muted-foreground">
-                Menampilkan{" "}
-                <span className="font-medium text-foreground">
-                  {startItem}
-                </span>
-                {" - "}
-                <span className="font-medium text-foreground">
-                  {endItem}
-                </span>
-                {" dari "}
-                <span className="font-medium text-foreground">
-                  {
-                    sortedProducts.length
-                  }
-                </span>{" "}
-                produk
-              </div>
-
-              {/* NAVIGATION */}
-              <div className="flex items-center justify-end gap-2">
+                {/* Export */}
                 <button
                   type="button"
-                  onClick={() =>
-                    setPage((prev) =>
-                      Math.max(
-                        1,
-                        prev - 1
-                      )
-                    )
+                  onClick={
+                    handleExport
                   }
                   disabled={
-                    currentPage === 1
+                    sortedProducts.length ===
+                    0
                   }
-                  className="rounded-md border px-3 py-2 text-sm font-medium transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
+                  className="inline-flex h-10 items-center gap-2 rounded-lg border px-3 text-sm font-medium transition hover:bg-muted disabled:pointer-events-none disabled:opacity-50"
                 >
-                  Previous
-                </button>
-
-                <span className="min-w-[90px] text-center text-sm">
-                  Halaman{" "}
-                  <span className="font-semibold">
-                    {currentPage}
-                  </span>{" "}
-                  dari{" "}
-                  <span className="font-semibold">
-                    {totalPages}
+                  <Download
+                    size={16}
+                  />
+                  <span className="hidden sm:inline">
+                    Export CSV
                   </span>
-                </span>
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    setPage((prev) =>
-                      Math.min(
-                        totalPages,
-                        prev + 1
-                      )
-                    )
-                  }
-                  disabled={
-                    currentPage ===
-                    totalPages
-                  }
-                  className="rounded-md border px-3 py-2 text-sm font-medium transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  Next
                 </button>
+
+                {/* Bulk delete */}
+                {selectedIds.length >
+                  0 && (
+                  <button
+                    type="button"
+                    onClick={
+                      handleBulkDelete
+                    }
+                    className="inline-flex h-10 items-center gap-2 rounded-lg border border-destructive/20 bg-destructive/5 px-3 text-sm font-medium text-destructive transition hover:bg-destructive/10"
+                  >
+                    <Trash2
+                      size={16}
+                    />
+
+                    <span>
+                      Hapus (
+                      {
+                        selectedIds.length
+                      }
+                      )
+                    </span>
+                  </button>
+                )}
               </div>
             </div>
+
+            {/* Filter status */}
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <span>
+                  Menampilkan{" "}
+                  <strong className="text-foreground">
+                    {
+                      sortedProducts.length
+                    }
+                  </strong>{" "}
+                  produk
+                </span>
+
+                {hasFilters && (
+                  <button
+                    type="button"
+                    onClick={
+                      clearFilters
+                    }
+                    className="inline-flex items-center gap-1 text-xs font-medium text-foreground underline underline-offset-4"
+                  >
+                    <X size={12} />
+                    Reset filter
+                  </button>
+                )}
+              </div>
+
+              {selectedIds.length >
+                0 && (
+                <div className="rounded-md bg-muted px-3 py-1.5 text-xs font-medium">
+                  {
+                    selectedIds.length
+                  }{" "}
+                  produk dipilih
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* TABLE */}
+          {isLoading &&
+          products.length === 0 ? (
+            <div className="flex min-h-[350px] items-center justify-center">
+              <div className="text-center">
+                <div className="mx-auto mb-3 size-8 animate-spin rounded-full border-2 border-muted border-t-foreground" />
+
+                <p className="text-sm text-muted-foreground">
+                  Memuat produk...
+                </p>
+              </div>
+            </div>
+          ) : (
+            <>
+              <ProductTable
+                products={
+                  paginatedProducts
+                }
+                onDelete={
+                  handleDelete
+                }
+                sortKey={sortKey}
+                sortDirection={
+                  sortDirection
+                }
+                onSort={
+                  handleSort
+                }
+                selectedIds={
+                  selectedIds
+                }
+                onSelect={
+                  handleSelect
+                }
+                onSelectAll={
+                  handleSelectAll
+                }
+                allPageSelected={
+                  allPageSelected
+                }
+                somePageSelected={
+                  somePageSelected
+                }
+              />
+
+              {/* Empty search */}
+              {sortedProducts.length ===
+                0 &&
+                products.length >
+                  0 && (
+                  <div className="border-t px-6 py-16 text-center">
+                    <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-muted">
+                      <Search
+                        size={24}
+                        className="text-muted-foreground"
+                      />
+                    </div>
+
+                    <h3 className="mt-4 font-semibold">
+                      Produk tidak ditemukan
+                    </h3>
+
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Coba ubah kata kunci
+                      atau filter
+                      kategori.
+                    </p>
+
+                    <button
+                      type="button"
+                      onClick={
+                        clearFilters
+                      }
+                      className="mt-4 text-sm font-medium underline underline-offset-4"
+                    >
+                      Reset pencarian
+                    </button>
+                  </div>
+                )}
+
+              {/* PAGINATION */}
+              {sortedProducts.length >
+                0 && (
+                <div className="flex flex-col gap-4 border-t p-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="text-sm text-muted-foreground">
+                    {startItem}–{endItem}{" "}
+                    dari{" "}
+                    {
+                      sortedProducts.length
+                    }
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <div className="hidden items-center gap-2 text-sm text-muted-foreground sm:flex">
+                      <span>
+                        Per halaman
+                      </span>
+
+                      <select
+                        value={
+                          pageSize
+                        }
+                        onChange={
+                          handlePageSizeChange
+                        }
+                        className="h-8 rounded-md border bg-background px-2 text-sm outline-none focus:ring-2 focus:ring-ring/20"
+                      >
+                        {PAGE_SIZE_OPTIONS.map(
+                          (size) => (
+                            <option
+                              key={size}
+                              value={
+                                size
+                              }
+                            >
+                              {size}
+                            </option>
+                          )
+                        )}
+                      </select>
+                    </div>
+
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setPage(
+                            (prev) =>
+                              Math.max(
+                                1,
+                                prev -
+                                  1
+                              )
+                          )
+                        }
+                        disabled={
+                          currentPage ===
+                          1
+                        }
+                        className="flex size-8 items-center justify-center rounded-md border transition hover:bg-muted disabled:pointer-events-none disabled:opacity-40"
+                        aria-label="Halaman sebelumnya"
+                      >
+                        <ChevronLeft
+                          size={16}
+                        />
+                      </button>
+
+                      <div className="flex h-8 min-w-8 items-center justify-center rounded-md bg-foreground px-2 text-xs font-medium text-background">
+                        {currentPage}
+                      </div>
+
+                      <span className="px-1 text-sm text-muted-foreground">
+                        dari{" "}
+                        {
+                          totalPages
+                        }
+                      </span>
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setPage(
+                            (prev) =>
+                              Math.min(
+                                totalPages,
+                                prev +
+                                  1
+                              )
+                          )
+                        }
+                        disabled={
+                          currentPage ===
+                          totalPages
+                        }
+                        className="flex size-8 items-center justify-center rounded-md border transition hover:bg-muted disabled:pointer-events-none disabled:opacity-40"
+                        aria-label="Halaman berikutnya"
+                      >
+                        <ChevronRight
+                          size={16}
+                        />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
           )}
-        </>
-      )}
+        </div>
+      </div>
     </div>
   );
 }
