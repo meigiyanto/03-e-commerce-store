@@ -1,21 +1,26 @@
 import { SignIn } from "@clerk/nextjs";
 
-export default async function SignInPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ redirect_url?: string }>;
-}) {
-  const params = await searchParams;
-  const redirectUrl = params.redirect_url || "/";
-
+export default function SignInPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12">
-      <SignIn
-        path="/sign-in"
-        routing="path"
-        signUpUrl="/sign-up"
-        forceRedirectUrl={redirectUrl}
-      />
-    </div>
+    <main className="flex min-h-[100dvh] items-center justify-center bg-gray-50 px-4 py-10">
+      <div className="w-full max-w-md">
+        <div className="mb-6 text-center">
+          <h1 className="text-2xl font-bold text-gray-900">
+            Login ke NexaShop
+          </h1>
+
+          <p className="mt-2 text-sm text-gray-500">
+            Masuk untuk melanjutkan ke akun Anda.
+          </p>
+        </div>
+
+        <SignIn
+          routing="path"
+          path="/sign-in"
+          forceRedirectUrl="/auth/redirect"
+          signUpUrl="/sign-up"
+        />
+      </div>
+    </main>
   );
 }
