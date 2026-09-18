@@ -20,11 +20,13 @@ const formatPrice = (price: number) =>
 export default function ProductsPage() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [search, setSearch] = useState("");
-  const [selectedCategory, setSelectedCategory] =useState("Semua");
+  const [selectedCategory, setSelectedCategory] = useState("Semua");
   const [sortBy, setSortBy] = useState("default");
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
+  const [minRating, setMinRating] = useState("0");
+  const [inStockOnly, setInStockOnly] = useState(false);
   const products = useProductStore((state) => state.products);
   const fetchProducts = useProductStore((state) => state.fetchProducts);
   
@@ -41,57 +43,95 @@ export default function ProductsPage() {
 
   const filteredProducts = useMemo(() => {
     let result = products.filter((product) => {
+      const query = search
+        .trim()
+        .toLowerCase();
+  
       const matchesSearch =
+        query === "" ||
         product.name
           .toLowerCase()
-          .includes(search.toLowerCase()) ||
+          .includes(query) ||
         product.category
           .toLowerCase()
-          .includes(search.toLowerCase());
-
+          .includes(query) ||
+        product.description
+          .toLowerCase()
+          .includes(query);
+  
       const matchesCategory =
         selectedCategory === "Semua" ||
         product.category === selectedCategory;
-
+  
       const minimumPrice =
         minPrice === ""
           ? true
           : product.price >= Number(minPrice);
-
+  
       const maximumPrice =
         maxPrice === ""
           ? true
           : product.price <= Number(maxPrice);
-
+  
+      const matchesRating =
+        product.rating >= Number(minRating);
+  
+      const matchesStock =
+        !inStockOnly || product.stock > 0;
+  
       return (
         matchesSearch &&
         matchesCategory &&
         minimumPrice &&
-        maximumPrice
+        maximumPrice &&
+        matchesRating &&
+        matchesStock
       );
     });
-
+  
     switch (sortBy) {
       case "price-low":
-        result = [...result].sort((a, b) => a.price - b.price);
+        result = [...result].sort(
+          (a, b) => a.price - b.price
+        );
         break;
-
+  
       case "price-high":
-        result = [...result].sort((a, b) => b.price - a.price);
+        result = [...result].sort(
+          (a, b) => b.price - a.price
+        );
         break;
-
-      case "name":
-        result = [...result].sort((a, b) =>a.name.localeCompare(b.name));
+  
+      case "name-asc":
+        result = [...result].sort((a, b) =>
+          a.name.localeCompare(b.name)
+        );
         break;
-
+  
+      case "name-desc":
+        result = [...result].sort((a, b) =>
+          b.name.localeCompare(a.name)
+        );
+        break;
+  
       case "rating":
-        result = [...result].sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
+        result = [...result].sort(
+          (a, b) =>
+            (b.rating ?? 0) -
+            (a.rating ?? 0)
+        );
         break;
-
+  
+      case "stock":
+        result = [...result].sort(
+          (a, b) => b.stock - a.stock
+        );
+        break;
+  
       default:
         break;
     }
-
+  
     return result;
   }, [
     products,
@@ -100,6 +140,8 @@ export default function ProductsPage() {
     sortBy,
     minPrice,
     maxPrice,
+    minRating,
+    inStockOnly,
   ]);
 
   const resetFilters = () => {
@@ -107,6 +149,8 @@ export default function ProductsPage() {
     setSelectedCategory("Semua");
     setMinPrice("");
     setMaxPrice("");
+    setMinRating("0");
+    setInStockOnly(false);
     setSortBy("default");
   };
 
@@ -114,7 +158,9 @@ export default function ProductsPage() {
     search !== "" ||
     selectedCategory !== "Semua" ||
     minPrice !== "" ||
-    maxPrice !== "";
+    maxPrice !== "" ||
+    minRating !== "0" ||
+    inStockOnly;
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -430,6 +476,10 @@ type FilterSidebarProps = {
   maxPrice: string;
   setMinPrice: (price: string) => void;
   setMaxPrice: (price: string) => void;
+  minRating: string;
+  setMinRating: (rating: string) => void;
+  inStockOnly: boolean;
+  setInStockOnly: (value: boolean) => void;
   resetFilters: () => void;
   hasActiveFilters: boolean;
 };
@@ -442,6 +492,10 @@ function FilterSidebar({
   maxPrice,
   setMinPrice,
   setMaxPrice,
+  minRating,
+  setMinRating,
+  inStockOnly,
+  setInStockOnly,
   resetFilters,
   hasActiveFilters,
 }: FilterSidebarProps) {
@@ -526,6 +580,57 @@ function FilterSidebar({
             className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-blue-500"
           />
         </div>
+      </div>
+
+      {/* Rating */}
+      <div className="border-t p-5">
+        <h3 className="mb-4 text-sm font-bold text-gray-900">
+          Rating Minimum
+        </h3>
+      
+        <div className="space-y-2">
+          {[
+            { value: "0", label: "Semua Rating" },
+            { value: "4", label: "⭐ 4 ke atas" },
+            { value: "3", label: "⭐ 3 ke atas" },
+            { value: "2", label: "⭐ 2 ke atas" },
+          ].map((rating) => (
+            <button
+              key={rating.value}
+              type="button"
+              onClick={() =>
+                setMinRating(rating.value)
+              }
+              className={`flex w-full items-center rounded-lg px-3 py-2.5 text-left text-sm transition ${
+                minRating === rating.value
+                  ? "bg-blue-50 font-semibold text-blue-600"
+                  : "text-gray-600 hover:bg-gray-50"
+              }`}
+            >
+              {rating.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Stock */}
+      <div className="border-t p-5">
+        <label className="flex cursor-pointer items-center gap-3">
+          <input
+            type="checkbox"
+            checked={inStockOnly}
+            onChange={(event) =>
+              setInStockOnly(
+                event.target.checked
+              )
+            }
+            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          />
+      
+          <span className="text-sm font-medium text-gray-700">
+            Hanya tampilkan produk tersedia
+          </span>
+        </label>
       </div>
     </div>
   );
@@ -675,11 +780,7 @@ function ProductListItem({ product, }: ProductListItemProps) {
 }
 
 /* ================= EMPTY STATE ================= */
-function EmptyState({
-  resetFilters,
-}: {
-  resetFilters: () => void;
-}) {
+function EmptyState({resetFilters}: {resetFilters: () => void}) {
   return (
     <div className="rounded-2xl border border-dashed border-gray-300 bg-white px-6 py-20 text-center">
 
