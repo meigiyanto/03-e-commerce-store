@@ -10,15 +10,60 @@ import {
 } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
+type SortKey = "name" | "price" | "category";
+type SortDirection = "asc" | "desc";
+
 interface ProductTableProps {
   products: Product[];
   onDelete: (id: string) => void;
+  sortKey: SortKey;
+  sortDirection: SortDirection;
+  onSort: (key: SortKey) => void;
 }
 
 export function ProductTable({
   products,
   onDelete,
+  sortKey,
+  sortDirection,
+  onSort,
 }: ProductTableProps) {
+  function SortButton({
+    column,
+    label,
+  }: {
+    column: SortKey;
+    label: string;
+  }) {
+    const isActive = sortKey === column;
+
+    return (
+      <button
+        type="button"
+        onClick={() => onSort(column)}
+        className="inline-flex items-center gap-1 font-semibold transition hover:opacity-70"
+        title={`Urutkan ${label}`}
+      >
+        {label}
+
+        <span
+          className={cn(
+            "text-xs",
+            isActive
+              ? "text-foreground"
+              : "text-muted-foreground"
+          )}
+        >
+          {isActive
+            ? sortDirection === "asc"
+              ? "↑"
+              : "↓"
+            : "↕"}
+        </span>
+      </button>
+    );
+  }
+
   return (
     <div className="overflow-x-auto rounded-lg border">
       <table className="w-full">
@@ -29,15 +74,24 @@ export function ProductTable({
             </th>
 
             <th className="px-4 py-3 text-left">
-              Name
+              <SortButton
+                column="name"
+                label="Name"
+              />
             </th>
 
             <th className="px-4 py-3 text-left">
-              Category
+              <SortButton
+                column="category"
+                label="Category"
+              />
             </th>
 
             <th className="px-4 py-3 text-left">
-              Price
+              <SortButton
+                column="price"
+                label="Price"
+              />
             </th>
 
             <th className="px-4 py-3 text-left">
@@ -92,7 +146,8 @@ export function ProductTable({
                     href={`/admin/products/${product.id}/edit`}
                     className={cn(
                       buttonVariants({
-                        variant: "outline",
+                        variant:
+                          "outline",
                         size: "sm",
                       })
                     )}

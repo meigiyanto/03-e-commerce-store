@@ -5,8 +5,13 @@ import { useEffect, useMemo, useState } from "react";
 import { useProductStore } from "@/stores/product-store";
 import { ProductTable } from "@/components/admin/products/product-table";
 import { buttonVariants } from "@/components/ui/button";
+import { Product } from "@/types/product";
 
 const PAGE_SIZE_OPTIONS = [10, 15, 25, 50];
+
+type SortKey = "name" | "price" | "category";
+
+type SortDirection = "asc" | "desc";
 
 export default function AdminProductsPage() {
   const products = useProductStore((state) => state.products);
@@ -18,32 +23,92 @@ export default function AdminProductsPage() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
+  const [sortKey, setSortKey] = useState<SortKey>("name");
+  const [sortDirection, setSortDirection] =
+    useState<SortDirection>("asc");
+
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
 
+  function handleSort(key: SortKey) {
+    if (sortKey === key) {
+      setSortDirection((current) =>
+        current === "asc" ? "desc" : "asc"
+      );
+    } else {
+      setSortKey(key);
+      setSortDirection("asc");
+    }
+
+    setPage(1);
+  }
+
+  const sortedProducts = useMemo(() => {
+    const sorted = [...products];
+
+    sorted.sort((a: Product, b: Product) => {
+      let comparison = 0;
+
+      if (sortKey === "name") {
+        comparison = a.name.localeCompare(
+          b.name,
+          "id-ID",
+          { sensitivity: "base" }
+        );
+      }
+
+      if (sortKey === "category") {
+        comparison = a.category.localeCompare(
+          b.category,
+          "id-ID",
+          { sensitivity: "base" }
+        );
+      }
+
+      if (sortKey === "price") {
+        comparison = a.price - b.price;
+      }
+
+      return sortDirection === "asc"
+        ? comparison
+        : -comparison;
+    });
+
+    return sorted;
+  }, [products, sortKey, sortDirection]);
+
   const totalPages = Math.max(
     1,
-    Math.ceil(products.length / pageSize)
+    Math.ceil(sortedProducts.length / pageSize)
   );
 
   const currentPage = Math.min(page, totalPages);
 
   const paginatedProducts = useMemo(() => {
-    const startIndex = (currentPage - 1) * pageSize;
+    const startIndex =
+      (currentPage - 1) * pageSize;
+
     const endIndex = startIndex + pageSize;
 
-    return products.slice(startIndex, endIndex);
-  }, [products, currentPage, pageSize]);
+    return sortedProducts.slice(
+      startIndex,
+      endIndex
+    );
+  }, [
+    sortedProducts,
+    currentPage,
+    pageSize,
+  ]);
 
   const startItem =
-    products.length === 0
+    sortedProducts.length === 0
       ? 0
       : (currentPage - 1) * pageSize + 1;
 
   const endItem = Math.min(
     currentPage * pageSize,
-    products.length
+    sortedProducts.length
   );
 
   function handlePageSizeChange(
@@ -64,12 +129,14 @@ export default function AdminProductsPage() {
 
     await deleteProduct(id);
 
-    // Jika halaman terakhir menjadi kosong setelah delete,
-    // pindahkan user ke halaman sebelumnya.
-    const remainingProducts = products.length - 1;
+    const remainingProducts =
+      products.length - 1;
+
     const newTotalPages = Math.max(
       1,
-      Math.ceil(remainingProducts / pageSize)
+      Math.ceil(
+        remainingProducts / pageSize
+      )
     );
 
     if (currentPage > newTotalPages) {
@@ -115,9 +182,12 @@ export default function AdminProductsPage() {
           <ProductTable
             products={paginatedProducts}
             onDelete={handleDelete}
+            sortKey={sortKey}
+            sortDirection={sortDirection}
+            onSort={handleSort}
           />
 
-          {products.length > 0 && (
+          {sortedProducts.length > 0 && (
             <div className="mt-4 flex flex-col gap-4 rounded-lg border bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
               {/* Jumlah data per halaman */}
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -129,11 +199,16 @@ export default function AdminProductsPage() {
                   className="rounded-md border bg-white px-3 py-2 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring"
                   aria-label="Jumlah produk per halaman"
                 >
-                  {PAGE_SIZE_OPTIONS.map((size) => (
-                    <option key={size} value={size}>
-                      {size}
-                    </option>
-                  ))}
+                  {PAGE_SIZE_OPTIONS.map(
+                    (size) => (
+                      <option
+                        key={size}
+                        value={size}
+                      >
+                        {size}
+                      </option>
+                    )
+                  )}
                 </select>
 
                 <span>per halaman</span>
@@ -151,7 +226,7 @@ export default function AdminProductsPage() {
                 </span>
                 {" dari "}
                 <span className="font-medium text-foreground">
-                  {products.length}
+                  {sortedProducts.length}
                 </span>{" "}
                 produk
               </div>
@@ -161,9 +236,16 @@ export default function AdminProductsPage() {
                 <button
                   type="button"
                   onClick={() =>
-                    setPage((prev) => Math.max(1, prev - 1))
+                    setPage((prev) =>
+                      Math.max(
+                        1,
+                        prev - 1
+                      )
+                    )
                   }
-                  disabled={currentPage === 1}
+                  disabled={
+                    currentPage === 1
+                  }
                   className="rounded-md border px-3 py-2 text-sm font-medium transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Previous
@@ -184,10 +266,16 @@ export default function AdminProductsPage() {
                   type="button"
                   onClick={() =>
                     setPage((prev) =>
-                      Math.min(totalPages, prev + 1)
+                      Math.min(
+                        totalPages,
+                        prev + 1
+                      )
                     )
                   }
-                  disabled={currentPage === totalPages}
+                  disabled={
+                    currentPage ===
+                    totalPages
+                  }
                   className="rounded-md border px-3 py-2 text-sm font-medium transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Next
