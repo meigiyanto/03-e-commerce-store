@@ -76,7 +76,7 @@
       "react": "^16.8.0 || ^17 || ^18 || ^19",
       "react-dom": "^16.8.0 || ^17 || ^18 || ^19"
     }
-  }
+  },
   "allowScripts": {
     "unrs-resolver@1.12.2": true,
     "@prisma/engines@7.10.0": true,
