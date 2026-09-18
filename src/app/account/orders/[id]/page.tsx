@@ -223,9 +223,22 @@ export default async function OrderDetailPage({
                   </p>
                 </div>
 
-                <p className="shrink-0 font-semibold text-gray-900">
-                  {formatPrice(item.subtotal)}
-                </p>
+                <div className="flex shrink-0 flex-col items-end gap-2">
+                    <p className="font-semibold text-gray-900">
+                      {formatPrice(item.subtotal)}
+                    </p>
+                  
+                    {order.orderStatus === "DELIVERED" &&
+                      item.productId && (
+                        <Link
+                          href={`/products/${item.productId}?review=1&orderId=${order.id}`}
+                          className="inline-flex items-center gap-1 rounded-lg bg-purple-50 px-3 py-2 text-xs font-semibold text-purple-700 transition hover:bg-purple-100"
+                        >
+                          Tulis Review
+                        </Link>
+                      )}
+                  </div>
+
               </div>
             ))}
           </div>

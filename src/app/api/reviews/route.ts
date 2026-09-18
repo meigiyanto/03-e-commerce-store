@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-
 import prisma from "@/lib/prisma";
 
 export async function GET(request: Request) {
@@ -34,6 +33,55 @@ export async function GET(request: Request) {
       return NextResponse.json({
         success: true,
         reviews,
+      });
+    }
+
+    if (productId && searchParams.get("eligible") === "1") {
+      if (!userId) {
+        return NextResponse.json(
+          {
+            message: "Anda harus login.",
+            orders: [],
+            reviewed: false,
+          },
+          { status: 401 }
+        );
+      }
+    
+      const orders = await prisma.order.findMany({
+        where: {
+          userId,
+          orderStatus: "DELIVERED",
+          items: {
+            some: {
+              productId,
+            },
+          },
+        },
+        select: {
+          id: true,
+          orderNumber: true,
+          createdAt: true,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+    
+      const existingReview = await prisma.review.findFirst({
+        where: {
+          userId,
+          productId,
+        },
+        select: {
+          id: true,
+        },
+      });
+    
+      return NextResponse.json({
+        success: true,
+        orders,
+        reviewed: Boolean(existingReview),
       });
     }
 

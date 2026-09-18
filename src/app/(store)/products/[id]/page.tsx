@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import {
   ChevronRight,
   Heart,
@@ -24,6 +24,7 @@ import { useRecentlyViewedStore } from "@/stores/recently-viewed-store";
 import { useCartStore } from "@/stores/cart-store";
 import { useProductStore } from "@/stores/product-store";
 import { useWishlistStore } from "@/stores/wishlist-store";
+import ReviewSection from "@/components/product/ReviewSection";
 
 const formatPrice = (price: number) =>
   new Intl.NumberFormat("id-ID", {
@@ -34,10 +35,19 @@ const formatPrice = (price: number) =>
 
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const searchParams = useSearchParams();
+  const reviewOrderId = searchParams.get("orderId") ?? undefined;
   const router = useRouter();
-
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState("description");
+  const searchParams = useSearchParams();
+  const reviewOrderId = searchParams.get("orderId") ?? undefined;
+  
+  useEffect(() => {
+    if (searchParams.get("review") === "1") {
+      setActiveTab("reviews");
+    }
+  }, [searchParams]);
 
   const products = useProductStore((state) => state.products);
   const fetchProducts = useProductStore((state) => state.fetchProducts);
@@ -580,65 +590,14 @@ export default function ProductDetailPage() {
             )}
 
             {activeTab === "reviews" && (
-              <div>
-
-                <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
-
-                  <div className="flex h-32 w-32 shrink-0 flex-col items-center justify-center rounded-2xl bg-yellow-50">
-
-                    <p className="text-4xl font-bold text-gray-900">
-                      {product.rating ?? 0}
-                    </p>
-
-                    <div className="mt-2 flex">
-
-                      {Array.from({ length: 5 }).map(
-                        (_, index) => (
-                          <Star
-                            key={index}
-                            size={15}
-                            className={
-                              index <
-                              Math.round(product.rating ?? 0)
-                                ? "fill-yellow-400 text-yellow-400"
-                                : "text-gray-300"
-                            }
-                          />
-                        )
-                      )}
-
-                    </div>
-                  </div>
-
-                  <div>
-
-                    <h2 className="text-xl font-bold text-gray-900">
-                      Ulasan Pelanggan
-                    </h2>
-
-                    <p className="mt-2 text-sm text-gray-500">
-                      Belum ada sistem ulasan yang terhubung.
-                    </p>
-
-                  </div>
-                </div>
-
-                <div className="mt-8 rounded-xl border border-dashed border-gray-300 p-8 text-center">
-
-                  <p className="font-semibold text-gray-700">
-                    Belum ada data ulasan yang ditampilkan.
-                  </p>
-
-                  <p className="mt-2 text-sm text-gray-500">
-                    Sistem review dapat ditambahkan pada tahap
-                    pengembangan berikutnya.
-                  </p>
-
-                </div>
-              </div>
+              <ReviewSection
+                productId={product.id}
+                initialOrderId={reviewOrderId}
+              />
             )}
 
           </div>
+          
         </div>
       </section>
 
