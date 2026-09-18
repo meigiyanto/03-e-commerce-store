@@ -109,6 +109,38 @@ export default function ProductCard({
                   }
                 />
               </button>
+
+              {/* PRODUCT COMPARE */}
+              <button
+                type="button"
+                onClick={() => toggleCompare(product)}
+                disabled={
+                  !isCompared && compareItems.length >= 4
+                }
+                className={`flex h-9 w-9 items-center justify-center rounded-lg border transition ${
+                  isCompared
+                    ? "border-blue-600 bg-blue-600 text-white"
+                    : "border-gray-200 bg-white text-gray-500 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600"
+                } ${
+                  !isCompared && compareItems.length >= 4
+                    ? "cursor-not-allowed opacity-50"
+                    : ""
+                }`}
+                title={
+                  isCompared
+                    ? "Hapus dari perbandingan"
+                    : compareItems.length >= 4
+                      ? "Maksimal 4 produk"
+                      : "Bandingkan produk"
+                }
+                aria-label={
+                  isCompared
+                    ? `Hapus ${product.name} dari perbandingan`
+                    : `Bandingkan ${product.name}`
+                }
+              >
+                <Scale size={17} />
+              </button>
             </div>
           </div>
         </Link>
@@ -170,37 +202,6 @@ export default function ProductCard({
               : "Stok habis"}
           </p>
         </div>
-
-        <button
-          type="button"
-          onClick={() => toggleCompare(product)}
-          disabled={
-            !isCompared && compareItems.length >= 4
-          }
-          className={`flex h-9 w-9 items-center justify-center rounded-lg border transition ${
-            isCompared
-              ? "border-blue-600 bg-blue-600 text-white"
-              : "border-gray-200 bg-white text-gray-500 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600"
-          } ${
-            !isCompared && compareItems.length >= 4
-              ? "cursor-not-allowed opacity-50"
-              : ""
-          }`}
-          title={
-            isCompared
-              ? "Hapus dari perbandingan"
-              : compareItems.length >= 4
-                ? "Maksimal 4 produk"
-                : "Bandingkan produk"
-          }
-          aria-label={
-            isCompared
-              ? `Hapus ${product.name} dari perbandingan`
-              : `Bandingkan ${product.name}`
-          }
-        >
-          <Scale size={17} />
-        </button>
       </div>
 
       {/* QUICK VIEW MODAL */}
