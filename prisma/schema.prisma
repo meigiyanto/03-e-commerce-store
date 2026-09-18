@@ -21,6 +21,7 @@ model Product {
   updatedAt   DateTime @updatedAt
 
   orderItems  OrderItem[]
+  reviews     Review[]
 
   @@index([category])
   @@index([createdAt])
@@ -57,6 +58,7 @@ model Order {
   updatedAt       DateTime    @updatedAt
 
   items           OrderItem[]
+  reviews         Review[]
 
   @@index([userId])
   @@index([createdAt])
@@ -80,4 +82,45 @@ model OrderItem {
 
   @@index([orderId])
   @@index([productId])
+}
+
+model Address {
+  id           String   @id @default(cuid())
+  userId       String
+
+  label        String
+  name         String
+  phone        String
+  address      String
+  city         String
+  province     String
+  postalCode   String
+  isDefault    Boolean  @default(false)
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model Review {
+  id          String   @id @default(cuid())
+
+  userId      String
+  productId   String
+  orderId     String
+
+  rating      Int
+  comment     String
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@index([productId])
+  @@index([orderId])
+  @@index([userId])
 }
