@@ -41,7 +41,7 @@ export default async function AccountPage() {
 
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
             <Link
-              href="/sign-in?redirect_url=/account"
+              href="/account/sign-in?redirect_url=/account"
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-purple-700 px-6 py-3 text-sm font-semibold text-white transition hover:bg-purple-800"
             >
               Masuk ke Akun

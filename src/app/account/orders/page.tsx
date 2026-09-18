@@ -67,7 +67,7 @@ export default async function AccountOrdersPage() {
           </h1>
 
           <Link
-            href="/sign-in?redirect_url=/account/orders"
+            href="/account/sign-in?redirect_url=/account/orders"
             className="mt-6 inline-flex rounded-xl bg-purple-700 px-5 py-3 text-sm font-semibold text-white"
           >
             Login
