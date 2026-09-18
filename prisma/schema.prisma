@@ -20,6 +20,64 @@ model Product {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  orderItems  OrderItem[]
+
   @@index([category])
   @@index([createdAt])
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  orderNumber     String      @unique
+
+  userId          String?
+
+  customerName    String
+  customerEmail   String
+  customerPhone   String
+
+  address         String
+  city            String
+  province        String
+  postalCode      String
+
+  subtotal        Float
+  shippingCost    Float
+  discount        Float
+  tax             Float
+  total           Float
+
+  couponCode      String?
+
+  paymentMethod   String
+  paymentStatus   String      @default("PENDING")
+  orderStatus     String      @default("PROCESSING")
+
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  items           OrderItem[]
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([paymentStatus])
+  @@index([orderStatus])
+}
+
+model OrderItem {
+  id          String   @id @default(cuid())
+
+  orderId     String
+  productId   String?
+
+  productName String
+  price       Float
+  quantity    Int
+  subtotal    Float
+
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product     Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  @@index([orderId])
+  @@index([productId])
 }
