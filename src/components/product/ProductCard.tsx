@@ -139,11 +139,7 @@ export default function ProductCard({
             <div className="mt-2">
               <ProductRating
                 rating={product.rating}
-                reviewCount={
-                  "reviewCount" in product
-                    ? product.reviewCount
-                    : 0
-                }
+                reviewCount={product.reviewCount ?? 0}
               />
             </div>
           )}

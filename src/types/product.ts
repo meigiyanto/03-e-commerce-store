@@ -6,7 +6,11 @@ export interface Product {
   image: string;
   category: string;
   rating: number;
+  reviewCount?: number;
   stock: number;
 }
 
-export type ProductInput = Omit<Product, "id">;
+export type ProductInput = Omit<
+  Product,
+  "id" | "reviewCount"
+>;

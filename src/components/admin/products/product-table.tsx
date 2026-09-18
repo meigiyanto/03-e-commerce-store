@@ -4,7 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Product } from "@/types/product";
-import { Button } from "@/components/ui/button";
+import {
+  Button,
+  buttonVariants,
+} from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface ProductTableProps {
   products: Product[];
