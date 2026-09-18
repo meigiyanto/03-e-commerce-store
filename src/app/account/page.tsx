@@ -13,6 +13,7 @@ import {
   UserRound,
 } from "lucide-react";
 
+import AccountSidebar from "@/components/account/AccountSidebar";
 import SignOutButton from "@/components/auth/SignOutButton";
 
 export default async function AccountPage() {
@@ -81,88 +82,12 @@ export default async function AccountPage() {
   return (
     <main className="min-h-[calc(100dvh-4rem)] bg-gray-50">
       <div className="mx-auto flex w-full max-w-7xl flex-col lg:flex-row">
-        {/* Sidebar */}
-        <aside className="w-full border-b border-gray-100 bg-white lg:min-h-[calc(100dvh-4rem)] lg:w-64 lg:border-b-0 lg:border-r">
-          <div className="p-4 sm:p-6 lg:sticky lg:top-20">
-            <div className="mb-6 flex items-center gap-3">
-              {user.imageUrl ? (
-                <img
-                  src={user.imageUrl}
-                  alt={fullName}
-                  className="h-11 w-11 rounded-full object-cover"
-                />
-              ) : (
-                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-purple-100 text-purple-700">
-                  <UserRound size={21} />
-                </div>
-              )}
-
-              <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-gray-900">
-                  {fullName}
-                </p>
-
-                <p className="truncate text-xs text-gray-500">{email}</p>
-              </div>
-            </div>
-
-            <nav className="space-y-1">
-              <AccountNavItem
-                href="/account"
-                icon={<Home size={17} />}
-                label="Overview"
-                active
-              />
-
-              <AccountNavItem
-                href="/account/orders"
-                icon={<ShoppingBag size={17} />}
-                label="Pesanan"
-              />
-
-              <AccountNavItem
-                href="/account/addresses"
-                icon={<MapPin size={17} />}
-                label="Alamat"
-              />
-
-              <AccountNavItem
-                href="/account/reviews"
-                icon={<Star size={17} />}
-                label="Review"
-              />
-
-              <AccountNavItem
-                href="/account/downloads"
-                icon={<FileText size={17} />}
-                label="Downloads"
-              />
-
-              <AccountNavItem
-                href="/account/settings"
-                icon={<Settings size={17} />}
-                label="Pengaturan"
-              />
-
-              {role === "admin" && (
-                <>
-                  <div className="my-3 border-t border-gray-100" />
-
-                  <AccountNavItem
-                    href="/admin"
-                    icon={<Package size={17} />}
-                    label="Admin Dashboard"
-                  />
-                </>
-              )}
-
-              <div className="my-3 border-t border-gray-100" />
-
-              <SignOutButton />
-            </nav>
-          </div>
-        </aside>
-
+        <AccountSidebar
+          fullName={fullName}
+          email={email}
+          imageUrl={user.imageUrl}
+          role={role}
+        />
         {/* Main */}
         <section className="min-w-0 flex-1 p-4 sm:p-6 lg:p-8">
           <div className="mx-auto max-w-5xl space-y-6">
@@ -383,32 +308,6 @@ export default async function AccountPage() {
         </section>
       </div>
     </main>
-  );
-}
-
-function AccountNavItem({
-  href,
-  icon,
-  label,
-  active = false,
-}: {
-  href: string;
-  icon: React.ReactNode;
-  label: string;
-  active?: boolean;
-}) {
-  return (
-    <Link
-      href={href}
-      className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition ${
-        active
-          ? "bg-purple-50 text-purple-700"
-          : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
-      }`}
-    >
-      {icon}
-      <span>{label}</span>
-    </Link>
   );
 }
 
