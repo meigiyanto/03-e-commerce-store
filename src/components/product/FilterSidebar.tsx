@@ -11,18 +11,14 @@ interface FilterSidebarProps {
   categories: string[]
   selectedCategory: string
   onCategoryChange: (category: string) => void
-
   minPrice: string
   maxPrice: string
   onMinPriceChange: (value: string) => void
   onMaxPriceChange: (value: string) => void
-
   minRating: string
   onMinRatingChange: (value: string) => void
-
   inStockOnly: boolean
   onInStockOnlyChange: (value: boolean) => void
-
   onReset: () => void
 }
 
@@ -30,18 +26,14 @@ export default function FilterSidebar({
   categories,
   selectedCategory,
   onCategoryChange,
-
   minPrice,
   maxPrice,
   onMinPriceChange,
   onMaxPriceChange,
-
   minRating,
   onMinRatingChange,
-
   inStockOnly,
   onInStockOnlyChange,
-
   onReset,
 }: FilterSidebarProps) {
   const [categoryOpen, setCategoryOpen] = useState(true)

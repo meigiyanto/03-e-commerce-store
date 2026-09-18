@@ -2,13 +2,29 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { ChevronRight, Grid2X2, Heart, List, Search, ShoppingCart, SlidersHorizontal, Star, X, } from "lucide-react";
-import Navbar from "@/components/layout/Navbar";
+import {
+  ChevronRight,
+  Grid2X2,
+  Heart,
+  List,
+  Search,
+  ShoppingCart,
+  SlidersHorizontal,
+  Star,
+  X,
+} from "lucide-react";
+
 import ProductCard from "@/components/product/ProductCard";
+import FilterSidebar from "@/components/product/FilterSidebar";
+
 import { Product } from "@/types/product";
 import { useProductStore } from "@/stores/product-store";
 import { useCartStore } from "@/stores/cart-store";
 import { useWishlistStore } from "@/stores/wishlist-store";
+
+/* =========================================================
+   FORMAT PRICE
+========================================================= */
 
 const formatPrice = (price: number) =>
   new Intl.NumberFormat("id-ID", {
@@ -17,68 +33,144 @@ const formatPrice = (price: number) =>
     maximumFractionDigits: 0,
   }).format(price);
 
+/* =========================================================
+   PRODUCTS PAGE
+========================================================= */
+
 export default function ProductsPage() {
+  /* =======================================================
+     UI STATE
+  ======================================================= */
+
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+
   const [search, setSearch] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("Semua");
+
+  const [selectedCategory, setSelectedCategory] =
+    useState("Semua");
+
   const [sortBy, setSortBy] = useState("default");
-  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+
+  const [isMobileFilterOpen, setIsMobileFilterOpen] =
+    useState(false);
+
+  /* =======================================================
+     FILTER STATE
+  ======================================================= */
+
   const [minPrice, setMinPrice] = useState("");
+
   const [maxPrice, setMaxPrice] = useState("");
+
   const [minRating, setMinRating] = useState("0");
+
   const [inStockOnly, setInStockOnly] = useState(false);
-  const products = useProductStore((state) => state.products);
-  const fetchProducts = useProductStore((state) => state.fetchProducts);
-  
+
+  /* =======================================================
+     PRODUCT STORE
+  ======================================================= */
+
+  const products = useProductStore(
+    (state) => state.products
+  );
+
+  const fetchProducts = useProductStore(
+    (state) => state.fetchProducts
+  );
+
+  /* =======================================================
+     FETCH PRODUCTS
+  ======================================================= */
+
   useEffect(() => {
     if (products.length === 0) {
       fetchProducts();
     }
   }, [products.length, fetchProducts]);
-  
-  const categories = [
-    "Semua",
-    ...Array.from(new Set(products.map((product) => product.category))),
-  ];
+
+  /* =======================================================
+     CATEGORIES
+  ======================================================= */
+
+  const categories = useMemo(() => {
+    const uniqueCategories = Array.from(
+      new Set(
+        products
+          .map((product) => product.category)
+          .filter(Boolean)
+      )
+    );
+
+    return ["Semua", ...uniqueCategories];
+  }, [products]);
+
+  /* =======================================================
+     FILTER + SEARCH + SORT
+  ======================================================= */
 
   const filteredProducts = useMemo(() => {
     let result = products.filter((product) => {
-      const query = search
-        .trim()
-        .toLowerCase();
-  
+      /* ---------------------------------------------------
+         SEARCH
+      --------------------------------------------------- */
+
+      const query = search.trim().toLowerCase();
+
+      const productName =
+        product.name?.toLowerCase() ?? "";
+
+      const productCategory =
+        product.category?.toLowerCase() ?? "";
+
+      const productDescription =
+        product.description?.toLowerCase() ?? "";
+
       const matchesSearch =
         query === "" ||
-        product.name
-          .toLowerCase()
-          .includes(query) ||
-        product.category
-          .toLowerCase()
-          .includes(query) ||
-        product.description
-          .toLowerCase()
-          .includes(query);
-  
+        productName.includes(query) ||
+        productCategory.includes(query) ||
+        productDescription.includes(query);
+
+      /* ---------------------------------------------------
+         CATEGORY
+      --------------------------------------------------- */
+
       const matchesCategory =
         selectedCategory === "Semua" ||
         product.category === selectedCategory;
-  
+
+      /* ---------------------------------------------------
+         MIN PRICE
+      --------------------------------------------------- */
+
       const minimumPrice =
         minPrice === ""
           ? true
           : product.price >= Number(minPrice);
-  
+
+      /* ---------------------------------------------------
+         MAX PRICE
+      --------------------------------------------------- */
+
       const maximumPrice =
         maxPrice === ""
           ? true
           : product.price <= Number(maxPrice);
-  
+
+      /* ---------------------------------------------------
+         RATING
+      --------------------------------------------------- */
+
       const matchesRating =
-        product.rating >= Number(minRating);
-  
+        (product.rating ?? 0) >= Number(minRating);
+
+      /* ---------------------------------------------------
+         STOCK
+      --------------------------------------------------- */
+
       const matchesStock =
         !inStockOnly || product.stock > 0;
-  
+
       return (
         matchesSearch &&
         matchesCategory &&
@@ -88,32 +180,36 @@ export default function ProductsPage() {
         matchesStock
       );
     });
-  
+
+    /* =====================================================
+       SORT
+    ===================================================== */
+
     switch (sortBy) {
       case "price-low":
         result = [...result].sort(
           (a, b) => a.price - b.price
         );
         break;
-  
+
       case "price-high":
         result = [...result].sort(
           (a, b) => b.price - a.price
         );
         break;
-  
+
       case "name-asc":
         result = [...result].sort((a, b) =>
           a.name.localeCompare(b.name)
         );
         break;
-  
+
       case "name-desc":
         result = [...result].sort((a, b) =>
           b.name.localeCompare(a.name)
         );
         break;
-  
+
       case "rating":
         result = [...result].sort(
           (a, b) =>
@@ -121,28 +217,32 @@ export default function ProductsPage() {
             (a.rating ?? 0)
         );
         break;
-  
+
       case "stock":
         result = [...result].sort(
           (a, b) => b.stock - a.stock
         );
         break;
-  
+
       default:
         break;
     }
-  
+
     return result;
   }, [
     products,
     search,
     selectedCategory,
-    sortBy,
     minPrice,
     maxPrice,
     minRating,
     inStockOnly,
+    sortBy,
   ]);
+
+  /* =======================================================
+     RESET FILTERS
+  ======================================================= */
 
   const resetFilters = () => {
     setSearch("");
@@ -154,17 +254,28 @@ export default function ProductsPage() {
     setSortBy("default");
   };
 
+  /* =======================================================
+     ACTIVE FILTER CHECK
+  ======================================================= */
+
   const hasActiveFilters =
-    search !== "" ||
+    search.trim() !== "" ||
     selectedCategory !== "Semua" ||
     minPrice !== "" ||
     maxPrice !== "" ||
     minRating !== "0" ||
     inStockOnly;
 
+  /* =======================================================
+     RENDER
+  ======================================================= */
+
   return (
     <main className="min-h-screen bg-gray-50">
-      {/* ================= BREADCRUMB ================= */}
+      {/* ===================================================
+          BREADCRUMB
+      =================================================== */}
+
       <div className="border-b bg-white">
         <div className="mx-auto flex max-w-7xl items-center gap-2 px-4 py-4 text-sm md:px-8">
           <Link
@@ -184,7 +295,11 @@ export default function ProductsPage() {
           </span>
         </div>
       </div>
-      {/* ================= PAGE HEADER ================= */}
+
+      {/* ===================================================
+          PAGE HEADER
+      =================================================== */}
+
       <section className="border-b bg-white">
         <div className="mx-auto max-w-7xl px-4 py-10 md:px-8 md:py-14">
           <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
@@ -201,7 +316,11 @@ export default function ProductsPage() {
           </p>
         </div>
       </section>
-      {/* ================= SEARCH ================= */}
+
+      {/* ===================================================
+          SEARCH
+      =================================================== */}
+
       <section className="border-b bg-white">
         <div className="mx-auto max-w-7xl px-4 py-6 md:px-8">
           <div className="relative">
@@ -222,38 +341,61 @@ export default function ProductsPage() {
           </div>
         </div>
       </section>
-      {/* ================= PRODUCTS ================= */}
+
+      {/* ===================================================
+          PRODUCTS
+      =================================================== */}
+
       <section className="mx-auto max-w-7xl px-4 py-8 md:px-8 md:py-10">
         <div className="flex gap-8">
-          {/* ================= SIDEBAR ================= */}
+          {/* =================================================
+              DESKTOP FILTER SIDEBAR
+          ================================================= */}
+
           <aside className="hidden w-64 shrink-0 lg:block">
             <FilterSidebar
               categories={categories}
               selectedCategory={selectedCategory}
-              setSelectedCategory={
-                setSelectedCategory
-              }
+              onCategoryChange={setSelectedCategory}
               minPrice={minPrice}
               maxPrice={maxPrice}
-              setMinPrice={setMinPrice}
-              setMaxPrice={setMaxPrice}
-              resetFilters={resetFilters}
-              hasActiveFilters={hasActiveFilters}
+              onMinPriceChange={setMinPrice}
+              onMaxPriceChange={setMaxPrice}
+              minRating={minRating}
+              onMinRatingChange={setMinRating}
+              inStockOnly={inStockOnly}
+              onInStockOnlyChange={setInStockOnly}
+              onReset={resetFilters}
             />
           </aside>
-          {/* ================= PRODUCT CONTENT ================= */}
+
+          {/* =================================================
+              PRODUCT CONTENT
+          ================================================= */}
+
           <div className="min-w-0 flex-1">
-            {/* Toolbar */}
+            {/* ===============================================
+                TOOLBAR
+            =============================================== */}
+
             <div className="mb-6 flex flex-col gap-4 rounded-xl border border-gray-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
+              {/* LEFT TOOLBAR */}
               <div className="flex items-center gap-3">
+                {/* MOBILE FILTER BUTTON */}
+
                 <button
                   type="button"
-                  onClick={() => setIsMobileFilterOpen(true) }
-                  className="flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 lg:hidden"
+                  onClick={() =>
+                    setIsMobileFilterOpen(true)
+                  }
+                  className="flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 lg:hidden"
                 >
                   <SlidersHorizontal size={18} />
+
                   Filter
                 </button>
+
+                {/* PRODUCT COUNT */}
 
                 <p className="text-sm text-gray-500">
                   Menampilkan{" "}
@@ -263,93 +405,139 @@ export default function ProductsPage() {
                   produk
                 </p>
               </div>
+
+              {/* RIGHT TOOLBAR */}
+
               <div className="flex items-center gap-3">
-                {/* View Toggle */}
+                {/* VIEW TOGGLE */}
+
                 <div className="hidden items-center rounded-lg border border-gray-200 p-1 sm:flex">
+                  {/* GRID */}
+
                   <button
                     type="button"
-                    onClick={() => setViewMode("grid")}
+                    onClick={() =>
+                      setViewMode("grid")
+                    }
                     className={`rounded-md p-2 transition ${
                       viewMode === "grid"
                         ? "bg-blue-50 text-blue-600"
                         : "text-gray-400 hover:text-gray-700"
                     }`}
                     aria-label="Grid view"
-                    aria-pressed={viewMode === "grid"}
+                    aria-pressed={
+                      viewMode === "grid"
+                    }
                   >
                     <Grid2X2 size={17} />
                   </button>
-                
+
+                  {/* LIST */}
+
                   <button
                     type="button"
-                    onClick={() => setViewMode("list")}
+                    onClick={() =>
+                      setViewMode("list")
+                    }
                     className={`rounded-md p-2 transition ${
                       viewMode === "list"
                         ? "bg-blue-50 text-blue-600"
                         : "text-gray-400 hover:text-gray-700"
                     }`}
                     aria-label="List view"
-                    aria-pressed={viewMode === "list"}
+                    aria-pressed={
+                      viewMode === "list"
+                    }
                   >
                     <List size={17} />
                   </button>
                 </div>
 
-                {/* Sorting */}
+                {/* SORTING */}
+
                 <select
                   value={sortBy}
-                  onChange={(event) => setSortBy(event.target.value) }
+                  onChange={(event) =>
+                    setSortBy(event.target.value)
+                  }
                   className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 outline-none focus:border-blue-500"
+                  aria-label="Urutkan produk"
                 >
                   <option value="default">
                     Urutkan Produk
                   </option>
+
                   <option value="price-low">
                     Harga Terendah
                   </option>
+
                   <option value="price-high">
                     Harga Tertinggi
                   </option>
-                  <option value="name">
+
+                  <option value="name-asc">
                     Nama A-Z
                   </option>
+
+                  <option value="name-desc">
+                    Nama Z-A
+                  </option>
+
                   <option value="rating">
                     Rating Tertinggi
+                  </option>
+
+                  <option value="stock">
+                    Stok Terbanyak
                   </option>
                 </select>
               </div>
             </div>
 
-            {/* Active Filters */}
+            {/* ===============================================
+                ACTIVE FILTERS
+            =============================================== */}
+
             {hasActiveFilters && (
               <div className="mb-6 flex flex-wrap items-center gap-2">
                 <span className="text-sm text-gray-500">
                   Filter aktif:
                 </span>
 
+                {/* CATEGORY CHIP */}
+
                 {selectedCategory !== "Semua" && (
                   <button
                     type="button"
-                    onClick={() => setSelectedCategory("Semua")}
+                    onClick={() =>
+                      setSelectedCategory("Semua")
+                    }
                     className="flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700"
                   >
                     {selectedCategory}
+
                     <X size={14} />
                   </button>
                 )}
 
-                {search && (
+                {/* SEARCH CHIP */}
+
+                {search.trim() !== "" && (
                   <button
                     type="button"
-                    onClick={() =>setSearch("")}
+                    onClick={() => setSearch("")}
                     className="flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700"
                   >
                     "{search}"
+
                     <X size={14} />
                   </button>
                 )}
 
-                {(minPrice || maxPrice) && (
+                {/* PRICE CHIP */}
+
+                {(minPrice !== "" ||
+                  maxPrice !== "") && (
                   <button
                     type="button"
                     onClick={() => {
@@ -359,17 +547,56 @@ export default function ProductsPage() {
                     className="flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700"
                   >
                     {minPrice
-                      ? formatPrice(Number(minPrice))
-                      : "Rp 0"}{" "}
-                    -
-                    {" "}
+                      ? formatPrice(
+                          Number(minPrice)
+                        )
+                      : "Rp 0"}
+
+                    {" - "}
+
                     {maxPrice
-                      ? formatPrice(Number(maxPrice))
+                      ? formatPrice(
+                          Number(maxPrice)
+                        )
                       : "∞"}
 
                     <X size={14} />
                   </button>
                 )}
+
+                {/* RATING CHIP */}
+
+                {minRating !== "0" && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setMinRating("0")
+                    }
+                    className="flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700"
+                  >
+                    ⭐ {minRating}+
+
+                    <X size={14} />
+                  </button>
+                )}
+
+                {/* STOCK CHIP */}
+
+                {inStockOnly && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setInStockOnly(false)
+                    }
+                    className="flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700"
+                  >
+                    Stok tersedia
+
+                    <X size={14} />
+                  </button>
+                )}
+
+                {/* RESET */}
 
                 <button
                   type="button"
@@ -381,37 +608,51 @@ export default function ProductsPage() {
               </div>
             )}
 
-            {/* Products Grid */}
+            {/* ===============================================
+                PRODUCT LIST
+            =============================================== */}
+
             {filteredProducts.length > 0 ? (
               viewMode === "grid" ? (
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
-                  {filteredProducts.map((product) => (
-                    <ProductCard
-                      key={product.id}
-                      product={product}
-                    />
-                  ))}
+                  {filteredProducts.map(
+                    (product) => (
+                      <ProductCard
+                        key={product.id}
+                        product={product}
+                      />
+                    )
+                  )}
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {filteredProducts.map((product) => (
-                    <ProductListItem
-                      key={product.id}
-                      product={product}
-                    />
-                  ))}
+                  {filteredProducts.map(
+                    (product) => (
+                      <ProductListItem
+                        key={product.id}
+                        product={product}
+                      />
+                    )
+                  )}
                 </div>
               )
             ) : (
-              <EmptyState resetFilters={resetFilters} />
+              <EmptyState
+                resetFilters={resetFilters}
+              />
             )}
           </div>
         </div>
       </section>
-      {/* ================= MOBILE FILTER ================= */}
+
+      {/* ===================================================
+          MOBILE FILTER
+      =================================================== */}
+
       {isMobileFilterOpen && (
         <div className="fixed inset-0 z-[100] bg-black/40 lg:hidden">
           <div className="absolute bottom-0 left-0 right-0 max-h-[85vh] overflow-y-auto rounded-t-3xl bg-white p-5">
+            {/* MOBILE FILTER HEADER */}
 
             <div className="mb-6 flex items-center justify-between">
               <div>
@@ -429,33 +670,38 @@ export default function ProductsPage() {
                 onClick={() =>
                   setIsMobileFilterOpen(false)
                 }
-                className="rounded-lg p-2 text-gray-500 hover:bg-gray-100"
+                className="rounded-lg p-2 text-gray-500 transition hover:bg-gray-100"
                 aria-label="Tutup filter"
               >
                 <X size={22} />
               </button>
             </div>
 
+            {/* FILTER */}
+
             <FilterSidebar
               categories={categories}
               selectedCategory={selectedCategory}
-              setSelectedCategory={
-                setSelectedCategory
-              }
+              onCategoryChange={setSelectedCategory}
               minPrice={minPrice}
               maxPrice={maxPrice}
-              setMinPrice={setMinPrice}
-              setMaxPrice={setMaxPrice}
-              resetFilters={resetFilters}
-              hasActiveFilters={hasActiveFilters}
+              onMinPriceChange={setMinPrice}
+              onMaxPriceChange={setMaxPrice}
+              minRating={minRating}
+              onMinRatingChange={setMinRating}
+              inStockOnly={inStockOnly}
+              onInStockOnlyChange={setInStockOnly}
+              onReset={resetFilters}
             />
+
+            {/* APPLY */}
 
             <button
               type="button"
               onClick={() =>
                 setIsMobileFilterOpen(false)
               }
-              className="mt-6 w-full rounded-xl bg-blue-600 py-3 font-semibold text-white"
+              className="mt-6 w-full rounded-xl bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-700"
             >
               Terapkan Filter
             </button>
@@ -466,190 +712,39 @@ export default function ProductsPage() {
   );
 }
 
-/* ================= FILTER SIDEBAR ================= */
-
-type FilterSidebarProps = {
-  categories: string[];
-  selectedCategory: string;
-  setSelectedCategory: (category: string) => void;
-  minPrice: string;
-  maxPrice: string;
-  setMinPrice: (price: string) => void;
-  setMaxPrice: (price: string) => void;
-  minRating: string;
-  setMinRating: (rating: string) => void;
-  inStockOnly: boolean;
-  setInStockOnly: (value: boolean) => void;
-  resetFilters: () => void;
-  hasActiveFilters: boolean;
-};
-
-function FilterSidebar({
-  categories,
-  selectedCategory,
-  setSelectedCategory,
-  minPrice,
-  maxPrice,
-  setMinPrice,
-  setMaxPrice,
-  minRating,
-  setMinRating,
-  inStockOnly,
-  setInStockOnly,
-  resetFilters,
-  hasActiveFilters,
-}: FilterSidebarProps) {
-  return (
-    <div className="rounded-xl border border-gray-200 bg-white">
-
-      {/* Filter Header */}
-      <div className="flex items-center justify-between border-b px-5 py-4">
-        <div className="flex items-center gap-2">
-          <SlidersHorizontal
-            size={18}
-            className="text-blue-600"
-          />
-
-          <h2 className="font-bold text-gray-900">
-            Filter Produk
-          </h2>
-        </div>
-
-        {hasActiveFilters && (
-          <button
-            type="button"
-            onClick={resetFilters}
-            className="text-xs font-semibold text-red-500 hover:text-red-600"
-          >
-            Reset
-          </button>
-        )}
-      </div>
-
-      {/* Categories */}
-      <div className="border-b p-5">
-        <h3 className="mb-4 text-sm font-bold text-gray-900">
-          Kategori
-        </h3>
-
-        <div className="space-y-1">
-          {categories.map((category) => (
-              <button
-                key={category}
-                type="button"
-                onClick={() =>setSelectedCategory(category)}
-                className={`flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left text-sm transition ${
-                  selectedCategory ===
-                  category
-                    ? "bg-blue-50 font-semibold text-blue-600"
-                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                }`}
-              >
-                {category}
-                {selectedCategory ===
-                  category && (
-                  <span className="h-2 w-2 rounded-full bg-blue-600" />
-                )}
-              </button>
-            ))}
-        </div>
-      </div>
-
-      {/* Price */}
-      <div className="p-5">
-        <h3 className="mb-4 text-sm font-bold text-gray-900">
-          Rentang Harga
-        </h3>
-
-        <div className="space-y-3">
-          <input
-            type="number"
-            value={minPrice}
-            onChange={(event) => setMinPrice(event.target.value)}
-            placeholder="Harga minimum"
-            min="0"
-            className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-blue-500"
-          />
-
-          <input
-            type="number"
-            value={maxPrice}
-            onChange={(event) =>setMaxPrice(event.target.value)}
-            placeholder="Harga maksimum"
-            min="0"
-            className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-blue-500"
-          />
-        </div>
-      </div>
-
-      {/* Rating */}
-      <div className="border-t p-5">
-        <h3 className="mb-4 text-sm font-bold text-gray-900">
-          Rating Minimum
-        </h3>
-      
-        <div className="space-y-2">
-          {[
-            { value: "0", label: "Semua Rating" },
-            { value: "4", label: "⭐ 4 ke atas" },
-            { value: "3", label: "⭐ 3 ke atas" },
-            { value: "2", label: "⭐ 2 ke atas" },
-          ].map((rating) => (
-            <button
-              key={rating.value}
-              type="button"
-              onClick={() =>
-                setMinRating(rating.value)
-              }
-              className={`flex w-full items-center rounded-lg px-3 py-2.5 text-left text-sm transition ${
-                minRating === rating.value
-                  ? "bg-blue-50 font-semibold text-blue-600"
-                  : "text-gray-600 hover:bg-gray-50"
-              }`}
-            >
-              {rating.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Stock */}
-      <div className="border-t p-5">
-        <label className="flex cursor-pointer items-center gap-3">
-          <input
-            type="checkbox"
-            checked={inStockOnly}
-            onChange={(event) =>
-              setInStockOnly(
-                event.target.checked
-              )
-            }
-            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-          />
-      
-          <span className="text-sm font-medium text-gray-700">
-            Hanya tampilkan produk tersedia
-          </span>
-        </label>
-      </div>
-    </div>
-  );
-}
+/* =========================================================
+   PRODUCT LIST ITEM
+========================================================= */
 
 type ProductListItemProps = {
   product: Product;
 };
 
-function ProductListItem({ product, }: ProductListItemProps) {
-  const addItem = useCartStore((state) => state.addItem);
-  const toggleItem = useWishlistStore((state) => state.toggleItem);
-  const isFavorite = useWishlistStore((state) =>state.items.some((item) => item.id === product.id));
+function ProductListItem({
+  product,
+}: ProductListItemProps) {
+  const addItem = useCartStore(
+    (state) => state.addItem
+  );
+
+  const toggleItem = useWishlistStore(
+    (state) => state.toggleItem
+  );
+
+  const isFavorite = useWishlistStore(
+    (state) =>
+      state.items.some(
+        (item) => item.id === product.id
+      )
+  );
 
   return (
     <article className="group overflow-hidden rounded-xl border border-gray-200 bg-white transition hover:border-blue-200 hover:shadow-md">
       <div className="flex flex-col sm:flex-row">
+        {/* =================================================
+            PRODUCT IMAGE
+        ================================================= */}
 
-        {/* Product Image */}
         <Link
           href={`/products/${product.id}`}
           className="flex h-56 shrink-0 items-center justify-center bg-gray-50 p-5 sm:h-auto sm:w-56"
@@ -661,17 +756,25 @@ function ProductListItem({ product, }: ProductListItemProps) {
           />
         </Link>
 
-        {/* Product Information */}
+        {/* =================================================
+            PRODUCT INFORMATION
+        ================================================= */}
+
         <div className="flex min-w-0 flex-1 flex-col p-5">
+          {/* HEADER */}
 
           <div className="flex items-start justify-between gap-4">
             <div>
+              {/* CATEGORY */}
+
               <Link
                 href="/products"
                 className="text-xs font-semibold uppercase tracking-wider text-blue-600"
               >
                 {product.category}
               </Link>
+
+              {/* NAME */}
 
               <Link
                 href={`/products/${product.id}`}
@@ -681,7 +784,8 @@ function ProductListItem({ product, }: ProductListItemProps) {
               </Link>
             </div>
 
-            {/* Wishlist */}
+            {/* WISHLIST */}
+
             <button
               type="button"
               onClick={() =>
@@ -692,7 +796,11 @@ function ProductListItem({ product, }: ProductListItemProps) {
                   ? "border-red-100 bg-red-50 text-red-500"
                   : "border-gray-200 text-gray-500 hover:border-red-200 hover:text-red-500"
               }`}
-              aria-label="Tambah ke wishlist"
+              aria-label={
+                isFavorite
+                  ? "Hapus dari wishlist"
+                  : "Tambah ke wishlist"
+              }
             >
               <Heart
                 size={19}
@@ -705,7 +813,10 @@ function ProductListItem({ product, }: ProductListItemProps) {
             </button>
           </div>
 
-          {/* Rating */}
+          {/* =================================================
+              RATING
+          ================================================= */}
+
           <div className="mt-3 flex items-center gap-2">
             <div className="flex">
               {Array.from({
@@ -735,40 +846,61 @@ function ProductListItem({ product, }: ProductListItemProps) {
             </span>
           </div>
 
-          {/* Description */}
+          {/* =================================================
+              DESCRIPTION
+          ================================================= */}
+
           <p className="mt-4 line-clamp-2 text-sm leading-relaxed text-gray-500">
             {product.description}
           </p>
 
-          {/* Bottom */}
+          {/* =================================================
+              BOTTOM
+          ================================================= */}
+
           <div className="mt-5 flex flex-col gap-4 border-t pt-4 sm:flex-row sm:items-center sm:justify-between">
+            {/* PRICE */}
+
             <div>
               <p className="text-xl font-bold text-blue-600">
                 {formatPrice(product.price)}
               </p>
 
               <p className="mt-1 text-xs text-gray-400">
-                Produk berkualitas
+                {product.stock > 0
+                  ? `${product.stock} stok tersedia`
+                  : "Stok habis"}
               </p>
             </div>
 
+            {/* ACTIONS */}
+
             <div className="flex gap-3">
+              {/* CART */}
+
               <button
                 type="button"
                 onClick={() =>
                   addItem(product)
                 }
-                className="flex items-center justify-center gap-2 rounded-lg border border-blue-600 px-4 py-2.5 text-sm font-semibold text-blue-600 transition hover:bg-blue-50"
+                disabled={product.stock <= 0}
+                className="flex items-center justify-center gap-2 rounded-lg border border-blue-600 px-4 py-2.5 text-sm font-semibold text-blue-600 transition hover:bg-blue-50 disabled:cursor-not-allowed disabled:border-gray-300 disabled:text-gray-400 disabled:hover:bg-transparent"
               >
                 <ShoppingCart size={18} />
-                Keranjang
+
+                {product.stock > 0
+                  ? "Keranjang"
+                  : "Stok Habis"}
               </button>
+
+              {/* DETAIL */}
 
               <Link
                 href={`/products/${product.id}`}
                 className="flex items-center justify-center gap-1 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
               >
                 Detail
+
                 <ChevronRight size={17} />
               </Link>
             </div>
@@ -779,23 +911,37 @@ function ProductListItem({ product, }: ProductListItemProps) {
   );
 }
 
-/* ================= EMPTY STATE ================= */
-function EmptyState({resetFilters}: {resetFilters: () => void}) {
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+function EmptyState({
+  resetFilters,
+}: {
+  resetFilters: () => void;
+}) {
   return (
     <div className="rounded-2xl border border-dashed border-gray-300 bg-white px-6 py-20 text-center">
+      {/* ICON */}
 
       <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 text-gray-400">
         <Search size={30} />
       </div>
 
+      {/* TITLE */}
+
       <h2 className="mt-5 text-xl font-bold text-gray-900">
         Produk Tidak Ditemukan
       </h2>
 
+      {/* DESCRIPTION */}
+
       <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-gray-500">
-        Kami belum menemukan produk yang sesuai dengan
-        pencarian atau filter Anda.
+        Kami belum menemukan produk yang sesuai
+        dengan pencarian atau filter Anda.
       </p>
+
+      {/* RESET */}
 
       <button
         type="button"
@@ -807,4 +953,3 @@ function EmptyState({resetFilters}: {resetFilters: () => void}) {
     </div>
   );
 }
-
