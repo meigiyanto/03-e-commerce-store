@@ -84,17 +84,17 @@ export function ProductTable({
 
               <td className="px-4 py-3">
                 <div className="flex justify-end gap-2">
-                  <Button
-                    asChild
-                    variant="outline"
-                    size="sm"
+                  <Link
+                    href={`/admin/products/${product.id}/edit`}
+                    className={cn(
+                      buttonVariants({
+                        variant: "outline",
+                        size: "sm",
+                      })
+                    )}
                   >
-                    <Link
-                      href={`/admin/products/${product.id}/edit`}
-                    >
-                      Edit
-                    </Link>
-                  </Button>
+                    Edit
+                  </Link>
 
                   <Button
                     variant="destructive"
