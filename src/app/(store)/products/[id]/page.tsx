@@ -35,14 +35,14 @@ const formatPrice = (price: number) =>
 
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const router = useRouter();
+
   const searchParams = useSearchParams();
   const reviewOrderId = searchParams.get("orderId") ?? undefined;
-  const router = useRouter();
+
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState("description");
-  const searchParams = useSearchParams();
-  const reviewOrderId = searchParams.get("orderId") ?? undefined;
-  
+
   useEffect(() => {
     if (searchParams.get("review") === "1") {
       setActiveTab("reviews");
@@ -50,6 +50,7 @@ export default function ProductDetailPage() {
   }, [searchParams]);
 
   const products = useProductStore((state) => state.products);
+ 
   const fetchProducts = useProductStore((state) => state.fetchProducts);
   const isLoading = useProductStore((state) => state.isLoading);
   const error = useProductStore((state) => state.error);
