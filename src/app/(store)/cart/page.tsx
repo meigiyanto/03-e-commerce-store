@@ -372,13 +372,13 @@ export default function CartPage() {
                 </div>
 
                 {/* Checkout */}
-                <button
-                  type="button"
+                <Link
+                  href="/checkout"
                   className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 hover:shadow-md"
                 >
                   Lanjut ke Checkout
                   <ArrowRight size={17} />
-                </button>
+                </Link>
 
                 {/* Continue Shopping */}
                 <Link
