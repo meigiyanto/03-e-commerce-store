@@ -137,9 +137,7 @@ export default function ProductDetailPage() {
   };
 
   const decreaseQuantity = () => {
-    setQuantity((current) =>
-      current > 1 ? current - 1 : 1
-    );
+    setQuantity((current) => current > 1 ? current - 1 : 1);
   };
 
   const handleAddToCart = () => {
@@ -417,63 +415,6 @@ export default function ProductDetailPage() {
               </button>
 
             </div>
-
-            {/* FEATURES */}
-            <div className="mt-8 grid gap-4 border-t pt-7 sm:grid-cols-3">
-
-              <ProductFeature
-                icon={<Truck size={22} />}
-                title="Pengiriman Cepat"
-                description="Pengiriman aman ke seluruh Indonesia."
-              />
-
-              <ProductFeature
-                icon={<ShieldCheck size={22} />}
-                title="Pembayaran Aman"
-                description="Transaksi aman dan terpercaya."
-              />
-
-              <ProductFeature
-                icon={<PackageCheck size={22} />}
-                title="Produk Terjamin"
-                description="Produk berkualitas dan pilihan."
-              />
-
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* STORE */}
-      <section className="mx-auto max-w-7xl px-4 pb-6 md:px-8">
-        <div className="rounded-2xl border border-gray-200 bg-white p-5 md:p-6">
-
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-
-            <div className="flex items-center gap-4">
-
-              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-                <Store size={27} />
-              </div>
-
-              <div>
-                <h3 className="font-bold text-gray-900">
-                  NexaShop Official Store
-                </h3>
-
-                <p className="mt-1 text-sm text-gray-500">
-                  Penjual terpercaya dengan produk berkualitas.
-                </p>
-              </div>
-
-            </div>
-
-            <button
-              type="button"
-              className="rounded-lg border border-blue-600 px-5 py-2.5 text-sm font-semibold text-blue-600 transition hover:bg-blue-50"
-            >
-              Kunjungi Toko
-            </button>
 
           </div>
         </div>
