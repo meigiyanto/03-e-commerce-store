@@ -8,10 +8,10 @@ import ProductRating from "@/components/product/ProductRating";
 import ProductQuickView from "@/components/product/ProductQuickView";
 
 import { Product } from "@/types/product";
-import { useWishlistStore } from "@/stores/wishlist-store";
 import { Scale } from "lucide-react";
 import { useCartStore } from "@/stores/cart-store";
 import { useComparisonStore } from "@/stores/comparison-store";
+import { useWishlistStore } from "@/stores/wishlist-store";
 
 type ProductCardProps = {
   product: Product;
