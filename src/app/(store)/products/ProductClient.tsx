@@ -44,6 +44,6 @@ export default function ProductsClient({initialProducts,categories}:{initialProd
             </div> : <div className="rounded-2xl border border-dashed bg-white p-16 text-center text-gray-500">Produk tidak ditemukan.</div>
           }
       </section>
-   </main>;
+   </main>
   )
 }
