@@ -78,12 +78,23 @@ export default function Navbar() {
   const cartItems = useCartStore((state) => state.items);
   const wishlistItems = useWishlistStore((state) => state.ids);
 
+  const [isMounted, setIsMounted] = useState(false);
+  
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  /* Saat render badge:
+  {isMounted && cartItemCount > 0 && (
+    <span className="...">...</span>
+  )}
+  */
+
   /*
    * ========================================
    * CART / WISHLIST COUNT
    * ========================================
    */
-
   const cartItemCount = cartItems.reduce((total, item) => total + item.quantity,0);
   const wishlistItemCount = wishlistItems.length;
 
@@ -92,7 +103,6 @@ export default function Navbar() {
    * SEARCH AUTOCOMPLETE
    * ========================================
    */
-
   const autocompleteProducts = useMemo(() => {
     const query = searchQuery
       .trim()
@@ -122,7 +132,6 @@ export default function Navbar() {
    * SEARCH SUBMIT
    * ========================================
    */
-
   const submitSearch = (queryValue = searchQuery) => {
     const query = queryValue.trim();
 
@@ -148,7 +157,6 @@ export default function Navbar() {
    * AUTOCOMPLETE ITEM
    * ========================================
    */
-
   const handleAutocompleteClick = (productId: string) => {
     setSearchQuery("");
     setIsSearchOpen(false);
@@ -161,7 +169,6 @@ export default function Navbar() {
    * KEYBOARD SEARCH
    * ========================================
    */
-
   const handleSearchKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Escape") {
       setIsSearchOpen(false);
@@ -185,7 +192,6 @@ export default function Navbar() {
    * CLICK OUTSIDE AUTOCOMPLETE
    * ========================================
    */
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
@@ -218,7 +224,6 @@ export default function Navbar() {
    * ACTIVE NAVIGATION
    * ========================================
    */
-
   const isActiveLink = (href: string) => {
     if (href === "/") {
       return pathname === "/";
@@ -232,7 +237,6 @@ export default function Navbar() {
       {/* ========================================
           TOP BAR
       ======================================== */}
-
       <div className="hidden border-b border-gray-100 bg-gray-50 md:block">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2 md:px-8">
           <p className="text-xs text-gray-500">
@@ -261,11 +265,9 @@ export default function Navbar() {
       {/* ========================================
           MAIN HEADER
       ======================================== */}
-
       <div className="border-b border-gray-100">
         <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-4 md:px-8">
           {/* Mobile Menu Button */}
-
           <button
             type="button"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -280,7 +282,6 @@ export default function Navbar() {
           </button>
 
           {/* Logo */}
-
           <Link
             href="/"
             className="shrink-0"
@@ -299,7 +300,6 @@ export default function Navbar() {
           {/* ========================================
               DESKTOP SEARCH
           ======================================== */}
-
           <div
             ref={desktopSearchRef}
             className="relative hidden flex-1 md:block"
@@ -429,7 +429,6 @@ export default function Navbar() {
                       </div>
 
                       {/* See all results */}
-
                       <button
                         type="button"
                         onMouseDown={(
@@ -453,10 +452,8 @@ export default function Navbar() {
           {/* ========================================
               DESKTOP / MOBILE ACTIONS
           ======================================== */}
-
           <div className="ml-auto flex items-center gap-1 sm:gap-2">
             {/* Mobile Search */}
-
             <button
               type="button"
               onClick={() => {
@@ -476,7 +473,6 @@ export default function Navbar() {
             </button>
 
             {/* Account Desktop */}
-
             <Link
               href="/account"
               className="hidden items-center gap-3 rounded-lg px-3 py-2 transition hover:bg-gray-50 lg:flex"
@@ -497,7 +493,6 @@ export default function Navbar() {
             </Link>
 
             {/* Account Mobile */}
-
             <Link
               href="/account"
               className="flex h-10 w-10 items-center justify-center rounded-lg text-gray-700 transition hover:bg-gray-100 lg:hidden"
@@ -507,15 +502,13 @@ export default function Navbar() {
             </Link>
 
             {/* Wishlist */}
-
             <Link
               href="/wishlist"
               className="relative flex h-10 w-10 items-center justify-center rounded-lg text-gray-700 transition hover:bg-red-50 hover:text-red-500"
               aria-label="Wishlist"
             >
               <Heart size={21} />
-
-              {wishlistItemCount > 0 && (
+              {isMounted && wishlistItemCount > 0 && (
                 <span className="absolute -right-1 -top-1 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
                   {wishlistItemCount > 99
                     ? "99+"
@@ -525,7 +518,6 @@ export default function Navbar() {
             </Link>
 
             {/* Cart */}
-
             <Link
               href="/cart"
               className="relative flex h-10 w-10 items-center justify-center rounded-lg text-gray-700 transition hover:bg-blue-50 hover:text-blue-600"
@@ -533,7 +525,7 @@ export default function Navbar() {
             >
               <ShoppingCart size={21} />
 
-              {cartItemCount > 0 && (
+              {isMounted && cartItemCount > 0 && (
                 <span className="absolute -right-1 -top-1 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-blue-600 px-1 text-[10px] font-bold text-white">
                   {cartItemCount > 99
                     ? "99+"
@@ -547,7 +539,6 @@ export default function Navbar() {
         {/* ========================================
             MOBILE SEARCH
         ======================================== */}
-
         {isSearchOpen && (
           <div
             ref={mobileSearchRef}
@@ -585,7 +576,6 @@ export default function Navbar() {
               />
 
               {/* Mobile Autocomplete */}
-
               {searchQuery.trim() &&
                 autocompleteProducts.length >
                   0 && (
@@ -681,7 +671,6 @@ export default function Navbar() {
       {/* ========================================
           CATEGORY NAVIGATION
       ======================================== */}
-
       <div className="hidden border-b border-gray-100 bg-white lg:block">
         <div className="mx-auto flex max-w-7xl items-center gap-7 px-8">
           {/* Department Dropdown */}
@@ -766,12 +755,10 @@ export default function Navbar() {
       {/* ========================================
           MOBILE MENU
       ======================================== */}
-
       {isMobileMenuOpen && (
         <div className="border-b border-gray-200 bg-white lg:hidden">
           <div className="mx-auto max-w-7xl px-4 py-5">
             {/* Main Navigation */}
-
             <nav className="flex flex-col">
               {navigationLinks.map((link) => (
                 <Link
@@ -792,7 +779,6 @@ export default function Navbar() {
             </nav>
 
             {/* Categories */}
-
             <div className="mt-6">
               <p className="mb-3 text-xs font-bold uppercase tracking-wider text-gray-400">
                 Kategori
@@ -819,7 +805,6 @@ export default function Navbar() {
             </div>
 
             {/* Mobile Promotion */}
-
             <Link
               href="/promo"
               onClick={() =>
