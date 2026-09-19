@@ -333,11 +333,6 @@ export default function Navbar() {
                   className="h-12 w-full rounded-xl border border-gray-200 bg-gray-50 pl-12 pr-28 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-50"
                   aria-label="Cari produk"
                   aria-autocomplete="list"
-                  aria-expanded={
-                    isSearchOpen &&
-                    autocompleteProducts.length >
-                      0
-                  }
                 />
 
                 <button
@@ -447,8 +442,7 @@ export default function Navbar() {
                         }
                         className="flex w-full items-center justify-center border-t border-gray-100 px-4 py-3 text-sm font-semibold text-blue-600 transition hover:bg-blue-50"
                       >
-                        Lihat semua hasil untuk "
-                        {searchQuery.trim()}"
+                        Lihat semua hasil untuk &quot;{searchQuery.trim()}&quot;
                       </button>
                     </div>
                   )}
@@ -473,7 +467,6 @@ export default function Navbar() {
               }}
               className="flex h-10 w-10 items-center justify-center rounded-lg text-gray-700 transition hover:bg-gray-100 md:hidden"
               aria-label="Cari produk"
-              aria-expanded={isSearchOpen}
             >
               {isSearchOpen ? (
                 <X size={21} />
@@ -702,9 +695,6 @@ export default function Navbar() {
                 )
               }
               className="flex items-center gap-2 border-x border-gray-100 px-5 py-4 text-sm font-semibold text-gray-800 transition hover:bg-gray-50"
-              aria-expanded={
-                isDepartmentOpen
-              }
             >
               <Menu size={18} />
 

@@ -17,7 +17,6 @@ interface ProductFormProps {
 
 export function ProductForm({ initialData, onSubmit, isSubmitting = false }: ProductFormProps) {
   const [imagePreview, setImagePreview] = useState(initialData?.image ?? "" );
-
   const form = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
     defaultValues: {
@@ -50,6 +49,18 @@ export function ProductForm({ initialData, onSubmit, isSubmitting = false }: Pro
   const imageUrl = useWatch({
     control: form.control,
     name: "image",
+  });
+  const price = useWatch({
+    control: form.control,
+    name: "price",
+  });
+  const stock = useWatch({
+    control: form.control,
+    name: "stock",
+  });
+  const rating = useWatch({
+    control: form.control,
+    name: "rating",
   });
 
   useEffect(() => {
@@ -373,7 +384,7 @@ export function ProductForm({ initialData, onSubmit, isSubmitting = false }: Pro
                   <span className="font-medium">
                     Rp{" "}
                     {(
-                      Number(form.watch("price")) || 0
+                      Number("price") || 0
                     ).toLocaleString("id-ID")}
                   </span>
                 </div>
@@ -384,7 +395,7 @@ export function ProductForm({ initialData, onSubmit, isSubmitting = false }: Pro
                   </span>
 
                   <span className="font-medium">
-                    {Number(form.watch("stock")) || 0}
+                    {Number("stock") || 0}
                   </span>
                 </div>
 
@@ -394,7 +405,7 @@ export function ProductForm({ initialData, onSubmit, isSubmitting = false }: Pro
                   </span>
 
                   <span className="font-medium">
-                    {(Number(form.watch("rating")) || 0).toFixed(
+                    {(Number("rating") || 0).toFixed(
                       1
                     )}{" "}
                     / 5

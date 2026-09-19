@@ -44,24 +44,32 @@ interface ProductTableProps {
   somePageSelected: boolean;
 }
 
-  
-function SortButton({  column, label }: { column: SortKey; label: string; }) {
+function SortButton({
+  column,
+  label,
+  sortKey,
+  sortDirection,
+  onSort,
+}: {
+  column: SortKey;
+  label: string;
+  sortKey: SortKey;
+  sortDirection: SortDirection;
+  onSort: (key: SortKey) => void;
+}) {
   const isActive = sortKey === column;
 
   return (
     <button
       type="button"
-      onClick={() =>
-        onSort(column)
-      }
+      onClick={() => onSort(column)}
       className="group inline-flex items-center gap-1.5 font-semibold text-muted-foreground transition hover:text-foreground"
       title={`Urutkan ${label}`}
     >
       <span>{label}</span>
 
       {isActive ? (
-        sortDirection ===
-        "asc" ? (
+        sortDirection === "asc" ? (
           <ArrowUp
             size={14}
             className="text-foreground"
