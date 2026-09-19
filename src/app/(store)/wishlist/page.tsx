@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ChevronRight, Heart, ShoppingBag, ShoppingCart, Star, Trash2, X } from "lucide-react";
-import { Product } from "@/type/product";
+import { Product } from "@/types/product";
 import { useWishlistStore } from "@/stores/wishlist-store";
 import { useCartStore } from "@/stores/cart-store";
 
@@ -16,7 +16,6 @@ const formatPrice = (price: number) =>
   }).format(price);
 
 export default function WishlistPage() {
-  // Mencegah masalah Hydration Mismatch dari Zustand persist
   const [isMounted, setIsMounted] = useState(false);
   const items = useWishlistStore((state) => state.items);
   const addItem = useCartStore((state) => state.addItem);
