@@ -30,7 +30,7 @@ function ProductDetailContent() {
   const initialTab = searchParams.get("review") === "1" ? "reviews" : "description";
 
   const [quantity, setQuantity] = useState(1);
-  const [activeTab, setActiveTab] = useState(initialTab);
+  const [activeTab, setActiveTab] = useState<"description" | "specifications" | "reviews">(initialTab);
 
   const products = useProductStore((state) => state.products);
   const fetchProducts = useProductStore((state) => state.fetchProducts);
@@ -118,6 +118,8 @@ function ProductDetailContent() {
     handleAddToCart();
     router.push("/cart");
   };
+
+  const hasSpecifications = product.specifications && Object.keys(product.specifications).length > 0;
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -235,12 +237,64 @@ function ProductDetailContent() {
       <section className="mx-auto max-w-7xl px-4 py-8 md:px-8 md:py-10">
         <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
           <div className="flex overflow-x-auto border-b">
-            <TabButton label="Deskripsi Produk" isActive={activeTab === "description"} onClick={() => setActiveTab("description")} />
-            <TabButton label="Ulasan" isActive={activeTab === "reviews"} onClick={() => setActiveTab("reviews")} />
+            <TabButton
+              label="Deskripsi Produk"
+              isActive={activeTab === "description"}
+              onClick={() => setActiveTab("description")}
+            />
+      
+            {hasSpecifications && (
+              <TabButton
+                label="Spesifikasi"
+                isActive={activeTab === "specifications"}
+                onClick={() => setActiveTab("specifications")}
+              />
+            )}
+      
+            <TabButton
+              label="Ulasan"
+              isActive={activeTab === "reviews"}
+              onClick={() => setActiveTab("reviews")}
+            />
           </div>
           <div className="p-6 md:p-8">
-            {activeTab === "description" && <p className="text-gray-600">{product.description}</p>}
-            {activeTab === "reviews" && <ReviewSection productId={product.id} initialOrderId={reviewOrderId} />}
+            {activeTab === "description" && (
+              <div className="prose max-w-none">
+                <p className="whitespace-pre-line text-gray-600">
+                  {product.description}
+                </p>
+              </div>
+            )}
+      
+            {activeTab === "specifications" && hasSpecifications && (
+              <div className="overflow-hidden rounded-xl border border-gray-200">
+                <div className="divide-y divide-gray-200">
+                  {Object.entries(product.specifications).map(
+                    ([key, value]) => (
+                      <div
+                        key={key}
+                        className="grid grid-cols-1 gap-2 px-4 py-4 sm:grid-cols-3"
+                      >
+                        <dt className="font-semibold capitalize text-gray-900">
+                          {key.replace(/([A-Z])/g, " $1")}
+                        </dt>
+      
+                        <dd className="text-gray-600 sm:col-span-2">
+                          {String(value)}
+                        </dd>
+                      </div>
+                    ),
+                  )}
+                </div>
+              </div>
+            )}
+      
+            {activeTab === "reviews" && (
+              <ReviewSection
+                productId={product.id}
+                initialOrderId={reviewOrderId}
+              />
+            )}
           </div>
         </div>
       </section>

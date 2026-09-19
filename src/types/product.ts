@@ -10,11 +10,9 @@ export interface Product {
   stock: number;
   createdAt?: string;
   updatedAt?: string;
+  specifications?: Record<string, string>;
 }
 
-export type ProductInput = Omit<
-  Product,
-  "id" | "reviewCount" | "createdAt" | "updatedAt"
->;
+export type ProductInput = Omit<Product, "id" | "reviewCount" | "createdAt" | "updatedAt">;
 
 export type ProductUpdateInput = Partial<ProductInput>;
