@@ -14,7 +14,7 @@ const formatPrice = (price: number) =>
   }).format(price);
 
 export default function WishlistPage() {
-  const items = useWishlistStore((state) => state.items);
+  const items = useWishlistStore((state) => state.ids);
   const removeItem = useWishlistStore((state) => state.removeItem);
   const clearWishlist = useWishlistStore((state) => state.clearWishlist);
   const addItem = useCartStore((state) => state.addItem);

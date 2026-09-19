@@ -4,13 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { Check, ChevronRight, Heart, Minus, Plus, Share2, ShoppingCart, Star } from "lucide-react";
-import ProductCard from "@/components/product/ProductCard";
-import RecentlyViewed from "@/components/product/RecentlyViewed";
 import { useRecentlyViewedStore } from "@/stores/recently-viewed-store";
 import { useCartStore } from "@/stores/cart-store";
 import { useProductStore } from "@/stores/product-store";
 import { useWishlistStore } from "@/stores/wishlist-store";
+import { Check, ChevronRight, Heart, Minus, Plus, Share2, ShoppingCart, Star } from "lucide-react";
+import ProductCard from "@/components/product/ProductCard";
+import RecentlyViewed from "@/components/product/RecentlyViewed";
 import ReviewSection from "@/components/product/ReviewSection";
 
 const formatPrice = (price: number) =>
@@ -36,7 +36,7 @@ export default function ProductDetailPage() {
   const addRecentlyViewed = useRecentlyViewedStore((state) => state.addItem);
   const addItem = useCartStore((state) => state.addItem);
   const toggleItem = useWishlistStore((state) => state.toggleItem);
-  const wishlistItems = useWishlistStore((state) => state.items);
+  const wishlistItems = useWishlistStore((state) => state.ids);
 
   useEffect(() => {
     if (products.length === 0) {
@@ -56,13 +56,7 @@ export default function ProductDetailPage() {
   const relatedProducts = useMemo(() => {
     if (!product) return [];
 
-    return products
-      .filter(
-        (item) =>
-          item.category === product.category &&
-          item.id !== product.id
-      )
-      .slice(0, 4);
+    return products.filter((item) => item.category === product.category && item.id !== product.id).slice(0, 4);
   }, [products, product]);
 
   if (isLoading && products.length === 0) {
@@ -215,11 +209,7 @@ export default function ProductDetailPage() {
               >
                 <Heart
                   size={21}
-                  className={
-                    isFavorite
-                      ? "fill-red-500"
-                      : ""
-                  }
+                  className={ isFavorite ? "fill-red-500" : "" }
                 />
               </button>
             </div>
@@ -402,9 +392,7 @@ export default function ProductDetailPage() {
 
       {/* TABS */}
       <section className="mx-auto max-w-7xl px-4 py-8 md:px-8 md:py-10">
-
         <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
-
           <div className="flex overflow-x-auto border-b">
 
             <TabButton
@@ -428,7 +416,6 @@ export default function ProductDetailPage() {
           </div>
 
           <div className="p-6 md:p-8">
-
             {activeTab === "description" && (
               <div className="max-w-4xl">
 
@@ -519,18 +506,14 @@ export default function ProductDetailPage() {
             )}
 
           </div>
-          
         </div>
       </section>
 
       {/* RELATED PRODUCTS */}
       {relatedProducts.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 pb-16 pt-6 md:px-8">
-
           <div className="mb-8 flex items-end justify-between">
-
             <div>
-
               <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
                 You May Also Like
               </p>
@@ -549,9 +532,7 @@ export default function ProductDetailPage() {
             </Link>
 
           </div>
-
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-
             {relatedProducts.map((item) => (
               <ProductCard
                 key={item.id}

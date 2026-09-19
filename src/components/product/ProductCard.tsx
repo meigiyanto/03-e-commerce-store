@@ -21,8 +21,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
   const addItem = useCartStore((state) => state.addItem);
   const toggleItem = useWishlistStore((state) => state.toggleItem);
-  const isFavorite = useWishlistStore((state) => state.items.some((item) => item.id === product.id));
-
+  const isFavorite = useWishlistStore((state) => state.ids.some((item) => item.id === product.id));
   const handleAddToCart = () => {
     if (product.stock <= 0) {
       return;
@@ -30,21 +29,18 @@ export default function ProductCard({ product }: ProductCardProps) {
 
     addItem(product);
   };
-
   const handleFavorite = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     event.stopPropagation();
 
     toggleItem(product);
   };
-
   const handleQuickView = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     event.stopPropagation();
 
     setIsQuickViewOpen(true);
   };
-
   const toggleCompare = useComparisonStore((state) => state.toggleItem);
   const isCompared = useComparisonStore((state) => state.isSelected(product.id));
   const compareItems = useComparisonStore((state) => state.items);
