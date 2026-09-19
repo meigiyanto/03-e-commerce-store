@@ -40,39 +40,27 @@ export default function AccountAddressesPage() {
 	const loadAddresses = async () => {
     try {
       const response = await fetch("/api/addresses");
-
+  
       if (!response.ok) {
         throw new Error("Gagal mengambil alamat.");
       }
-
+  
       const data = await response.json();
-
-      if (!cancelled) {
-        setAddresses(data.addresses ?? []);
-      }
+  
+      setAddresses(data.addresses ?? []);
     } catch (error) {
-      if (!cancelled) {
-        setMessage(
-          error instanceof Error
-            ? error.message
-            : "Gagal mengambil alamat."
-        );
-      }
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "Gagal mengambil alamat."
+      );
     } finally {
-      if (!cancelled) {
-        setLoading(false);
-      }
+      setLoading(false);
     }
-	}
+  };
 
   useEffect(() => {
-    let cancelled = false;
-
     loadAddresses();
-
-    return () => {
-      cancelled = true;
-    };
   }, []);
 
   const openAddForm = () => {
