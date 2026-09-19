@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { Product } from "@/types/product";
 
+/*
 export type Product = {
   id: string;
   name: string;
@@ -10,6 +12,7 @@ export type Product = {
   rating?: number;
   reviewCount?: number;
 };
+*/
 
 type WishlistState = {
   items: Product[];
@@ -30,8 +33,8 @@ export const useWishlistStore = create<WishlistState>()(
         })),
       removeItem: (id) =>
         set((s) => ({ items: s.items.filter((x) => x.id !== id) })),
-      clearWishlist: () => set({ items: [] }),
+      clearWishlist: () => set({ ids: [] }),
     }),
-    { name: "nexashop-wishlist-v2", partialize: (s) => ({ items: s.items }) }
+    { name: "nexashop-wishlist-v2" }
   )
 );
