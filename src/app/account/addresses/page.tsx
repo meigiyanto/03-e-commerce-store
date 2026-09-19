@@ -46,7 +46,6 @@ export default function AccountAddressesPage() {
       }
   
       const data = await response.json();
-  
       setAddresses(data.addresses ?? []);
     } catch (error) {
       setMessage(
@@ -58,11 +57,11 @@ export default function AccountAddressesPage() {
       setLoading(false);
     }
   };
-
+  /*
   useEffect(() => {
     loadAddresses();
   }, []);
-
+  */
   const openAddForm = () => {
     setEditingId(null);
     setForm(emptyForm);
