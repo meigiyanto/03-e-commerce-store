@@ -1,8 +1,6 @@
-import Link from "next/link";
 import type { Metadata } from "next";
-import { ClerkProvider } from '@clerk/nextjs'
+import { ClerkProvider } from "@clerk/nextjs";
 import { Geist, Geist_Mono } from "next/font/google";
-import { CartProvider } from "@/context/CartContext";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -16,20 +14,21 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "NexaShop",
-  description: "Modern online shop built with Next.js",
+  title: {
+    default: "NexaShop",
+    template: "%s | NexaShop",
+  },
+  description: "Modern online shop built with Next.js.",
 };
 
-export default function RootLayout({ children, }: Readonly<{ children: React.ReactNode; }>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="id" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-background text-foreground">
-        <ClerkProvider>
-          {/* Main Content */}
-          <main className="flex-1">
-            <CartProvider>{children}</CartProvider>
-          </main>
-        </ClerkProvider>
+    <html
+      lang="id"
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+    >
+      <body className="min-h-full bg-background text-foreground">
+        <ClerkProvider>{children}</ClerkProvider>
       </body>
     </html>
   );

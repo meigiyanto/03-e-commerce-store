@@ -8,16 +8,15 @@ export default function SignInPage() {
           <h1 className="text-2xl font-bold text-gray-900">
             Login ke NexaShop
           </h1>
-
           <p className="mt-2 text-sm text-gray-500">
-            Masuk untuk melanjutkan ke akun Anda.
+            Masuk untuk melanjutkan.
           </p>
         </div>
 
         <SignIn
           routing="path"
           path="/sign-in"
-          forceRedirectUrl="/account"
+          forceRedirectUrl="/auth/redirect"
           signUpUrl="/sign-up"
         />
       </div>

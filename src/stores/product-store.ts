@@ -1,230 +1,141 @@
 import { create } from "zustand";
-import { Product, ProductInput } from "@/types/product";
+import type { Product, ProductInput, ProductUpdateInput } from "@/types/product";
 
-interface ProductState {
+type ProductState = {
   products: Product[];
-  hasHydrated: boolean;
   isLoading: boolean;
   error: string | null;
   fetchProducts: () => Promise<void>;
   addProduct: (product: ProductInput) => Promise<Product | null>;
-  updateProduct: (id: string,product: Partial<ProductInput>) => Promise<Product | null>;
+  updateProduct: (id: string, product: ProductUpdateInput ) => Promise<Product | null>;
   deleteProduct: (id: string) => Promise<boolean>;
-  setHasHydrated: (state: boolean) => void;
+};
+
+async function parseResponse<T>(response: Response): Promise<T> {
+  const data = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(
+      data?.message ?? `Request gagal (${response.status}).`,
+    );
+  }
+
+  return data as T;
 }
 
-export const useProductStore =
-  create<ProductState>((set) => ({
-    products: [],
-    hasHydrated: false,
-    isLoading: false,
-    error: null,
-    setHasHydrated: (state) => {
-      set({
-        hasHydrated: state,
-      });
-    },
-    fetchProducts: async () => {
-      set({
-        isLoading: true,
-        error: null,
+export const useProductStore = create<ProductState>((set) => ({
+  products: [],
+  isLoading: false,
+  error: null,
+
+  fetchProducts: async () => {
+    set({ isLoading: true, error: null });
+
+    try {
+      const response = await fetch("/api/products", {
+        cache: "no-store",
       });
 
-      try {
-        const response = await fetch(
-          "/api/products",
-          {
-            method: "GET",
-            cache: "no-store",
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error(
-            "Gagal mengambil produk."
-          );
-        }
-
-        const products: Product[] =
-          await response.json();
-
-        set({
-          products,
-          isLoading: false,
-          hasHydrated: true,
-          error: null,
-        });
-      } catch (error) {
-        console.error(
-          "fetchProducts error:",
-          error
-        );
-
-        set({
-          isLoading: false,
-          hasHydrated: true,
-          error:
-            error instanceof Error
-              ? error.message
-              : "Gagal mengambil produk.",
-        });
-      }
-    },
-    addProduct: async (product) => {
+      const products = await parseResponse<Product[]>(response);
+      set({ products, isLoading: false });
+    } catch (error) {
       set({
-        isLoading: true,
-        error: null,
+        isLoading: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "Gagal mengambil produk.",
+      });
+    }
+  },
+
+  addProduct: async (product) => {
+    set({ isLoading: true, error: null });
+
+    try {
+      const response = await fetch("/api/products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(product),
       });
 
-      try {
-        const response = await fetch(
-          "/api/products",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(product),
-          }
-        );
+      const created = await parseResponse<Product>(response);
 
-        const data = await response.json();
+      set((state) => ({
+        products: [created, ...state.products],
+        isLoading: false,
+      }));
 
-        if (!response.ok) {
-          throw new Error(
-            data.message ??
-              "Gagal membuat produk."
-          );
-        }
-
-        set((state) => ({
-          products: [
-            data,
-            ...state.products,
-          ],
-          isLoading: false,
-        }));
-
-        return data;
-      } catch (error) {
-        console.error(
-          "addProduct error:",
-          error
-        );
-
-        set({
-          isLoading: false,
-          error:
-            error instanceof Error
-              ? error.message
-              : "Gagal membuat produk.",
-        });
-
-        return null;
-      }
-    },
-    updateProduct: async (id, product) => {
+      return created;
+    } catch (error) {
       set({
-        isLoading: true,
-        error: null,
+        isLoading: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "Gagal membuat produk.",
+      });
+      return null;
+    }
+  },
+
+  updateProduct: async (id, product) => {
+    set({ isLoading: true, error: null });
+
+    try {
+      const response = await fetch(`/api/products/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(product),
       });
 
-      try {
-        const response = await fetch(
-          `/api/products/${id}`,
-          {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(product),
-          }
-        );
+      const updated = await parseResponse<Product>(response);
 
-        const data = await response.json();
+      set((state) => ({
+        products: state.products.map((item) =>
+          item.id === id ? updated : item,
+        ),
+        isLoading: false,
+      }));
 
-        if (!response.ok) {
-          throw new Error(
-            data.message ??
-              "Gagal memperbarui produk."
-          );
-        }
-
-        set((state) => ({
-          products: state.products.map(
-            (item) =>
-              item.id === id
-                ? data
-                : item
-          ),
-          isLoading: false,
-        }));
-
-        return data;
-      } catch (error) {
-        console.error(
-          "updateProduct error:",
-          error
-        );
-
-        set({
-          isLoading: false,
-          error:
-            error instanceof Error
-              ? error.message
-              : "Gagal memperbarui produk.",
-        });
-
-        return null;
-      }
-    },
-    deleteProduct: async (id) => {
+      return updated;
+    } catch (error) {
       set({
-        isLoading: true,
-        error: null,
+        isLoading: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "Gagal memperbarui produk.",
+      });
+      return null;
+    }
+  },
+
+  deleteProduct: async (id) => {
+    set({ isLoading: true, error: null });
+
+    try {
+      const response = await fetch(`/api/products/${id}`, {
+        method: "DELETE",
       });
 
-      try {
-        const response = await fetch(
-          `/api/products/${id}`,
-          {
-            method: "DELETE",
-          }
-        );
+      await parseResponse<{ message: string }>(response);
 
-        const data = await response.json();
+      set((state) => ({
+        products: state.products.filter((item) => item.id !== id),
+        isLoading: false,
+      }));
 
-        if (!response.ok) {
-          throw new Error(
-            data.message ??
-              "Gagal menghapus produk."
-          );
-        }
-
-        set((state) => ({
-          products: state.products.filter(
-            (product) =>
-              product.id !== id
-          ),
-          isLoading: false,
-        }));
-
-        return true;
-      } catch (error) {
-        console.error(
-          "deleteProduct error:",
-          error
-        );
-
-        set({
-          isLoading: false,
-          error:
-            error instanceof Error
-              ? error.message
-              : "Gagal menghapus produk.",
-        });
-
-        return false;
-      }
-    },
-  }));
+      return true;
+    } catch (error) {
+      set({
+        isLoading: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "Gagal menghapus produk.",
+      });
+      return false;
+    }
+  },
+}));

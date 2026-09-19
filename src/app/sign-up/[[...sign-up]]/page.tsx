@@ -8,7 +8,6 @@ export default function SignUpPage() {
           <h1 className="text-2xl font-bold text-gray-900">
             Daftar di NexaShop
           </h1>
-
           <p className="mt-2 text-sm text-gray-500">
             Buat akun untuk mulai berbelanja.
           </p>
@@ -17,7 +16,7 @@ export default function SignUpPage() {
         <SignUp
           routing="path"
           path="/sign-up"
-          forceRedirectUrl="/account"
+          forceRedirectUrl="/auth/redirect"
           signInUrl="/sign-in"
         />
       </div>

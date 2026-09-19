@@ -1,93 +1,36 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 
-export type UserRole = "admin" | "customer";
+export const USER_ROLES = ["admin", "customer"] as const;
+export type UserRole = (typeof USER_ROLES)[number];
 
-export async function requireAdmin() {
-  const { userId } = await auth();
+export type AuthorizationResult =
+  | { ok: true; status: 200; userId: string; role: "admin" }
+  | { ok: false; status: 401; userId: null; role: null }
+  | { ok: false; status: 403; userId: string; role: "customer" };
 
-  if (!userId) {
-    return {
-      ok: false as const,
-      status: 401,
-      userId: null,
-      role: null,
-    };
-  }
-
-  const user = await currentUser();
-
-  const role: UserRole =
-    user?.publicMetadata?.role === "admin"
-      ? "admin"
-      : "customer";
-
-  if (role !== "admin") {
-    return {
-      ok: false as const,
-      status: 403,
-      userId,
-      role,
-    };
-  }
-
-  return {
-    ok: true as const,
-    status: 200,
-    userId,
-    role,
-  };
-}
-
-export async function getUserRole(): Promise<UserRole | null> {
-  const user = await currentUser();
-
-  if (!user) {
-    return null;
-  }
-
-  return user.publicMetadata?.role === "admin"
+function getRole(user: Awaited<ReturnType<typeof currentUser>>): UserRole {
+  return user?.publicMetadata?.role === "admin"
     ? "admin"
     : "customer";
 }
 
-/*
-import { auth, currentUser } from "@clerk/nextjs/server";
+export async function getUserRole(): Promise<UserRole | null> {
+  const user = await currentUser();
+  return user ? getRole(user) : null;
+}
 
-export type UserRole = "admin" | "customer";
-
-export async function requireAdmin() {
+export async function requireAdmin(): Promise<AuthorizationResult> {
   const { userId } = await auth();
 
   if (!userId) {
-    return {
-      ok: false as const,
-      status: 401,
-      userId: null,
-      role: null,
-    };
+    return { ok: false, status: 401, userId: null, role: null };
   }
 
-  const user = await currentUser();
-
-  const role: UserRole =
-    user?.publicMetadata?.role === "admin"
-      ? "admin"
-      : "customer";
+  const role = getRole(await currentUser());
 
   if (role !== "admin") {
-    return {
-      ok: false as const,
-      status: 403,
-      userId,
-      role,
-    };
+    return { ok: false, status: 403, userId, role };
   }
 
-  return {
-    ok: true as const,
-    status: 200,
-    userId,
-    role,
-  };
+  return { ok: true, status: 200, userId, role };
 }
-*/

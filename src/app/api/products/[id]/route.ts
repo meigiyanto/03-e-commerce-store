@@ -1,286 +1,109 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
+import { apiError, readJson, zodErrorResponse } from "@/lib/api";
+import { productUpdateSchema } from "@/schemas/product-schema";
 
 type RouteContext = {
-  params: Promise<{id: string;}>;
+  params: Promise<{ id: string }>;
 };
 
-export async function PATCH(
-  request: NextRequest,
-  context: RouteContext
-) {
-  const authorization = await requireAdmin();
-
-  if (!authorization.ok) {
-    return NextResponse.json(
-      {
-        message: authorization.status === 401 ? "Anda harus login." : "Anda tidak memiliki akses admin.",
-      },
-      {
-        status: authorization.status,
-      }
-    );
-  }
-
-  try {
-    const { id } = await context.params;
-    const body = await request.json();
-    const existingProduct =
-      await prisma.product.findUnique({
-        where: {
-          id,
-        },
-      });
-
-    if (!existingProduct) {
-      return NextResponse.json(
-        {
-          message: "Produk tidak ditemukan.",
-        },
-        {
-          status: 404,
-        }
-      );
-    }
-
-    const { name, price, description, image, category, rating, stock, } = body;
-
-    const data: {
-      name?: string;
-      price?: number;
-      description?: string;
-      image?: string;
-      category?: string;
-      rating?: number;
-      stock?: number;
-    } = {};
-
-    if (name !== undefined) {
-      const value = String(name).trim();
-
-      if (!value) {
-        return NextResponse.json(
-          {
-            message: "Nama produk wajib diisi.",
-          },
-          {
-            status: 400,
-          }
-        );
-      }
-
-      data.name = value;
-    }
-
-    if (price !== undefined) {
-      const value = Number(price);
-
-      if (
-        !Number.isFinite(value) ||
-        value < 0
-      ) {
-        return NextResponse.json(
-          {
-            message: "Harga tidak valid.",
-          },
-          {
-            status: 400,
-          }
-        );
-      }
-
-      data.price = value;
-    }
-
-    if (description !== undefined) {
-      const value = String(description).trim();
-
-      if (!value) {
-        return NextResponse.json(
-          {
-            message: "Deskripsi wajib diisi.",
-          },
-          {
-            status: 400,
-          }
-        );
-      }
-
-      data.description = value;
-    }
-
-    if (image !== undefined) {
-      data.image = String(image).trim();
-    }
-
-    if (category !== undefined) {
-      data.category = String(category).trim();
-    }
-
-    if (rating !== undefined) {
-      const value = Number(rating);
-
-      if (
-        !Number.isFinite(value) ||
-        value < 0 ||
-        value > 5
-      ) {
-        return NextResponse.json(
-          {
-            message: "Rating harus berada di antara 0 dan 5.",
-          },
-          {
-            status: 400,
-          }
-        );
-      }
-
-      data.rating = value;
-    }
-
-    if (stock !== undefined) {
-      const value = Number(stock);
-
-      if (
-        !Number.isInteger(value) ||
-        value < 0
-      ) {
-        return NextResponse.json(
-          {
-            message: "Stock tidak valid.",
-          },
-          {
-            status: 400,
-          }
-        );
-      }
-
-      data.stock = value;
-    }
-
-    const product =
-      await prisma.product.update({
-        where: { id, },
-        data,
-      });
-
-    return NextResponse.json(product);
-  } catch (error) {
-    console.error("PATCH /api/products/[id] error:",error);
-
-    return NextResponse.json(
-      {
-        message: "Gagal memperbarui produk.",
-      },
-      {
-        status: 500,
-      }
-    );
-  }
+function authorizationError(status: 401 | 403) {
+  return apiError( status === 401 ? "Anda harus login." : "Anda tidak memiliki akses admin.", status,);
 }
 
-export async function GET(
-  _request: NextRequest,
-  context: RouteContext
-) {
-
+export async function GET(_request: NextRequest, context: RouteContext) {
   const authorization = await requireAdmin();
 
   if (!authorization.ok) {
-    return NextResponse.json(
-      {
-        message: authorization.status === 401 ? "Anda harus login." : "Anda tidak memiliki akses admin.",
-      },
-      {
-        status: authorization.status,
-      },
-    );
+    return authorizationError(authorization.status);
   }
-  
+
+  const { id } = await context.params;
+
   try {
-    const { id } = await context.params;
-    const product = await prisma.product.findUnique({ where: { id, }, });
+    const product = await prisma.product.findUnique({
+      where: { id },
+    });
 
     if (!product) {
-      return NextResponse.json(
-        {
-          message: "Produk tidak ditemukan.",
-        },
-        {
-          status: 404,
-        }
-      );
+      return apiError("Produk tidak ditemukan.", 404);
     }
 
     return NextResponse.json(product);
   } catch (error) {
-    console.error("GET /api/products/[id] error:",error);
-
-    return NextResponse.json(
-      {
-        message: "Gagal mengambil produk.",
-      },
-      {
-        status: 500,
-      }
-    );
+    console.error("GET /api/products/[id]", error);
+    return apiError("Gagal mengambil produk.");
   }
 }
 
-export async function DELETE(
-  _request: NextRequest,
-  context: RouteContext
-) {
+export async function PATCH(request: NextRequest, context: RouteContext ) {
   const authorization = await requireAdmin();
 
   if (!authorization.ok) {
-    return NextResponse.json(
-      {
-        message: authorization.status === 401 ? "Anda harus login." : "Anda tidak memiliki akses admin.",
-      },
-      {
-        status: authorization.status,
-      }
-    );
+    return authorizationError(authorization.status);
+  }
+
+  const { id } = await context.params;
+  const body = await readJson(request);
+  const parsed = productUpdateSchema.safeParse(body);
+
+  if (!parsed.success) {
+    return zodErrorResponse(parsed.error);
   }
 
   try {
-    const { id } = await context.params;
+    const product = await prisma.product.update({
+      where: { id },
+      data: parsed.data,
+    });
 
-    const existingProduct =
-      await prisma.product.findUnique({
-        where: { id, },
-      });
+    return NextResponse.json(product);
+  } catch (error: unknown) {
+    console.error("PATCH /api/products/[id]", error);
 
-    if (!existingProduct) {
-      return NextResponse.json(
-        {
-          message: "Produk tidak ditemukan.",
-        },
-        {
-          status: 404,
-        }
-      );
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      error.code === "P2025"
+    ) {
+      return apiError("Produk tidak ditemukan.", 404);
     }
 
+    return apiError("Gagal memperbarui produk.");
+  }
+}
+
+export async function DELETE(_request: NextRequest, context: RouteContext) {
+  const authorization = await requireAdmin();
+
+  if (!authorization.ok) {
+    return authorizationError(authorization.status);
+  }
+
+  const { id } = await context.params;
+
+  try {
     await prisma.product.delete({
-      where: { id, },
+      where: { id },
     });
 
     return NextResponse.json({
       message: "Produk berhasil dihapus.",
     });
-  } catch (error) {
-    console.error("DELETE /api/products/[id] error:", error);
+  } catch (error: unknown) {
+    console.error("DELETE /api/products/[id]", error);
 
-    return NextResponse.json(
-      {
-        message: "Gagal menghapus produk.",
-      },
-      {
-        status: 500,
-      }
-    );
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      error.code === "P2025"
+    ) {
+      return apiError("Produk tidak ditemukan.", 404);
+    }
+
+    return apiError("Gagal menghapus produk.");
   }
 }

@@ -8,9 +8,13 @@ export interface Product {
   rating: number;
   reviewCount?: number;
   stock: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export type ProductInput = Omit<
   Product,
-  "id" | "reviewCount"
+  "id" | "reviewCount" | "createdAt" | "updatedAt"
 >;
+
+export type ProductUpdateInput = Partial<ProductInput>;
