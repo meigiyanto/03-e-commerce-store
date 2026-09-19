@@ -3,17 +3,11 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import {
-  Eye,
-  Heart,
-  ShoppingCart,
-} from "lucide-react";
-
+import { Eye, Heart, ShoppingCart } from "lucide-react";
 import ProductRating from "@/components/product/ProductRating";
 import ProductQuickView from "@/components/product/ProductQuickView";
 
 import { Product } from "@/types/product";
-import { useCartStore } from "@/stores/cart-store";
 import { useWishlistStore } from "@/stores/wishlist-store";
 import { Scale } from "lucide-react";
 import { useComparisonStore } from "@/stores/comparison-store";
@@ -22,9 +16,7 @@ type ProductCardProps = {
   product: Product;
 };
 
-export default function ProductCard({
-  product,
-}: ProductCardProps) {
+export default function ProductCard({ product }: ProductCardProps) {
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
   const addItem = useCartStore((state) => state.addItem);
   const toggleItem = useWishlistStore((state) => state.toggleItem);
