@@ -1,5 +1,23 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@/generated/prisma/client";
+import type { Prisma } from "@/generated/prisma";
+
+export function serializeProduct(
+  p: Prisma.ProductGetPayload<{}>,
+): Product {
+  return {
+    id: p.id,
+    name: p.name,
+    price: p.price,
+    description: p.description,
+    image: p.image,
+    category: p.category,
+    rating: p.rating,
+    stock: p.stock,
+    createdAt: p.createdAt?.toISOString(),
+    updatedAt: p.updatedAt?.toISOString(),
+  };
+}
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;

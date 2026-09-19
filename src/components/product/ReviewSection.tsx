@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { Loader2, MessageSquare, Send, Star } from "lucide-react";
 
@@ -32,57 +32,57 @@ export default function ReviewSection({ productId, initialOrderId }: ReviewSecti
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState("");
 
-  const loadReviews = async () => {
-    try {
-      const response = await fetch(
-        `/api/reviews?productId=${encodeURIComponent(productId)}`,
-        {
-          cache: "no-store",
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Gagal mengambil review.");
+  const loadReviews = useCallback(async () => {
+  try {
+    const response = await fetch(
+      `/api/reviews?productId=${encodeURIComponent(productId)}`,
+      {
+        cache: "no-store",
       }
+    );
 
-      const data = await response.json();
+    if (!response.ok) {
+      throw new Error("Gagal mengambil review.");
+    }
 
-      setReviews(data.reviews ?? []);
+    const data = await response.json();
+
+    setReviews(data.reviews ?? []);
     } catch {
       setReviews([]);
     }
-  };
+  }, [productId]);
 
-  const loadEligibility = async () => {
-    try {
-      const response = await fetch(
-        `/api/reviews?productId=${encodeURIComponent(
-          productId
-        )}&eligible=1`,
-        {
-          cache: "no-store",
-        }
-      );
-
-      if (response.status === 401) {
-        setOrders([]);
-        setReviewed(false);
-        return;
+  const loadEligibility = useCallback(async () => {
+  try {
+    const response = await fetch(
+      `/api/reviews?productId=${encodeURIComponent(
+        productId
+      )}&eligible=1`,
+      {
+        cache: "no-store",
       }
+    );
 
-      if (!response.ok) {
-        return;
-      }
+    if (response.status === 401) {
+      setOrders([]);
+      setReviewed(false);
+      return;
+    }
 
-      const data = await response.json();
+    if (!response.ok) {
+      return;
+    }
 
-      setOrders(data.orders ?? []);
-      setReviewed(Boolean(data.reviewed));
+    const data = await response.json();
+
+    setOrders(data.orders ?? []);
+    setReviewed(Boolean(data.reviewed));
     } catch {
       setOrders([]);
       setReviewed(false);
     }
-  };
+  }, [productId]);
 
   useEffect(() => {
     const load = async () => {

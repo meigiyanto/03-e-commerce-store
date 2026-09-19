@@ -3,14 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  Eye,
-  Minus,
-  Plus,
-  ShoppingCart,
-  X,
-} from "lucide-react";
-
+import { Eye, Minus, Plus, ShoppingCart, X } from "lucide-react";
 import { Product } from "@/types/product";
 import { useCartStore } from "@/stores/cart-store";
 
@@ -32,44 +25,29 @@ export default function ProductQuickView({
   open,
   onClose,
 }: ProductQuickViewProps) {
-  const addItem = useCartStore(
-    (state) => state.addItem
-  );
-
+  const addItem = useCartStore((state) => state.addItem);
   const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     if (!open) return;
-
-    setQuantity(1);
-
+  
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        onClose();
+        handleClose();
       }
     };
-
-    document.addEventListener(
-      "keydown",
-      handleEscape
-    );
-
-    const originalOverflow =
-      document.body.style.overflow;
-
+  
+    document.addEventListener("keydown", handleEscape);
+  
+    const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
-    return () => {
-      document.removeEventListener(
-        "keydown",
-        handleEscape
-      );
-
-      document.body.style.overflow =
-        originalOverflow;
-    };
-  }, [open, onClose]);
-
+  return () => {
+    document.removeEventListener("keydown", handleEscape);
+    document.body.style.overflow = originalOverflow;
+  };
+}, [open, onClose]);
+  
   if (!open || !product) {
     return null;
   }

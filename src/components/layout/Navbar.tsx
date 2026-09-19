@@ -271,7 +271,6 @@ export default function Navbar() {
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-gray-700 transition hover:bg-gray-100 lg:hidden"
             aria-label="Buka menu"
-            aria-expanded={isMobileMenuOpen}
           >
             {isMobileMenuOpen ? (
               <X size={22} />

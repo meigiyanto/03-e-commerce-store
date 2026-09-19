@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ImageIcon, Package, Star, Tag } from "lucide-react";
 import { ProductFormData, productSchema } from "@/schemas/product-schema";
@@ -47,7 +47,10 @@ export function ProductForm({ initialData, onSubmit, isSubmitting = false }: Pro
     }
   }, [initialData, form]);
 
-  const imageUrl = form.watch("image");
+  const imageUrl = useWatch({
+    control: form.control,
+    name: "image",
+  });
 
   useEffect(() => {
     setImagePreview(imageUrl || "");

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -46,9 +47,11 @@ export default function CompareBar() {
               key={item.id}
               className="flex min-w-[150px] items-center gap-2 rounded-xl bg-gray-50 px-2 py-2"
             >
-              <img
+              <Image
                 src={item.image}
                 alt={item.name}
+                width={40}
+                height={40}
                 className="h-10 w-10 shrink-0 rounded-lg object-cover"
               />
 

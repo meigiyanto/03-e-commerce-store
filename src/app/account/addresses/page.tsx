@@ -2,15 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import {
-  ArrowLeft,
-  Check,
-  MapPin,
-  Pencil,
-  Plus,
-  Trash2,
-  X,
-} from "lucide-react";
+import { ArrowLeft, Check, MapPin, Pencil, Plus, Trash2, X } from "lucide-react";
 
 type Address = {
   id: string;
@@ -44,31 +36,46 @@ export default function AccountAddressesPage() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
 
-  const loadAddresses = async () => {
-    try {
-      setLoading(true);
-
-      const response = await fetch("/api/addresses");
-
-      if (!response.ok) {
-        throw new Error("Gagal mengambil alamat.");
-      }
-
-      const data = await response.json();
-      setAddresses(data.addresses ?? []);
-    } catch (error) {
-      setMessage(
-        error instanceof Error
-          ? error.message
-          : "Gagal mengambil alamat."
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    loadAddresses();
+    let cancelled = false;
+  
+    async function load() {
+      try {
+        const response = await fetch(
+          "/api/addresses"
+        );
+  
+        if (!response.ok) {
+          throw new Error(
+            "Gagal mengambil alamat."
+          );
+        }
+  
+        const data = await response.json();
+  
+        if (!cancelled) {
+          setAddresses(data.addresses ?? []);
+        }
+      } catch (error) {
+        if (!cancelled) {
+          setMessage(
+            error instanceof Error
+              ? error.message
+              : "Gagal mengambil alamat."
+          );
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+  
+    load();
+  
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const openAddForm = () => {

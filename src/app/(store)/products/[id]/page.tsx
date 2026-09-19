@@ -26,16 +26,9 @@ export default function ProductDetailPage() {
 
   const searchParams = useSearchParams();
   const reviewOrderId = searchParams.get("orderId") ?? undefined;
-
   const [quantity, setQuantity] = useState(1);
-  const [activeTab, setActiveTab] = useState("description");
-
-  useEffect(() => {
-    if (searchParams.get("review") === "1") {
-      setActiveTab("reviews");
-    }
-  }, [searchParams]);
-
+  const initialTab = searchParams.get("review") === "1" ? "reviews" : "description";
+  const [activeTab, setActiveTab] = useState(initialTab);
   const products = useProductStore((state) => state.products);
   const fetchProducts = useProductStore((state) => state.fetchProducts);
   const isLoading = useProductStore((state) => state.isLoading);

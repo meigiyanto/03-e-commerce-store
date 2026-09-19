@@ -36,78 +36,53 @@ interface ProductTableProps {
   onSort: (key: SortKey) => void;
 
   selectedIds: string[];
-  onSelect: (
-    id: string,
-    checked: boolean
-  ) => void;
+  onSelect: (id: string, checked: boolean) => void;
 
-  onSelectAll: (
-    checked: boolean
-  ) => void;
+  onSelectAll: (checked: boolean) => void;
 
   allPageSelected: boolean;
   somePageSelected: boolean;
 }
 
-export function ProductTable({
-  products,
-  onDelete,
-  sortKey,
-  sortDirection,
-  onSort,
-  selectedIds,
-  onSelect,
-  onSelectAll,
-  allPageSelected,
-  somePageSelected,
-}: ProductTableProps) {
-  function SortButton({
-    column,
-    label,
-  }: {
-    column: SortKey;
-    label: string;
-  }) {
-    const isActive =
-      sortKey === column;
+  
+function SortButton({  column, label }: { column: SortKey; label: string; }) {
+  const isActive = sortKey === column;
 
-    return (
-      <button
-        type="button"
-        onClick={() =>
-          onSort(column)
-        }
-        className="group inline-flex items-center gap-1.5 font-semibold text-muted-foreground transition hover:text-foreground"
-        title={`Urutkan ${label}`}
-      >
-        <span>{label}</span>
+  return (
+    <button
+      type="button"
+      onClick={() =>
+        onSort(column)
+      }
+      className="group inline-flex items-center gap-1.5 font-semibold text-muted-foreground transition hover:text-foreground"
+      title={`Urutkan ${label}`}
+    >
+      <span>{label}</span>
 
-        {isActive ? (
-          sortDirection ===
-          "asc" ? (
-            <ArrowUp
-              size={14}
-              className="text-foreground"
-            />
-          ) : (
-            <ArrowDown
-              size={14}
-              className="text-foreground"
-            />
-          )
-        ) : (
-          <ArrowUpDown
+      {isActive ? (
+        sortDirection ===
+        "asc" ? (
+          <ArrowUp
             size={14}
-            className="text-muted-foreground/60 transition group-hover:text-foreground"
+            className="text-foreground"
           />
-        )}
-      </button>
-    );
-  }
+        ) : (
+          <ArrowDown
+            size={14}
+            className="text-foreground"
+          />
+        )
+      ) : (
+        <ArrowUpDown
+          size={14}
+          className="text-muted-foreground/60 transition group-hover:text-foreground"
+        />
+      )}
+    </button>
+  );
+}
 
-  function getStockStatus(
-    stock: number
-  ) {
+function getStockStatus( stock: number ) {
     if (stock <= 0) {
       return {
         label: "Habis",
@@ -130,6 +105,19 @@ export function ProductTable({
         "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400",
     };
   }
+
+export function ProductTable({
+  products,
+  onDelete,
+  sortKey,
+  sortDirection,
+  onSort,
+  selectedIds,
+  onSelect,
+  onSelectAll,
+  allPageSelected,
+  somePageSelected,
+}: ProductTableProps) {
 
   return (
     <div className="overflow-x-auto">
