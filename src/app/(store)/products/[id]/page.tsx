@@ -55,7 +55,7 @@ function ProductDetailContent() {
     }
   }, [product, addRecentlyViewed]);
 
-  const isFavorite = wishlistItems.includes(item);
+  const isFavorite = wishlistItems.includes(product.id);
 
   const relatedProducts = useMemo(() => {
     if (!product) return [];
@@ -157,7 +157,7 @@ function ProductDetailContent() {
               </div>
               <button
                 type="button"
-                onClick={() => toggleItem(product.item)}
+                onClick={() => toggleItem(product.id)}
                 className={`absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-white shadow-md transition hover:scale-105 ${
                   isFavorite ? "text-red-500" : "text-gray-600"
                 }`}
