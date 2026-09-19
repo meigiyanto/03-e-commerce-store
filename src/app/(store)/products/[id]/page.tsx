@@ -8,7 +8,6 @@ import { Check, ChevronRight, Heart, Minus, Plus, Share2, ShoppingCart, Star } f
 import ProductCard from "@/components/product/ProductCard";
 import RecentlyViewed from "@/components/product/RecentlyViewed";
 import { useRecentlyViewedStore } from "@/stores/recently-viewed-store";
-import { useCartStore } from "@/stores/cart-store";
 import { useProductStore } from "@/stores/product-store";
 import { useWishlistStore } from "@/stores/wishlist-store";
 import ReviewSection from "@/components/product/ReviewSection";

@@ -1,4 +1,4 @@
-import {getProductCategories,getProducts} from "@/lib/products";
+import { getProductCategories,getProducts } from "@/lib/products";
 import ProductsClient from "./ProductsClient";
 
 export const dynamic = "force-dynamic";

@@ -5,12 +5,10 @@ import Link from "next/link";
 import { redirect } from 'next/navigation';
 import { ArrowLeft, ArrowRight, Check, CreditCard, MapPin, Package, ShieldCheck, Tag, Truck, Wallet } from "lucide-react";
 import { FormEvent, useMemo,useState } from "react";
-import { useCartStore } from "@/stores/cart-store";
 import { PaymentMethod, useCheckoutStore } from "@/stores/checkout-store";
 import { calculateShipping, calculateTax } from "@/lib/coupons";
 
 const formatPrice = (price: number) => `Rp ${price.toLocaleString("id-ID")}`;
-
 const paymentOptions: {
   value: PaymentMethod;
   label: string;
