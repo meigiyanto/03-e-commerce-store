@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Image from "next/image";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,7 +16,6 @@ interface ProductFormProps {
 }
 
 export function ProductForm({ initialData, onSubmit, isSubmitting = false }: ProductFormProps) {
-  const [imagePreview, setImagePreview] = useState(initialData?.image ?? "" );
   const form = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
     defaultValues: {
@@ -31,19 +30,17 @@ export function ProductForm({ initialData, onSubmit, isSubmitting = false }: Pro
   });
 
   useEffect(() => {
-    if (initialData) {
-      form.reset({
-        name: initialData.name,
-        price: initialData.price,
-        description: initialData.description,
-        image: initialData.image,
-        category: initialData.category,
-        rating: initialData.rating,
-        stock: initialData.stock,
-      });
-
-      setImagePreview(initialData.image);
-    }
+    if (!initialData) return;
+  
+    form.reset({
+      name: initialData.name,
+      price: initialData.price,
+      description: initialData.description,
+      image: initialData.image,
+      category: initialData.category,
+      rating: initialData.rating,
+      stock: initialData.stock,
+    });
   }, [initialData, form]);
 
   const imageUrl = useWatch({
@@ -62,10 +59,6 @@ export function ProductForm({ initialData, onSubmit, isSubmitting = false }: Pro
     control: form.control,
     name: "rating",
   });
-
-  useEffect(() => {
-    setImagePreview(imageUrl || "");
-  }, [imageUrl]);
 
   const errors = form.formState.errors;
 
@@ -317,15 +310,12 @@ export function ProductForm({ initialData, onSubmit, isSubmitting = false }: Pro
             <div className="space-y-5 p-6">
               {/* Preview */}
               <div className="relative aspect-square overflow-hidden rounded-xl border bg-muted">
-                {imagePreview ? (
+                {{imageUrl ? (
                   <Image
-                    src={imagePreview}
+                    src={imageUrl}
                     alt="Preview produk"
                     fill
                     className="object-cover"
-                    onError={() =>
-                      setImagePreview("")
-                    }
                   />
                 ) : (
                   <div className="flex h-full flex-col items-center justify-center gap-3 text-muted-foreground">
@@ -384,7 +374,7 @@ export function ProductForm({ initialData, onSubmit, isSubmitting = false }: Pro
                   <span className="font-medium">
                     Rp{" "}
                     {(
-                      Number("price") || 0
+                      Number(price) || 0
                     ).toLocaleString("id-ID")}
                   </span>
                 </div>
@@ -395,7 +385,7 @@ export function ProductForm({ initialData, onSubmit, isSubmitting = false }: Pro
                   </span>
 
                   <span className="font-medium">
-                    {Number("stock") || 0}
+                    {Number(stock) || 0}
                   </span>
                 </div>
 
@@ -405,7 +395,7 @@ export function ProductForm({ initialData, onSubmit, isSubmitting = false }: Pro
                   </span>
 
                   <span className="font-medium">
-                    {(Number("rating") || 0).toFixed(
+                    {(Number(rating) || 0).toFixed(
                       1
                     )}{" "}
                     / 5

@@ -1,7 +1,10 @@
 import prisma from "@/lib/prisma";
+import type { Prisma } from "@/generated/prisma";
 import type { Product } from "@/types/product";
 
-export function serializeProduct(p: any): Product {
+export function serializeProduct(
+  p: Prisma.ProductGetPayload<object>,
+): Product {
   return {
     id: p.id,
     name: p.name,
@@ -47,6 +50,7 @@ export async function getProductById(id: string) {
   const row = await prisma.product.findUnique({ where: { id } });
   return row ? serializeProduct(row) : null;
 }
+
 export async function getProductCategories() {
   const rows = await prisma.product.findMany({
     distinct: ["category"],

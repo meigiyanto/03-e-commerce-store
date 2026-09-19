@@ -167,6 +167,9 @@ export function ProductTable({
               <SortButton
                 column="category"
                 label="Kategori"
+                sortKey={sortKey}
+                sortDirection={sortDirection}
+                onSort={onSort}
               />
             </th>
 
@@ -175,6 +178,9 @@ export function ProductTable({
               <SortButton
                 column="price"
                 label="Harga"
+                sortKey={sortKey}
+                sortDirection={sortDirection}
+                onSort={onSort}
               />
             </th>
 
