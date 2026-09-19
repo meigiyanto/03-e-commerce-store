@@ -15,9 +15,9 @@ const formatPrice = (price: number) =>
 
 export default function WishlistPage() {
   const items = useWishlistStore((state) => state.ids);
+  const addItem = useCartStore((state) => state.addItem);
   const removeItem = useWishlistStore((state) => state.removeItem);
   const clearWishlist = useWishlistStore((state) => state.clearWishlist);
-  const addItem = useCartStore((state) => state.addItem);
   const handleAddToCart = (product: (typeof items)[number]) => {addItem(product);};
 
   return (
@@ -140,127 +140,126 @@ export default function WishlistPage() {
 
             {/* ================= WISHLIST ITEMS ================= */}
             <div className="space-y-4">
-  {items.map((item) => (
-    <article
-      key={item.id}
-      className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white transition hover:border-blue-200 hover:shadow-lg"
-    >
-      <div className="flex flex-col gap-5 p-4 sm:flex-row sm:items-center sm:p-5">
-
-        {/* Product Image */}
-        <Link
-          href={`/products/${item.id}`}
-          className="flex h-40 w-full shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gray-50 sm:h-32 sm:w-32"
-        >
-          <Image
-            src={item.image}
-            alt={item.name}
-            className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-          />
-        </Link>
-
-        {/* Product Information */}
-        <div className="min-w-0 flex-1">
-
-          <div className="flex items-start justify-between gap-4">
-
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
-                {item.category}
-              </p>
-
-              <Link
-                href={`/products/${item.id}`}
-              >
-                <h2 className="mt-2 text-lg font-bold text-gray-900 transition hover:text-blue-600">
-                  {item.name}
-                </h2>
-              </Link>
-            </div>
-
-            {/* Remove */}
-            <button
-              type="button"
-              onClick={() =>
-                removeItem(item.id)
-              }
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-gray-400 transition hover:bg-red-50 hover:text-red-500"
-              aria-label={`Hapus ${item.name}`}
-            >
-              <X size={20} />
-            </button>
-
-          </div>
-
-          {/* Rating */}
-          <div className="mt-3 flex items-center gap-2">
-
-            <div className="flex">
-              {Array.from({
-                length: 5,
-              }).map((_, index) => (
-                <Star
-                  key={`${item.id}-star-${index}`}
-                  size={15}
-                  className={
-                    index <
-                    Math.round(
-                      item.rating ?? 0
-                    )
-                      ? "fill-yellow-400 text-yellow-400"
-                      : "text-gray-300"
-                  }
-                />
+              {items.map((item) => (
+                <article
+                  key={item.id}
+                  className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white transition hover:border-blue-200 hover:shadow-lg"
+                >
+                  <div className="flex flex-col gap-5 p-4 sm:flex-row sm:items-center sm:p-5">
+            
+                    {/* Product Image */}
+                    <Link
+                      href={`/products/${item.id}`}
+                      className="flex h-40 w-full shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gray-50 sm:h-32 sm:w-32"
+                    >
+                      <Image
+                        src={item.image}
+                        alt={item.name}
+                        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                      />
+                    </Link>
+            
+                    {/* Product Information */}
+                    <div className="min-w-0 flex-1">
+            
+                      <div className="flex items-start justify-between gap-4">
+            
+                        <div>
+                          <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
+                            {item.category}
+                          </p>
+            
+                          <Link
+                            href={`/products/${item.id}`}
+                          >
+                            <h2 className="mt-2 text-lg font-bold text-gray-900 transition hover:text-blue-600">
+                              {item.name}
+                            </h2>
+                          </Link>
+                        </div>
+            
+                        {/* Remove */}
+                        <button
+                          type="button"
+                          onClick={() =>
+                            removeItem(item.id)
+                          }
+                          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-gray-400 transition hover:bg-red-50 hover:text-red-500"
+                          aria-label={`Hapus ${item.name}`}
+                        >
+                          <X size={20} />
+                        </button>
+            
+                      </div>
+            
+                      {/* Rating */}
+                      <div className="mt-3 flex items-center gap-2">
+            
+                        <div className="flex">
+                          {Array.from({
+                            length: 5,
+                          }).map((_, index) => (
+                            <Star
+                              key={`${item.id}-star-${index}`}
+                              size={15}
+                              className={
+                                index <
+                                Math.round(
+                                  item.rating ?? 0
+                                )
+                                  ? "fill-yellow-400 text-yellow-400"
+                                  : "text-gray-300"
+                              }
+                            />
+                          ))}
+                        </div>
+            
+                        <span className="text-xs font-medium text-gray-600">
+                          {item.rating ?? 0}
+                        </span>
+            
+                        <span className="text-xs text-gray-400">
+                          •
+                        </span>
+            
+                        <span className="text-xs text-gray-400">
+                          {item.reviewCount ?? 0} ulasan
+                        </span>
+            
+                      </div>
+            
+                      {/* Price */}
+                      <p className="mt-4 text-xl font-bold text-blue-600">
+                        {formatPrice(item.price)}
+                      </p>
+                    </div>
+            
+                    {/* Actions */}
+                    <div className="flex shrink-0 flex-col gap-2 sm:w-44">
+            
+                      <button
+                        type="button"
+                        onClick={() =>
+                          handleAddToCart(item)
+                        }
+                        className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
+                      >
+                        <ShoppingCart size={18} />
+                        Ke Keranjang
+                      </button>
+            
+                      <Link
+                        href={`/products/${item.id}`}
+                        className="flex w-full items-center justify-center rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold text-gray-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
+                      >
+                        Lihat Produk
+                      </Link>
+            
+                    </div>
+                  </div>
+                </article>
               ))}
             </div>
-
-            <span className="text-xs font-medium text-gray-600">
-              {item.rating ?? 0}
-            </span>
-
-            <span className="text-xs text-gray-400">
-              •
-            </span>
-
-            <span className="text-xs text-gray-400">
-              {item.reviewCount ?? 0} ulasan
-            </span>
-
-          </div>
-
-          {/* Price */}
-          <p className="mt-4 text-xl font-bold text-blue-600">
-            {formatPrice(item.price)}
-          </p>
-        </div>
-
-        {/* Actions */}
-        <div className="flex shrink-0 flex-col gap-2 sm:w-44">
-
-          <button
-            type="button"
-            onClick={() =>
-              handleAddToCart(item)
-            }
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
-          >
-            <ShoppingCart size={18} />
-            Ke Keranjang
-          </button>
-
-          <Link
-            href={`/products/${item.id}`}
-            className="flex w-full items-center justify-center rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold text-gray-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
-          >
-            Lihat Produk
-          </Link>
-
-        </div>
-      </div>
-    </article>
-  ))}
-</div>
-
           </>
         )}
       </section>
