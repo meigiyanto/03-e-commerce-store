@@ -52,6 +52,7 @@ export default function ProductDetailPage() {
   }, [products.length, fetchProducts]);
 
   const product = products.find((item) => item.id === id);
+  
   useEffect(() => {
     if (product) {
       addRecentlyViewed(product);
@@ -235,7 +236,7 @@ export default function ProductDetailPage() {
                 type="button"
                 className="flex h-20 w-20 items-center justify-center rounded-xl border-2 border-blue-600 bg-white p-2"
               >
-                <img
+                <Image
                   src={product.image}
                   alt={product.name}
                   className="h-full w-full object-contain"
@@ -576,40 +577,7 @@ export default function ProductDetailPage() {
   );
 }
 
-/*
-function ProductFeature({ icon, title, description }: {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="flex gap-3">
-
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
-        {icon}
-      </div>
-
-      <div>
-
-        <h3 className="text-sm font-semibold text-gray-900">
-          {title}
-        </h3>
-
-        <p className="mt-1 text-xs leading-relaxed text-gray-500">
-          {description}
-        </p>
-
-      </div>
-    </div>
-  );
-}
-*/
-
-function TabButton({
-  label,
-  isActive,
-  onClick,
-}: {
+function TabButton({ label, isActive, onClick }: {
   label: string;
   isActive: boolean;
   onClick: () => void;
@@ -629,10 +597,7 @@ function TabButton({
   );
 }
 
-function SpecificationRow({
-  label,
-  value,
-}: {
+function SpecificationRow({ label, value }: {
   label: string;
   value: string;
 }) {

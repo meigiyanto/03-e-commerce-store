@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, ChevronRight, Headphones, Laptop, Monitor, Package, Shirt, ShieldCheck, ShoppingBag, Smartphone, Sparkles, Watch } from "lucide-react";
+import { ArrowRight, ChevronRight, Headphones, Laptop, Monitor, Package, Shirt, ShieldCheck, ShoppingBag, Smartphone, Sparkles, Truck, Watch } from "lucide-react";
 import ProductCard from "@/components/product/ProductCard";
 import { products } from "@/data/products";
 
@@ -380,11 +380,7 @@ export default function Home() {
   );
 }
 
-function Feature({
-  icon,
-  title,
-  description,
-}: {
+function Feature({ icon,title, description }: {
   icon: React.ReactNode;
   title: string;
   description: string;
@@ -408,10 +404,8 @@ function Feature({
   );
 }
 
-function FooterColumn({
-  title,
-  links,
-}: {
+/*
+function FooterColumn({ title, links }: {
   title: string;
   links: string[];
 }) {
@@ -436,3 +430,4 @@ function FooterColumn({
     </div>
   );
 }
+*/

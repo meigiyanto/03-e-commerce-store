@@ -1,25 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import {
-  FormEvent,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import {
-  ChevronDown,
-  ChevronRight,
-  Heart,
-  Menu,
-  Search,
-  ShoppingCart,
-  User,
-  X,
-} from "lucide-react";
-
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { ChevronDown, ChevronRight, Heart, Menu, Search, ShoppingCart, User, X } from "lucide-react";
 import { useCartStore } from "@/stores/cart-store";
 import { useWishlistStore } from "@/stores/wishlist-store";
 import { useProductStore } from "@/stores/product-store";
@@ -83,34 +68,15 @@ const departments = [
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
-
   const desktopSearchRef = useRef<HTMLDivElement>(null);
   const mobileSearchRef = useRef<HTMLDivElement>(null);
-
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const [isMobileMenuOpen, setIsMobileMenuOpen] =
-    useState(false);
-
-  const [
-    isDepartmentOpen,
-    setIsDepartmentOpen,
-  ] = useState(false);
-
-  const [isSearchOpen, setIsSearchOpen] =
-    useState(false);
-
-  const products = useProductStore(
-    (state) => state.products
-  );
-
-  const cartItems = useCartStore(
-    (state) => state.items
-  );
-
-  const wishlistItems = useWishlistStore(
-    (state) => state.items
-  );
+  const [ searchQuery, setSearchQuery] = useState("");
+  const [ isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [ isDepartmentOpen, setIsDepartmentOpen ] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const products = useProductStore((state) => state.products);
+  const cartItems = useCartStore((state) => state.items);
+  const wishlistItems = useWishlistStore((state) => state.items);
 
   /*
    * ========================================
@@ -118,13 +84,8 @@ export default function Navbar() {
    * ========================================
    */
 
-  const cartItemCount = cartItems.reduce(
-    (total, item) => total + item.quantity,
-    0
-  );
-
-  const wishlistItemCount =
-    wishlistItems.length;
+  const cartItemCount = cartItems.reduce((total, item) => total + item.quantity,0);
+  const wishlistItemCount = wishlistItems.length;
 
   /*
    * ========================================
@@ -143,14 +104,9 @@ export default function Navbar() {
 
     return products
       .filter((product) => {
-        const name =
-          product.name?.toLowerCase() ?? "";
-
-        const category =
-          product.category?.toLowerCase() ?? "";
-
-        const description =
-          product.description?.toLowerCase() ?? "";
+        const name = product.name?.toLowerCase() ?? "";
+        const category = product.category?.toLowerCase() ?? "";
+        const description = product.description?.toLowerCase() ?? "";
 
         return (
           name.includes(query) ||
@@ -167,9 +123,7 @@ export default function Navbar() {
    * ========================================
    */
 
-  const submitSearch = (
-    queryValue = searchQuery
-  ) => {
+  const submitSearch = (queryValue = searchQuery) => {
     const query = queryValue.trim();
 
     if (!query) {
@@ -178,17 +132,13 @@ export default function Navbar() {
       return;
     }
 
-    router.push(
-      `/products?search=${encodeURIComponent(query)}`
-    );
+    router.push(`/products?search=${encodeURIComponent(query)}`);
 
     setSearchQuery("");
     setIsSearchOpen(false);
   };
 
-  const handleSearch = (
-    event: FormEvent<HTMLFormElement>
-  ) => {
+  const handleSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     submitSearch();
   };
@@ -199,9 +149,7 @@ export default function Navbar() {
    * ========================================
    */
 
-  const handleAutocompleteClick = (
-    productId: string
-  ) => {
+  const handleAutocompleteClick = (productId: string) => {
     setSearchQuery("");
     setIsSearchOpen(false);
 
@@ -214,9 +162,7 @@ export default function Navbar() {
    * ========================================
    */
 
-  const handleSearchKeyDown = (
-    event: React.KeyboardEvent<HTMLInputElement>
-  ) => {
+  const handleSearchKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Escape") {
       setIsSearchOpen(false);
       return;
@@ -241,20 +187,10 @@ export default function Navbar() {
    */
 
   useEffect(() => {
-    const handleClickOutside = (
-      event: MouseEvent
-    ) => {
+    const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
-
-      const clickedDesktop =
-        desktopSearchRef.current?.contains(
-          target
-        );
-
-      const clickedMobile =
-        mobileSearchRef.current?.contains(
-          target
-        );
+      const clickedDesktop = desktopSearchRef.current?.contains(target);
+      const clickedMobile = mobileSearchRef.current?.contains(target);
 
       if (
         !clickedDesktop &&
@@ -332,11 +268,7 @@ export default function Navbar() {
 
           <button
             type="button"
-            onClick={() =>
-              setIsMobileMenuOpen(
-                !isMobileMenuOpen
-              )
-            }
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-gray-700 transition hover:bg-gray-100 lg:hidden"
             aria-label="Buka menu"
             aria-expanded={isMobileMenuOpen}
@@ -453,7 +385,7 @@ export default function Navbar() {
 
                               <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-gray-100">
                                 {product.image ? (
-                                  <img
+                                  <Image
                                     src={
                                       product.image
                                     }
@@ -686,7 +618,7 @@ export default function Navbar() {
                           >
                             <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-gray-100">
                               {product.image ? (
-                                <img
+                                <Image
                                   src={
                                     product.image
                                   }

@@ -495,14 +495,13 @@ export default function ProductsPage() {
                     onClick={() => setSearch("")}
                     className="flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700"
                   >
-                    "{search}"
+                    &quot;{search}&quot;
 
                     <X size={14} />
                   </button>
                 )}
 
                 {/* PRICE CHIP */}
-
                 {(minPrice !== "" ||
                   maxPrice !== "") && (
                   <button
