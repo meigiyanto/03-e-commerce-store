@@ -39,7 +39,7 @@ function ProductDetailContent() {
   const addRecentlyViewed = useRecentlyViewedStore((state) => state.addItem);
   const addItem = useCartStore((state) => state.addItem);
   const toggleItem = useWishlistStore((state) => state.toggleItem);
-  const wishlistItems = useWishlistStore((state) => state.ids);
+  const wishlistItems = useWishlistStore((state) => state.items);
 
   // Perbaikan Infinite Fetch: Hanya fetch jika belum ada data dan tidak sedang loading
   useEffect(() => {

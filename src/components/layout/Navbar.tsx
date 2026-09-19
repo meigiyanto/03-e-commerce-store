@@ -76,7 +76,7 @@ export default function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const products = useProductStore((state) => state.products);
   const cartItems = useCartStore((state) => state.items);
-  const wishlistItems = useWishlistStore((state) => state.ids);
+  const wishlistItems = useWishlistStore((state) => state.items);
 
   const [isMounted, setIsMounted] = useState(false);
   
