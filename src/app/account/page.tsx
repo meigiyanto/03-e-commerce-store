@@ -88,6 +88,7 @@ export default async function AccountPage() {
                   <Image
                     src={user.imageUrl}
                     alt={fullName}
+                    fill
                     className="h-20 w-20 shrink-0 rounded-full border-4 border-white object-cover shadow-sm"
                   />
                 ) : (
@@ -141,6 +142,7 @@ export default async function AccountPage() {
                     <Image
                       src={user.imageUrl}
                       alt={fullName}
+                      fill
                       className="h-28 w-28 rounded-full border-4 border-purple-100 object-cover"
                     />
                   ) : (
