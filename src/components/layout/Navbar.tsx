@@ -5,8 +5,9 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { ChevronDown, ChevronRight, Heart, Menu, Search, ShoppingCart, User, X } from "lucide-react";
-import { useWishlistStore } from "@/stores/wishlist-store";
+import { useCartStore } from "@/stores/cart-store";
 import { useProductStore } from "@/stores/product-store";
+import { useWishlistStore } from "@/stores/wishlist-store";
 
 const navigationLinks = [
   {
@@ -69,9 +70,9 @@ export default function Navbar() {
   const router = useRouter();
   const desktopSearchRef = useRef<HTMLDivElement>(null);
   const mobileSearchRef = useRef<HTMLDivElement>(null);
-  const [ searchQuery, setSearchQuery] = useState("");
-  const [ isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [ isDepartmentOpen, setIsDepartmentOpen ] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isDepartmentOpen, setIsDepartmentOpen ] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const products = useProductStore((state) => state.products);
   const cartItems = useCartStore((state) => state.items);

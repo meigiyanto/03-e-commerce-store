@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Check, MapPin, Pencil, Plus, Trash2, X } from "lucide-react";
+import { useCartStore } from "@/stores/cart-store";
 
 type Address = {
   id: string;
