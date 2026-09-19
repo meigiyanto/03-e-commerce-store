@@ -3,12 +3,11 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Eye, Heart, ShoppingCart } from "lucide-react";
+import { Eye, Heart, ShoppingCart, Scale } from "lucide-react";
 import ProductRating from "@/components/product/ProductRating";
 import ProductQuickView from "@/components/product/ProductQuickView";
 
 import { Product } from "@/types/product";
-import { Scale } from "lucide-react";
 import { useCartStore } from "@/stores/cart-store";
 import { useComparisonStore } from "@/stores/comparison-store";
 import { useWishlistStore } from "@/stores/wishlist-store";
@@ -20,32 +19,32 @@ type ProductCardProps = {
 export default function ProductCard({ product }: ProductCardProps) {
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
   const addItem = useCartStore((state) => state.addItem);
-  const toggleItem = useWishlistStore((state) => state.toggleItem);
-	const isFavorite = useWishlistStore((state) =>
-	  state.ids.includes(product.id)
-	);
-
-	toggleItem(product.id);
+  
+  // Ambil state wishlist
+  const toggleWishlist = useWishlistStore((state) => state.toggleItem);
+  const isFavorite = useWishlistStore((state) =>
+    state.items.some((item) => item.id === product.id)
+  );
 
   const handleAddToCart = () => {
     if (product.stock <= 0) {
       return;
     }
-
     addItem(product);
   };
+
   const handleFavorite = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     event.stopPropagation();
-
-    toggleItem(product);
+    toggleWishlist(product);
   };
+
   const handleQuickView = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     event.stopPropagation();
-
     setIsQuickViewOpen(true);
   };
+
   const toggleCompare = useComparisonStore((state) => state.toggleItem);
   const isCompared = useComparisonStore((state) => state.isSelected(product.id));
   const compareItems = useComparisonStore((state) => state.items);
@@ -150,7 +149,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           </Link>
 
           {/* RATING */}
-          {"rating" in product && (
+          {"rating" in product && product.rating !== undefined && (
             <div className="mt-2">
               <ProductRating
                 rating={product.rating}

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronRight, Heart, ShoppingBag, ShoppingCart, Star, Trash2, X } from "lucide-react";
-import { useWishlistStore } from "@/stores/wishlist-store";
+import { useWishlistStore, Product } from "@/stores/wishlist-store";
 import { useCartStore } from "@/stores/cart-store";
 
 const formatPrice = (price: number) =>
@@ -14,15 +14,17 @@ const formatPrice = (price: number) =>
   }).format(price);
 
 export default function WishlistPage() {
-  const items = useWishlistStore((state) => state.ids);
+  const items = useWishlistStore((state) => state.items);
   const addItem = useCartStore((state) => state.addItem);
   const removeItem = useWishlistStore((state) => state.removeItem);
   const clearWishlist = useWishlistStore((state) => state.clearWishlist);
-  const handleAddToCart = (product: (typeof items)[number]) => {addItem(product);};
+
+  const handleAddToCart = (product: Product) => {
+    addItem(product);
+  };
 
   return (
     <main className="min-h-screen bg-gray-50">
-      
       {/* ================= BREADCRUMB ================= */}
       <div className="border-b bg-white">
         <div className="mx-auto flex max-w-7xl items-center gap-2 px-4 py-4 text-sm md:px-8">
@@ -146,7 +148,7 @@ export default function WishlistPage() {
                   className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white transition hover:border-blue-200 hover:shadow-lg"
                 >
                   <div className="flex flex-col gap-5 p-4 sm:flex-row sm:items-center sm:p-5">
-            
+
                     {/* Product Image */}
                     <Link
                       href={`/products/${item.id}`}
@@ -155,20 +157,22 @@ export default function WishlistPage() {
                       <Image
                         src={item.image}
                         alt={item.name}
+                        width={128}
+                        height={128}
                         className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                       />
                     </Link>
-            
+
                     {/* Product Information */}
                     <div className="min-w-0 flex-1">
-            
+
                       <div className="flex items-start justify-between gap-4">
-            
+
                         <div>
                           <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
                             {item.category}
                           </p>
-            
+
                           <Link
                             href={`/products/${item.id}`}
                           >
@@ -177,24 +181,22 @@ export default function WishlistPage() {
                             </h2>
                           </Link>
                         </div>
-            
+
                         {/* Remove */}
                         <button
                           type="button"
-                          onClick={() =>
-                            removeItem(item.id)
-                          }
+                          onClick={() => removeItem(item.id)}
                           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-gray-400 transition hover:bg-red-50 hover:text-red-500"
                           aria-label={`Hapus ${item.name}`}
                         >
                           <X size={20} />
                         </button>
-            
+
                       </div>
-            
+
                       {/* Rating */}
                       <div className="mt-3 flex items-center gap-2">
-            
+
                         <div className="flex">
                           {Array.from({
                             length: 5,
@@ -203,58 +205,53 @@ export default function WishlistPage() {
                               key={`${item.id}-star-${index}`}
                               size={15}
                               className={
-                                index <
-                                Math.round(
-                                  item.rating ?? 0
-                                )
+                                index < Math.round(item.rating ?? 0)
                                   ? "fill-yellow-400 text-yellow-400"
                                   : "text-gray-300"
                               }
                             />
                           ))}
                         </div>
-            
+
                         <span className="text-xs font-medium text-gray-600">
                           {item.rating ?? 0}
                         </span>
-            
+
                         <span className="text-xs text-gray-400">
                           •
                         </span>
-            
+
                         <span className="text-xs text-gray-400">
                           {item.reviewCount ?? 0} ulasan
                         </span>
-            
+
                       </div>
-            
+
                       {/* Price */}
                       <p className="mt-4 text-xl font-bold text-blue-600">
                         {formatPrice(item.price)}
                       </p>
                     </div>
-            
+
                     {/* Actions */}
                     <div className="flex shrink-0 flex-col gap-2 sm:w-44">
-            
+
                       <button
                         type="button"
-                        onClick={() =>
-                          handleAddToCart(item)
-                        }
+                        onClick={() => handleAddToCart(item)}
                         className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
                       >
                         <ShoppingCart size={18} />
                         Ke Keranjang
                       </button>
-            
+
                       <Link
                         href={`/products/${item.id}`}
                         className="flex w-full items-center justify-center rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold text-gray-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
                       >
                         Lihat Produk
                       </Link>
-            
+
                     </div>
                   </div>
                 </article>
@@ -263,7 +260,6 @@ export default function WishlistPage() {
           </>
         )}
       </section>
-      
     </main>
   );
 }

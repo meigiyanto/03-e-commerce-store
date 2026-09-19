@@ -1,9 +1,19 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+export type Product = {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  category: string;
+  rating?: number;
+  reviewCount?: number;
+};
+
 type WishlistState = {
-  ids: string[];
-  toggleItem: (id: string) => void;
+  items: Product[];
+  toggleItem: (product: Product) => void;
   removeItem: (id: string) => void;
   clearWishlist: () => void;
 };
@@ -11,11 +21,17 @@ type WishlistState = {
 export const useWishlistStore = create<WishlistState>()(
   persist(
     (set) => ({
-      ids: [],
-      toggleItem: (id) => set((s) => ({ ids: s.ids.includes(id) ? s.ids.filter((x) => x !== id) : [...s.ids, id], })),
-      removeItem: (id) => set((s) => ({ ids: s.ids.filter((x) => x !== id) })),
-      clearWishlist: () => set({ ids: [] }),
+      items: [],
+      toggleItem: (product) =>
+        set((s) => ({
+          items: s.items.some((x) => x.id === product.id)
+            ? s.items.filter((x) => x.id !== product.id)
+            : [...s.items, product],
+        })),
+      removeItem: (id) =>
+        set((s) => ({ items: s.items.filter((x) => x.id !== id) })),
+      clearWishlist: () => set({ items: [] }),
     }),
-    { name: "nexashop-wishlist-v2", partialize: (s) => ({ ids: s.ids }) },
-  ),
+    { name: "nexashop-wishlist-v2", partialize: (s) => ({ items: s.items }) }
+  )
 );
