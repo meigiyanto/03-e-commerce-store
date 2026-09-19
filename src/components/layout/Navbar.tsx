@@ -370,16 +370,11 @@ export default function Navbar() {
                               className="flex w-full items-center gap-3 px-4 py-3 text-left transition hover:bg-blue-50"
                             >
                               {/* Product Image */}
-
                               <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-gray-100">
                                 {product.image ? (
                                   <Image
-                                    src={
-                                      product.image
-                                    }
-                                    alt={
-                                      product.name
-                                    }
+                                    src={product.image}
+                                    alt={product.name}
                                     className="h-full w-full object-cover"
                                   />
                                 ) : (
@@ -393,7 +388,6 @@ export default function Navbar() {
                               </div>
 
                               {/* Product Info */}
-
                               <div className="min-w-0 flex-1">
                                 <p className="truncate text-sm font-semibold text-gray-800">
                                   {product.name}
@@ -580,27 +574,19 @@ export default function Navbar() {
                           <button
                             key={product.id}
                             type="button"
-                            onMouseDown={(
-                              event
-                            ) =>
+                            onMouseDown={(event) =>
                               event.preventDefault()
                             }
                             onClick={() =>
-                              handleAutocompleteClick(
-                                product.id
-                              )
+                              handleAutocompleteClick(product.id)
                             }
                             className="flex w-full items-center gap-3 px-4 py-3 text-left transition hover:bg-blue-50"
                           >
                             <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-gray-100">
                               {product.image ? (
                                 <Image
-                                  src={
-                                    product.image
-                                  }
-                                  alt={
-                                    product.name
-                                  }
+                                  src={product.image}
+                                  alt={product.name}
                                   className="h-full w-full object-cover"
                                 />
                               ) : (

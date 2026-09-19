@@ -90,6 +90,7 @@ export default function AccountSidebar({ fullName, email, imageUrl, role }: Acco
                 <Image
                   src={imageUrl}
                   alt={fullName}
+                  width
                   className="h-10 w-10 shrink-0 rounded-full object-cover"
                 />
               ) : (
