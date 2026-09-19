@@ -310,7 +310,7 @@ export function ProductForm({ initialData, onSubmit, isSubmitting = false }: Pro
             <div className="space-y-5 p-6">
               {/* Preview */}
               <div className="relative aspect-square overflow-hidden rounded-xl border bg-muted">
-                {{imageUrl ? (
+                {imageUrl ? (
                   <Image
                     src={imageUrl}
                     alt="Preview produk"
