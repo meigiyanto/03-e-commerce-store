@@ -41,10 +41,8 @@ export default function ProductSearchAutocomplete({
     return products
       .filter((product) => {
         const name = product.name.toLowerCase();
-        const category =
-          product.category.toLowerCase();
-        const description =
-          product.description.toLowerCase();
+        const category = product.category.toLowerCase();
+        const description = product.description.toLowerCase();
 
         return (
           name.includes(query) ||
@@ -150,7 +148,7 @@ export default function ProductSearchAutocomplete({
           >
             <Search size={16} />
 
-            Lihat semua hasil untuk "{value}"
+            Lihat semua hasil untuk &quot;{value}&quot;
           </button>
         </>
       ) : (
@@ -175,7 +173,7 @@ export default function ProductSearchAutocomplete({
             onClick={onSubmit}
             className="mt-4 text-sm font-semibold text-blue-600 hover:text-blue-700"
           >
-            Cari "{value}"
+            Cari &quot;{value}&quot;
           </button>
         </div>
       )}

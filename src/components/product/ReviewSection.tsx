@@ -22,17 +22,12 @@ type ReviewSectionProps = {
   initialOrderId?: string;
 };
 
-export default function ReviewSection({
-  productId,
-  initialOrderId,
-}: ReviewSectionProps) {
+export default function ReviewSection({ productId, initialOrderId }: ReviewSectionProps) {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [orders, setOrders] = useState<EligibleOrder[]>([]);
   const [reviewed, setReviewed] = useState(false);
-
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
-
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState("");
@@ -102,13 +97,11 @@ export default function ReviewSection({
     };
 
     load();
-  }, [productId]);
+  }, [productId, loadReviews, loadEligibility]);
 
   const submitReview = async () => {
     if (!orders.length) {
-      setMessage(
-        "Anda belum memiliki pesanan selesai untuk produk ini."
-      );
+      setMessage("Anda belum memiliki pesanan selesai untuk produk ini.");
       return;
     }
 
