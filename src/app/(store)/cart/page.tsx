@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, ArrowRight,  Minus, Plus, ShoppingBag, Trash2, Truck, ShieldCheck, PackageCheck,} from "lucide-react";
+import { useCartStore } from "@/stores/cart-store";
 
 export default function CartPage() {
   const { items, removeItem, increaseQuantity, decreaseQuantity, clearCart, } = useCartStore();

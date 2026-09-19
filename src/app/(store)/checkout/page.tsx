@@ -7,6 +7,7 @@ import { ArrowLeft, ArrowRight, Check, CreditCard, MapPin, Package, ShieldCheck,
 import { FormEvent, useMemo,useState } from "react";
 import { PaymentMethod, useCheckoutStore } from "@/stores/checkout-store";
 import { calculateShipping, calculateTax } from "@/lib/coupons";
+import { useCartStore } from "@/stores/cart-store";
 
 const formatPrice = (price: number) => `Rp ${price.toLocaleString("id-ID")}`;
 const paymentOptions: {
