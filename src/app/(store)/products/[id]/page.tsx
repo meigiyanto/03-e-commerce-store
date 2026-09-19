@@ -55,7 +55,7 @@ function ProductDetailContent() {
     }
   }, [product, addRecentlyViewed]);
 
-  const isFavorite = wishlistItems.includes(id);
+  const isFavorite = wishlistItems.includes(product.id);
 
   const relatedProducts = useMemo(() => {
     if (!product) return [];
