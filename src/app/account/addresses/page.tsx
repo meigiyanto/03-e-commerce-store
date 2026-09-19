@@ -38,30 +38,29 @@ export default function AccountAddressesPage() {
   const [message, setMessage] = useState("");
 
 	const loadAddresses = async () => {
-      try {
-        const response = await fetch("/api/addresses");
-  
-        if (!response.ok) {
-          throw new Error("Gagal mengambil alamat.");
-        }
-  
-        const data = await response.json();
-  
-        if (!cancelled) {
-          setAddresses(data.addresses ?? []);
-        }
-      } catch (error) {
-        if (!cancelled) {
-          setMessage(
-            error instanceof Error
-              ? error.message
-              : "Gagal mengambil alamat."
-          );
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
+    try {
+      const response = await fetch("/api/addresses");
+
+      if (!response.ok) {
+        throw new Error("Gagal mengambil alamat.");
+      }
+
+      const data = await response.json();
+
+      if (!cancelled) {
+        setAddresses(data.addresses ?? []);
+      }
+    } catch (error) {
+      if (!cancelled) {
+        setMessage(
+          error instanceof Error
+            ? error.message
+            : "Gagal mengambil alamat."
+        );
+      }
+    } finally {
+      if (!cancelled) {
+        setLoading(false);
       }
     }
 	}
