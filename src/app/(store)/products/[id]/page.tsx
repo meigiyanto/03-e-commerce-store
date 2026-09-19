@@ -41,7 +41,6 @@ function ProductDetailContent() {
   const toggleItem = useWishlistStore((state) => state.toggleItem);
   const wishlistItems = useWishlistStore((state) => state.items);
 
-  // Perbaikan Infinite Fetch: Hanya fetch jika belum ada data dan tidak sedang loading
   useEffect(() => {
     if (products.length === 0 && !isLoading && !error) {
       fetchProducts();

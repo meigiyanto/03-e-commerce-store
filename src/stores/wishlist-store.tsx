@@ -25,12 +25,10 @@ export const useWishlistStore = create<WishlistState>()(
       items: [],
       toggleItem: (product) =>
         set((s) => ({
-          items: s.items.some((x) => x.id === product.id)
-            ? s.items.filter((x) => x.id !== product.id)
-            : [...s.items, product],
+          items: s.items.some((x) => x.id === product.id) ? s.items.filter((x) => x.id !== product.id) : [...s.items, product],
         })),
       removeItem: (id) => set((s) => ({ items: s.items.filter((x) => x.id !== id) })),
-      clearWishlist: () => set({ ids: [] }),
+      clearWishlist: () => set({ items: [] }),
     }),
     { name: "nexashop-wishlist-v2" }
   )
