@@ -19,7 +19,7 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDepartmentOpen, setIsDepartmentOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-
+  const [isMounted, setIsMounted] = useState(false);
   const products = useProductStore((state) => state.products);
   const cartItems = useCartStore((state) => state.items);
   const wishlistItems = useWishlistStore((state) => state.items);
