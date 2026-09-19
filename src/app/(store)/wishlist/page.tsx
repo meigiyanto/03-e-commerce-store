@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChevronRight, Heart, ShoppingBag, ShoppingCart, Star, Trash2, X } from "lucide-react";
 import { useWishlistStore } from "@/stores/wishlist-store";
-import { useCartStore } from "@/stores/cart-store";
 
 const formatPrice = (price: number) =>
   new Intl.NumberFormat("id-ID", {
