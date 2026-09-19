@@ -8,7 +8,8 @@ import { useRecentlyViewedStore } from "@/stores/recently-viewed-store";
 import { useCartStore } from "@/stores/cart-store";
 import { useProductStore } from "@/stores/product-store";
 import { useWishlistStore } from "@/stores/wishlist-store";
-import { Check, ChevronRight, Heart, Minus, Plus, Share2, ShoppingCart, Star } from "lucide-react";
+// import { Check, ChevronRight, Heart, Minus, Plus, Share2, ShoppingCart, Star } from "lucide-react";
+import { ChevronRight, Heart, Minus, Plus, ShoppingCart } from "lucide-react";
 import ProductCard from "@/components/product/ProductCard";
 import RecentlyViewed from "@/components/product/RecentlyViewed";
 import ReviewSection from "@/components/product/ReviewSection";
@@ -55,7 +56,8 @@ function ProductDetailContent() {
     }
   }, [product, addRecentlyViewed]);
 
-  const isFavorite = wishlistItems.includes(product.id);
+  // const isFavorite = wishlistItems.includes(product.id);
+  const isFavorite = wishlistItems.some((item) => item.id === id );
 
   const relatedProducts = useMemo(() => {
     if (!product) return [];
@@ -107,7 +109,6 @@ function ProductDetailContent() {
   };
 
   const handleAddToCart = () => {
-    // Direkomendasikan mengupdate store agar addItem mendukung penambahan jumlah sekaligus: addItem(product, quantity)
     for (let i = 0; i < quantity; i++) {
       addItem(product);
     }
@@ -139,7 +140,7 @@ function ProductDetailContent() {
         </div>
       </div>
 
-      {/* DETAIL PRODUK */}
+      {/* PRODUCT DETAIL */}
       <section className="mx-auto max-w-7xl px-4 py-6 md:px-8 md:py-10">
         <div className="grid gap-8 lg:grid-cols-2">
           {/* GALERI */}
@@ -157,7 +158,7 @@ function ProductDetailContent() {
               </div>
               <button
                 type="button"
-                onClick={() => toggleItem(product.id)}
+                onClick={() => toggleItem(product)}
                 className={`absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-white shadow-md transition hover:scale-105 ${
                   isFavorite ? "text-red-500" : "text-gray-600"
                 }`}
@@ -243,7 +244,34 @@ function ProductDetailContent() {
           </div>
         </div>
       </section>
-
+      
+      {/* RELATED PRODUCT */}
+      {relatedProducts.length > 0 && (
+        <section className="mx-auto max-w-7xl px-4 py-8 md:px-8 md:py-10">
+          <div className="mb-6 flex items-center justify-between">
+            <h2 className="text-2xl font-bold text-gray-900">
+              Produk Terkait
+            </h2>
+      
+            <Link
+              href="/products"
+              className="text-sm font-semibold text-blue-600 hover:text-blue-700"
+            >
+              Lihat Semua
+            </Link>
+          </div>
+      
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {relatedProducts.map((item) => (
+              <ProductCard
+                key={item.id}
+                product={item}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+      
       {/* RECENTLY VIEWED */}
       <RecentlyViewed excludeId={product.id} />
     </main>
