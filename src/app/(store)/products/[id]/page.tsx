@@ -41,6 +41,8 @@ function ProductDetailContent() {
   const toggleItem = useWishlistStore((state) => state.toggleItem);
   const wishlistItems = useWishlistStore((state) => state.items);
 
+  console.log(wishlistItems);
+
   useEffect(() => {
     if (products.length === 0 && !isLoading && !error) {
       fetchProducts();
