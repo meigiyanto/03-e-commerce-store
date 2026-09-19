@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Check, MapPin, Pencil, Plus, Trash2, X } from "lucide-react";
-import { useCartStore } from "@/stores/cart-store";
+// import { useCartStore } from "@/stores/cart-store";
 
 type Address = {
   id: string;
@@ -57,11 +57,13 @@ export default function AccountAddressesPage() {
       setLoading(false);
     }
   };
+  
   /*
   useEffect(() => {
     loadAddresses();
   }, []);
   */
+  
   const openAddForm = () => {
     setEditingId(null);
     setForm(emptyForm);
