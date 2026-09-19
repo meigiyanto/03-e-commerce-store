@@ -1,7 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-// import { Product } from "@/types/product";
+import { Product } from "@/types/product";
 
+/*
 export type Product = {
   id: string;
   name: string;
@@ -11,6 +12,7 @@ export type Product = {
   rating?: number;
   reviewCount?: number;
 };
+*/
 
 type WishlistState = {
   items: Product[];

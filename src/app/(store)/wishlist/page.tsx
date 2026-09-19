@@ -4,7 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ChevronRight, Heart, ShoppingBag, ShoppingCart, Star, Trash2, X } from "lucide-react";
-import { useWishlistStore, Product } from "@/stores/wishlist-store";
+import { Product } from "@/type/product";
+import { useWishlistStore } from "@/stores/wishlist-store";
 import { useCartStore } from "@/stores/cart-store";
 
 const formatPrice = (price: number) =>
