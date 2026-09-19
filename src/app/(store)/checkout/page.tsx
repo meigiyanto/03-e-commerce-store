@@ -1,36 +1,15 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import {
-  ArrowLeft,
-  ArrowRight,
-  Check,
-  CreditCard,
-  MapPin,
-  Package,
-  ShieldCheck,
-  Tag,
-  Truck,
-  Wallet,
-} from "lucide-react";
-import {
-  FormEvent,
-  useMemo,
-  useState,
-} from "react";
-
+import { redirect } from 'next/navigation';
+import { ArrowLeft, ArrowRight, Check, CreditCard, MapPin, Package, ShieldCheck, Tag, Truck, Wallet } from "lucide-react";
+import { FormEvent, useMemo,useState } from "react";
 import { useCartStore } from "@/stores/cart-store";
-import {
-  PaymentMethod,
-  useCheckoutStore,
-} from "@/stores/checkout-store";
-import {
-  calculateShipping,
-  calculateTax,
-} from "@/lib/coupons";
+import { PaymentMethod, useCheckoutStore } from "@/stores/checkout-store";
+import { calculateShipping, calculateTax } from "@/lib/coupons";
 
-const formatPrice = (price: number) =>
-  `Rp ${price.toLocaleString("id-ID")}`;
+const formatPrice = (price: number) => `Rp ${price.toLocaleString("id-ID")}`;
 
 const paymentOptions: {
   value: PaymentMethod;
@@ -41,104 +20,43 @@ const paymentOptions: {
   {
     value: "bank_transfer",
     label: "Transfer Bank",
-    description:
-      "Simulasi transfer bank",
+    description: "Simulasi transfer bank",
     icon: CreditCard,
   },
   {
     value: "e_wallet",
     label: "E-Wallet",
-    description:
-      "Simulasi pembayaran digital",
+    description: "Simulasi pembayaran digital",
     icon: Wallet,
   },
   {
     value: "cod",
     label: "COD",
-    description:
-      "Bayar saat barang diterima",
+    description: "Bayar saat barang diterima",
     icon: Truck,
   },
 ];
 
 export default function CheckoutPage() {
-  const { items, clearCart } =
-    useCartStore();
+  const { items, clearCart } = useCartStore();
+  const { step, setStep, couponCode, couponDiscount, shippingDiscount, couponMessage, setCoupon, clearCoupon, shipping, setShipping, paymentMethod, setPaymentMethod, setLastOrder } = useCheckoutStore();
+  const [ couponInput, setCouponInput ] = useState(couponCode);
+  const [ couponLoading, setCouponLoading ] = useState(false);
+  const [ couponError, setCouponError ] = useState("");
+  const [ paymentLoading, setPaymentLoading ] = useState(false);
+  const [ paymentError, setPaymentError ] = useState("");
+  const subtotal = useMemo(() => items.reduce((total, item) => total + item.price * item.quantity, 0), [items]);
+  const baseShipping = calculateShipping(subtotal);
+  const shippingCost = Math.max(0, baseShipping - shippingDiscount);
+  const taxableAmount = Math.max(0, subtotal - couponDiscount);
+  const tax = calculateTax(taxableAmount);
+  const total = Math.max(0, taxableAmount + shippingCost + tax);
 
-  const {
-    step,
-    setStep,
-    couponCode,
-    couponDiscount,
-    shippingDiscount,
-    couponMessage,
-    setCoupon,
-    clearCoupon,
-    shipping,
-    setShipping,
-    paymentMethod,
-    setPaymentMethod,
-    setLastOrder,
-  } = useCheckoutStore();
-
-  const [couponInput, setCouponInput] =
-    useState(couponCode);
-
-  const [couponLoading, setCouponLoading] =
-    useState(false);
-
-  const [couponError, setCouponError] =
-    useState("");
-
-  const [paymentLoading, setPaymentLoading] =
-    useState(false);
-
-  const [paymentError, setPaymentError] =
-    useState("");
-
-  const subtotal = useMemo(
-    () =>
-      items.reduce(
-        (total, item) =>
-          total +
-          item.price * item.quantity,
-        0
-      ),
-    [items]
-  );
-
-  const baseShipping =
-    calculateShipping(subtotal);
-
-  const shippingCost = Math.max(
-    0,
-    baseShipping - shippingDiscount
-  );
-
-  const taxableAmount = Math.max(
-    0,
-    subtotal - couponDiscount
-  );
-
-  const tax =
-    calculateTax(taxableAmount);
-
-  const total = Math.max(
-    0,
-    taxableAmount +
-      shippingCost +
-      tax
-  );
-
-  async function applyCoupon(
-    event: FormEvent
-  ) {
+  async function applyCoupon(event: FormEvent) {
     event.preventDefault();
 
     if (!couponInput.trim()) {
-      setCouponError(
-        "Masukkan kode kupon."
-      );
+      setCouponError("Masukkan kode kupon.");
       return;
     }
 
@@ -161,8 +79,7 @@ export default function CheckoutPage() {
         }
       );
 
-      const data =
-        await response.json();
+      const data = await response.json();
 
       if (!response.ok) {
         throw new Error(
@@ -194,9 +111,7 @@ export default function CheckoutPage() {
     setCouponError("");
   }
 
-  function submitShipping(
-    event: FormEvent
-  ) {
+  function submitShipping(event: FormEvent) {
     event.preventDefault();
 
     if (
@@ -240,31 +155,21 @@ export default function CheckoutPage() {
         }
       );
 
-      const data =
-        await response.json();
+      const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          data.message ??
-            "Gagal membuat pesanan"
-        );
+        throw new Error(data.message ?? "Gagal membuat pesanan");
       }
 
       setLastOrder({
         id: data.order.id,
-        orderNumber:
-          data.order.orderNumber,
+        orderNumber: data.order.orderNumber,
         total: data.order.total,
-        paymentMethod:
-          data.order.paymentMethod,
-        createdAt:
-          data.order.createdAt,
+        paymentMethod: data.order.paymentMethod,
+        createdAt: data.order.createdAt,
       });
-
       clearCart();
-
-      window.location.href =
-        "/checkout/success";
+      redirect("/checkout/success");
     } catch (error) {
       setPaymentError(
         error instanceof Error
@@ -407,7 +312,7 @@ export default function CheckoutPage() {
                           key={item.id}
                           className="flex gap-4 p-5"
                         >
-                          <img
+                          <Image
                             src={item.image}
                             alt={item.name}
                             className="h-20 w-20 rounded-xl object-cover"

@@ -1,12 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import {
-  ArrowLeft,
-  MessageSquare,
-  Star,
-} from "lucide-react";
+import { ArrowLeft, MessageSquare, Star } from "lucide-react";
 
 type Review = {
   id: string;
@@ -104,7 +101,7 @@ export default function AccountReviewsPage() {
                 className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm"
               >
                 <div className="flex gap-4">
-                  <img
+                  <Image
                     src={review.product.image}
                     alt={review.product.name}
                     className="h-20 w-20 rounded-xl bg-gray-50 object-contain"

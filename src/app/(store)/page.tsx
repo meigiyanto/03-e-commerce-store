@@ -1,20 +1,5 @@
 import Link from "next/link";
-import {
-  ArrowRight,
-  ChevronRight,
-  Headphones,
-  Laptop,
-  Monitor,
-  Package,
-  Shirt,
-  ShieldCheck,
-  ShoppingBag,
-  Smartphone,
-  Sparkles,
-  Truck,
-  Watch,
-} from "lucide-react";
-
+import { ArrowRight, ChevronRight, Headphones, Laptop, Monitor, Package, Shirt, ShieldCheck, ShoppingBag, Smartphone, Sparkles, Watch } from "lucide-react";
 import ProductCard from "@/components/product/ProductCard";
 import { products } from "@/data/products";
 

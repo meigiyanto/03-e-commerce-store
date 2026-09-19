@@ -1,20 +1,8 @@
 import { currentUser } from "@clerk/nextjs/server";
+import Image from "next/image";
 import Link from "next/link";
-import {
-  ArrowRight,
-  CalendarDays,
-  FileText,
-  Home,
-  MapPin,
-  Package,
-  Settings,
-  ShoppingBag,
-  Star,
-  UserRound,
-} from "lucide-react";
-
+import { ArrowRight, CalendarDays, FileText, MapPin, Package, Settings, ShoppingBag, Star, UserRound } from "lucide-react";
 import AccountSidebar from "@/components/account/AccountSidebar";
-import SignOutButton from "@/components/auth/SignOutButton";
 
 export default async function AccountPage() {
   const user = await currentUser();
@@ -97,7 +85,7 @@ export default async function AccountPage() {
 
               <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center">
                 {user.imageUrl ? (
-                  <img
+                  <Image
                     src={user.imageUrl}
                     alt={fullName}
                     className="h-20 w-20 shrink-0 rounded-full border-4 border-white object-cover shadow-sm"
@@ -150,7 +138,7 @@ export default async function AccountPage() {
               <div className="grid md:grid-cols-[220px_1fr]">
                 <div className="flex flex-col items-center justify-center border-b p-6 text-center md:border-b-0 md:border-r">
                   {user.imageUrl ? (
-                    <img
+                    <Image
                       src={user.imageUrl}
                       alt={fullName}
                       className="h-28 w-28 rounded-full border-4 border-purple-100 object-cover"

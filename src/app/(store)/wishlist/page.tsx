@@ -1,16 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import {
-  ChevronRight,
-  Heart,
-  ShoppingBag,
-  ShoppingCart,
-  Star,
-  Trash2,
-  X,
-} from "lucide-react";
-
+import { ChevronRight, Heart, ShoppingBag, ShoppingCart, Star, Trash2, X } from "lucide-react";
 import { useWishlistStore } from "@/stores/wishlist-store";
 import { useCartStore } from "@/stores/cart-store";
 
@@ -22,27 +14,11 @@ const formatPrice = (price: number) =>
   }).format(price);
 
 export default function WishlistPage() {
-  const items = useWishlistStore(
-    (state) => state.items
-  );
-
-  const removeItem = useWishlistStore(
-    (state) => state.removeItem
-  );
-
-  const clearWishlist = useWishlistStore(
-    (state) => state.clearWishlist
-  );
-
-  const addItem = useCartStore(
-    (state) => state.addItem
-  );
-
-  const handleAddToCart = (
-    product: (typeof items)[number]
-  ) => {
-    addItem(product);
-  };
+  const items = useWishlistStore((state) => state.items);
+  const removeItem = useWishlistStore((state) => state.removeItem);
+  const clearWishlist = useWishlistStore((state) => state.clearWishlist);
+  const addItem = useCartStore((state) => state.addItem);
+  const handleAddToCart = (product: (typeof items)[number]) => {addItem(product);};
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -176,7 +152,7 @@ export default function WishlistPage() {
           href={`/products/${item.id}`}
           className="flex h-40 w-full shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gray-50 sm:h-32 sm:w-32"
         >
-          <img
+          <Image
             src={item.image}
             alt={item.name}
             className="h-full w-full object-cover transition duration-500 group-hover:scale-105"

@@ -1,23 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import {
-  ChevronLeft,
-  ChevronRight,
-  FileText,
-  Home,
-  LogOut,
-  MapPin,
-  Menu,
-  Package,
-  Settings,
-  ShoppingBag,
-  Star,
-  UserRound,
-  X,
-} from "lucide-react";
-
+import { ChevronLeft, ChevronRight, FileText, Home, MapPin, Menu, Package, Settings, ShoppingBag, Star, UserRound, X } from "lucide-react";
 import SignOutButton from "@/components/auth/SignOutButton";
 
 type AccountSidebarProps = {
@@ -27,12 +13,7 @@ type AccountSidebarProps = {
   role: string;
 };
 
-export default function AccountSidebar({
-  fullName,
-  email,
-  imageUrl,
-  role,
-}: AccountSidebarProps) {
+export default function AccountSidebar({ fullName, email, imageUrl, role }: AccountSidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -106,7 +87,7 @@ export default function AccountSidebar({
           {!collapsed && (
             <div className="flex min-w-0 items-center gap-3">
               {imageUrl ? (
-                <img
+                <Image
                   src={imageUrl}
                   alt={fullName}
                   className="h-10 w-10 shrink-0 rounded-full object-cover"
@@ -132,7 +113,7 @@ export default function AccountSidebar({
           {collapsed && (
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 text-purple-700">
               {imageUrl ? (
-                <img
+                <Image
                   src={imageUrl}
                   alt={fullName}
                   className="h-10 w-10 rounded-full object-cover"
@@ -266,14 +247,7 @@ export default function AccountSidebar({
   );
 }
 
-function AccountNavItem({
-  href,
-  icon,
-  label,
-  collapsed,
-  active = false,
-  onClick,
-}: {
+function AccountNavItem({ href, icon, label, collapsed, active = false, onClick }: {
   href: string;
   icon: React.ReactNode;
   label: string;

@@ -1,23 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import {
-  ChevronRight,
-  Heart,
-  Minus,
-  Plus,
-  Share2,
-  ShieldCheck,
-  ShoppingCart,
-  Star,
-  Truck,
-  PackageCheck,
-  Store,
-  Check,
-} from "lucide-react";
-import Navbar from "@/components/layout/Navbar";
+import { Check, ChevronRight, Heart, Minus, Plus, Share2, ShoppingCart, Star } from "lucide-react";
 import ProductCard from "@/components/product/ProductCard";
 import RecentlyViewed from "@/components/product/RecentlyViewed";
 import { useRecentlyViewedStore } from "@/stores/recently-viewed-store";
@@ -50,7 +37,6 @@ export default function ProductDetailPage() {
   }, [searchParams]);
 
   const products = useProductStore((state) => state.products);
- 
   const fetchProducts = useProductStore((state) => state.fetchProducts);
   const isLoading = useProductStore((state) => state.isLoading);
   const error = useProductStore((state) => state.error);
@@ -216,7 +202,7 @@ export default function ProductDetailPage() {
           <div>
             <div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-white">
               <div className="aspect-square bg-gray-50 p-6">
-                <img
+                <Image
                   src={product.image}
                   alt={product.name}
                   className="h-full w-full object-contain"
@@ -590,11 +576,8 @@ export default function ProductDetailPage() {
   );
 }
 
-function ProductFeature({
-  icon,
-  title,
-  description,
-}: {
+/*
+function ProductFeature({ icon, title, description }: {
   icon: React.ReactNode;
   title: string;
   description: string;
@@ -620,6 +603,7 @@ function ProductFeature({
     </div>
   );
 }
+*/
 
 function TabButton({
   label,

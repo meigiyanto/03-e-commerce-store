@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowLeft, ArrowRight,  Minus, Plus, ShoppingBag, Trash2, Truck, ShieldCheck, PackageCheck,} from "lucide-react";
 import { useCartStore } from "@/stores/cart-store";
 
@@ -129,7 +130,7 @@ export default function CartPage() {
                         href={`/products/${item.id}`}
                         className="group h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-gray-100 sm:h-32 sm:w-32"
                       >
-                        <img
+                        <Image
                           src={item.image}
                           alt={item.name}
                           className="h-full w-full object-cover transition duration-300 group-hover:scale-105"

@@ -4,18 +4,8 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  ImageIcon,
-  Package,
-  Star,
-  Tag,
-  Trash2,
-} from "lucide-react";
-
-import {
-  ProductFormData,
-  productSchema,
-} from "@/schemas/product-schema";
+import { ImageIcon, Package, Star, Tag } from "lucide-react";
+import { ProductFormData, productSchema } from "@/schemas/product-schema";
 import { Product } from "@/types/product";
 import { Button } from "@/components/ui/button";
 
@@ -25,14 +15,8 @@ interface ProductFormProps {
   isSubmitting?: boolean;
 }
 
-export function ProductForm({
-  initialData,
-  onSubmit,
-  isSubmitting = false,
-}: ProductFormProps) {
-  const [imagePreview, setImagePreview] = useState(
-    initialData?.image ?? ""
-  );
+export function ProductForm({ initialData, onSubmit, isSubmitting = false }: ProductFormProps) {
+  const [imagePreview, setImagePreview] = useState(initialData?.image ?? "" );
 
   const form = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),

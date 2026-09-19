@@ -1,22 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import {
-  ChevronRight,
-  Grid2X2,
-  Heart,
-  List,
-  Search,
-  ShoppingCart,
-  SlidersHorizontal,
-  Star,
-  X,
-} from "lucide-react";
-
+import { ChevronRight, Grid2X2, Heart, List, Search, ShoppingCart, SlidersHorizontal, Star, X } from "lucide-react";
 import ProductCard from "@/components/product/ProductCard";
 import FilterSidebar from "@/components/product/FilterSidebar";
-
 import { Product } from "@/types/product";
 import { useProductStore } from "@/stores/product-store";
 import { useCartStore } from "@/stores/cart-store";
@@ -43,40 +32,26 @@ export default function ProductsPage() {
   ======================================================= */
 
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-
   const [search, setSearch] = useState("");
-
-  const [selectedCategory, setSelectedCategory] =
-    useState("Semua");
-
+  const [selectedCategory, setSelectedCategory] = useState("Semua");
   const [sortBy, setSortBy] = useState("default");
-
-  const [isMobileFilterOpen, setIsMobileFilterOpen] =
-    useState(false);
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
   /* =======================================================
      FILTER STATE
   ======================================================= */
 
   const [minPrice, setMinPrice] = useState("");
-
   const [maxPrice, setMaxPrice] = useState("");
-
   const [minRating, setMinRating] = useState("0");
-
   const [inStockOnly, setInStockOnly] = useState(false);
 
   /* =======================================================
      PRODUCT STORE
   ======================================================= */
 
-  const products = useProductStore(
-    (state) => state.products
-  );
-
-  const fetchProducts = useProductStore(
-    (state) => state.fetchProducts
-  );
+  const products = useProductStore((state) => state.products);
+  const fetchProducts = useProductStore((state) => state.fetchProducts);
 
   /* =======================================================
      FETCH PRODUCTS
@@ -115,15 +90,9 @@ export default function ProductsPage() {
       --------------------------------------------------- */
 
       const query = search.trim().toLowerCase();
-
-      const productName =
-        product.name?.toLowerCase() ?? "";
-
-      const productCategory =
-        product.category?.toLowerCase() ?? "";
-
-      const productDescription =
-        product.description?.toLowerCase() ?? "";
+      const productName = product.name?.toLowerCase() ?? "";
+      const productCategory = product.category?.toLowerCase() ?? "";
+      const productDescription = product.description?.toLowerCase() ?? "";
 
       const matchesSearch =
         query === "" ||
@@ -161,15 +130,13 @@ export default function ProductsPage() {
          RATING
       --------------------------------------------------- */
 
-      const matchesRating =
-        (product.rating ?? 0) >= Number(minRating);
+      const matchesRating = (product.rating ?? 0) >= Number(minRating);
 
       /* ---------------------------------------------------
          STOCK
       --------------------------------------------------- */
 
-      const matchesStock =
-        !inStockOnly || product.stock > 0;
+      const matchesStock = !inStockOnly || product.stock > 0;
 
       return (
         matchesSearch &&
@@ -749,7 +716,7 @@ function ProductListItem({
           href={`/products/${product.id}`}
           className="flex h-56 shrink-0 items-center justify-center bg-gray-50 p-5 sm:h-auto sm:w-56"
         >
-          <img
+          <Image
             src={product.image}
             alt={product.name}
             className="h-full w-full object-contain transition duration-300 group-hover:scale-105"

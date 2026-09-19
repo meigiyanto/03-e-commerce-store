@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
-import Link from "next/link";
-import { Package, Boxes, DollarSign, Star, Plus, AlertTriangle, } from "lucide-react";
+import { Package, Boxes, DollarSign, Star } from "lucide-react";
 import { useProductStore } from "@/stores/product-store";
 
 function formatRupiah(value: number) {
@@ -13,11 +12,7 @@ function formatRupiah(value: number) {
   }).format(value);
 }
 
-function StatCard({ title, value, icon, }: {
-  title: string;
-  value: string | number;
-  icon: React.ReactNode;
-}) {
+function StatCard({ title, value, icon, }: { title: string; value: string | number; icon: React.ReactNode; }) {
   return (
     <div className="rounded-xl border bg-white p-5">
       <div className="rounded-lg bg-gray-100 p-2.5 w-fit">
@@ -44,36 +39,11 @@ export default function AdminDashboard() {
 
   const statistics = useMemo(() => {
     const totalProducts = products.length;
+    const totalStock = products.reduce((total, product) =>total + Number(product.stock || 0), 0);
+    const inventoryValue = products.reduce((total, product) =>total +Number(product.price || 0) * Number(product.stock || 0),0);
+    const averageRating = totalProducts > 0 ? products.reduce((total, product) =>total + Number(product.rating || 0), 0) / totalProducts: 0;
 
-    const totalStock = products.reduce(
-      (total, product) =>
-        total + Number(product.stock || 0),
-      0
-    );
-
-    const inventoryValue = products.reduce(
-      (total, product) =>
-        total +
-        Number(product.price || 0) *
-          Number(product.stock || 0),
-      0
-    );
-
-    const averageRating =
-      totalProducts > 0
-        ? products.reduce(
-            (total, product) =>
-              total + Number(product.rating || 0),
-            0
-          ) / totalProducts
-        : 0;
-
-    return {
-      totalProducts,
-      totalStock,
-      inventoryValue,
-      averageRating,
-    };
+    return { totalProducts, totalStock, inventoryValue, averageRating};
   }, [products]);
   const lowStockProducts = products.filter((product) => Number(product.stock || 0) <= 5).slice(0, 5);
 
