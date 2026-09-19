@@ -40,16 +40,14 @@ export default function AccountAddressesPage() {
   useEffect(() => {
     let cancelled = false;
   
-    async function load() {
+    async function loadAddresses() {
       try {
         const response = await fetch(
           "/api/addresses"
         );
   
         if (!response.ok) {
-          throw new Error(
-            "Gagal mengambil alamat."
-          );
+          throw new Error("Gagal mengambil alamat.");
         }
   
         const data = await response.json();
@@ -72,7 +70,7 @@ export default function AccountAddressesPage() {
       }
     }
   
-    load();
+    loadAddresses();
   
     return () => {
       cancelled = true;
@@ -134,9 +132,7 @@ export default function AccountAddressesPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          data.message || "Gagal menyimpan alamat."
-        );
+        throw new Error(data.message || "Gagal menyimpan alamat.");
       }
 
       await loadAddresses();

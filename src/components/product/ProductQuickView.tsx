@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Eye, Minus, Plus, ShoppingCart, X } from "lucide-react";
 import { Product } from "@/types/product";
+import { useCartStore } from "@/store/cart-store";
 
 type ProductQuickViewProps = {
   product: Product | null;
@@ -19,11 +20,7 @@ const formatPrice = (price: number) =>
     maximumFractionDigits: 0,
   }).format(price);
 
-export default function ProductQuickView({
-  product,
-  open,
-  onClose,
-}: ProductQuickViewProps) {
+export default function ProductQuickView({ product, open, onClose }: ProductQuickViewProps) {
   const addItem = useCartStore((state) => state.addItem);
   const [quantity, setQuantity] = useState(1);
 
@@ -72,9 +69,7 @@ export default function ProductQuickView({
     onClose();
   };
 
-  const handleOverlayClick = (
-    event: React.MouseEvent<HTMLDivElement>
-  ) => {
+  const handleOverlayClick = (event: React.MouseEvent<HTMLDivElement>) => {
     if (event.target === event.currentTarget) {
       onClose();
     }

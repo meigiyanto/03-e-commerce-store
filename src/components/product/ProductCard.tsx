@@ -31,18 +31,14 @@ export default function ProductCard({ product }: ProductCardProps) {
     addItem(product);
   };
 
-  const handleFavorite = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const handleFavorite = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     event.stopPropagation();
 
     toggleItem(product);
   };
 
-  const handleQuickView = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const handleQuickView = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     event.stopPropagation();
 
