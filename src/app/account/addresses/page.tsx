@@ -37,14 +37,9 @@ export default function AccountAddressesPage() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
 
-  useEffect(() => {
-    let cancelled = false;
-  
-    async function loadAddresses() {
+	const loadAddresses = async () => {
       try {
-        const response = await fetch(
-          "/api/addresses"
-        );
+        const response = await fetch("/api/addresses");
   
         if (!response.ok) {
           throw new Error("Gagal mengambil alamat.");
@@ -69,9 +64,13 @@ export default function AccountAddressesPage() {
         }
       }
     }
-  
+	}
+
+  useEffect(() => {
+    let cancelled = false;
+
     loadAddresses();
-  
+
     return () => {
       cancelled = true;
     };

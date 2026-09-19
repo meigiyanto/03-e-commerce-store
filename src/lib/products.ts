@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import type { Prisma } from "@/generated/prisma/client";
+import type { Prisma } from "@prisma/client";
 import type { Product } from "@/types/product";
 
 export function serializeProduct(p: Prisma.ProductGetPayload<object>): Product {

@@ -29,7 +29,7 @@ export default function ProductQuickView({ product, open, onClose }: ProductQuic
   
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        handleClose();
+        onClose();
       }
     };
   

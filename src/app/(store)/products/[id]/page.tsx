@@ -52,7 +52,7 @@ export default function ProductDetailPage() {
     }
   }, [product, addRecentlyViewed]);
   
-  const isFavorite = wishlistItems.some((item) => item.id === id);
+	const isFavorite = wishlistItems.includes(id);
   const relatedProducts = useMemo(() => {
     if (!product) return [];
 
@@ -129,7 +129,7 @@ export default function ProductDetailPage() {
   };
 
   const handleWishlist = () => {
-    toggleItem(product);
+    toggleItem(product.id);
   };
 
   return (

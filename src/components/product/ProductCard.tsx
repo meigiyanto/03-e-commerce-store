@@ -21,7 +21,12 @@ export default function ProductCard({ product }: ProductCardProps) {
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
   const addItem = useCartStore((state) => state.addItem);
   const toggleItem = useWishlistStore((state) => state.toggleItem);
-  const isFavorite = useWishlistStore((state) => state.ids.some((item) => item.id === product.id));
+	const isFavorite = useWishlistStore((state) =>
+	  state.ids.includes(product.id)
+	);
+
+	toggleItem(product.id);
+
   const handleAddToCart = () => {
     if (product.stock <= 0) {
       return;
