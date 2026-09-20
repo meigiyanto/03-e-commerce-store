@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ChevronRight, Heart, ShoppingBag, ShoppingCart, Trash2, X } from "lucide-react";
 import { useHydrated } from "@/hooks/use-hydrated";
 
@@ -209,7 +209,7 @@ export default function WishlistPage() {
   const hydrated = useHydrated();
   
   if (!hydrated) {
-    setIsMounted(true);
+    return setIsMounted(true);
   }
 
   const handleAddToCart = (product: Product) => {

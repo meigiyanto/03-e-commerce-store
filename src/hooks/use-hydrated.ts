@@ -3,11 +3,15 @@
 import { useEffect, useState } from "react";
 
 export function useHydrated() {
-  const [hydrated, setHydrated] = useState(false);
-
+  const [hydrated, setHydrated] = useState(
+    useWishlistStore.persist.hasHydrated(),
+  );
+  
   useEffect(() => {
-    setHydrated(true);
+    const unsub = useWishlistStore.persist.onFinishHydration(() => {
+      setHydrated(true);
+    });
+  
+    return unsub;
   }, []);
-
-  return hydrated;
 }
