@@ -79,13 +79,9 @@ export default function Navbar() {
   const cartItems = useCartStore((state) => state.items);
   const wishlistItems = useWishlistStore((state) => state.items);
 
-  const [isMounted, setIsMounted] = useState(false);
+  // const [isMounted, setIsMounted] = useState(false);
   const hydrated = useHydrated();
   
-  if(!hydrated) {
-    return setIsMounted(true);
-  }
-
   /*
    * ========================================
    * CART / WISHLIST COUNT
@@ -227,6 +223,10 @@ export default function Navbar() {
 
     return pathname.startsWith(href);
   };
+
+  if(!hydrated) {
+    return null;
+  }
 
   return (
     <header className="sticky top-0 z-50 bg-white shadow-sm">
@@ -377,6 +377,7 @@ export default function Navbar() {
                                   <Image
                                     src={product.image}
                                     alt={product.name}
+                                    fill
                                     className="h-full w-full object-cover"
                                   />
                                 ) : (
@@ -589,6 +590,7 @@ export default function Navbar() {
                                 <Image
                                   src={product.image}
                                   alt={product.name}
+                                  fill
                                   className="h-full w-full object-cover"
                                 />
                               ) : (

@@ -200,8 +200,6 @@ function WishlistLoading() {
 }
 
 export default function WishlistPage() {
-  const [isMounted, setIsMounted] = useState(false);
-
   const items = useWishlistStore((state) => state.items);
   const removeItem = useWishlistStore((state) => state.removeItem);
   const clearWishlist = useWishlistStore((state) => state.clearWishlist);
@@ -209,7 +207,7 @@ export default function WishlistPage() {
   const hydrated = useHydrated();
   
   if (!hydrated) {
-    return setIsMounted(true);
+    return <WishlistLoading />
   }
 
   const handleAddToCart = (product: Product) => {
@@ -217,10 +215,6 @@ export default function WishlistPage() {
 
     addItem(product);
   };
-
-  if (!isMounted) {
-    return <WishlistLoading />;
-  }
 
   return (
     <main className="min-h-screen bg-gray-50">

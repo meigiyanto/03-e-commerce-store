@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 export function useHydrated() {
+  // eslint-disable-next-line
   const [hydrated, setHydrated] = useState(
     useWishlistStore.persist.hasHydrated(),
   );
