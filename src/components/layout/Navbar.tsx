@@ -80,7 +80,7 @@ export default function Navbar() {
   const wishlistItems = useWishlistStore((state) => state.items);
 
   // const [isMounted, setIsMounted] = useState(false);
-  const hydrated = useHydrated();
+  const { hasHydrated } = useHydrated();
   
   /*
    * ========================================
@@ -198,16 +198,10 @@ export default function Navbar() {
       }
     };
 
-    document.addEventListener(
-      "mousedown",
-      handleClickOutside
-    );
+    document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
-      document.removeEventListener(
-        "mousedown",
-        handleClickOutside
-      );
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -224,7 +218,7 @@ export default function Navbar() {
     return pathname.startsWith(href);
   };
 
-  if(!hydrated) {
+  if(!hasHydrated) {
     return null;
   }
 

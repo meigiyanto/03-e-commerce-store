@@ -1,19 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useWishlistStore } from "@/stores/wishlist-store";
 
 export function useHydrated() {
-  // eslint-disable-next-line
-  const [hydrated, setHydrated] = useState(
-    useWishlistStore.persist.hasHydrated(),
-  );
-  
+  const [hasHydrated, setHasHydrated] = useState(false);
+
   useEffect(() => {
-    const unsub = useWishlistStore.persist.onFinishHydration(() => {
-      setHydrated(true);
-    });
-  
-    return unsub;
+    setHasHydrated(true);
   }, []);
+
+  return {
+    hasHydrated,
+  };
 }
