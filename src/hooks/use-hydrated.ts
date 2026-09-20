@@ -7,7 +7,7 @@ export function useHydrated() {
 
   useEffect(() => {
     setHasHydrated(true);
-  }, []);
+  }, [hasHydrated]);
 
   return {
     hasHydrated,
