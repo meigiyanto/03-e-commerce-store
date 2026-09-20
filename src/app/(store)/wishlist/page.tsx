@@ -3,14 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import {
-  ChevronRight,
-  Heart,
-  ShoppingBag,
-  ShoppingCart,
-  Trash2,
-  X,
-} from "lucide-react";
+import { ChevronRight, Heart, ShoppingBag, ShoppingCart, Trash2, X } from "lucide-react";
+import { useHydrated } from "@/hooks/use-hydrated";
 
 import { useWishlistStore } from "@/stores/wishlist-store";
 import { useCartStore } from "@/stores/cart-store";
@@ -42,10 +36,7 @@ function Breadcrumb() {
   );
 }
 
-function WishlistHeader({
-  itemCount,
-  onClear,
-}: {
+function WishlistHeader({ itemCount, onClear }: {
   itemCount: number;
   onClear: () => void;
 }) {
@@ -112,11 +103,7 @@ function EmptyWishlist() {
   );
 }
 
-function WishlistItem({
-  product,
-  onRemove,
-  onAddToCart,
-}: {
+function WishlistItem({ product, onRemove, onAddToCart }: {
   product: Product;
   onRemove: (id: string) => void;
   onAddToCart: (product: Product) => void;
@@ -218,12 +205,12 @@ export default function WishlistPage() {
   const items = useWishlistStore((state) => state.items);
   const removeItem = useWishlistStore((state) => state.removeItem);
   const clearWishlist = useWishlistStore((state) => state.clearWishlist);
-
   const addItem = useCartStore((state) => state.addItem);
-
-  useEffect(() => {
+  const hydrated = useHydrated();
+  
+  if (!hydrated) {
     setIsMounted(true);
-  }, []);
+  }
 
   const handleAddToCart = (product: Product) => {
     if (product.stock <= 0) return;

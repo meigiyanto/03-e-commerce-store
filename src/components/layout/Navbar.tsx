@@ -8,6 +8,7 @@ import { ChevronDown, ChevronRight, Heart, Menu, Search, ShoppingCart, User, X }
 import { useCartStore } from "@/stores/cart-store";
 import { useProductStore } from "@/stores/product-store";
 import { useWishlistStore } from "@/stores/wishlist-store";
+import { useHydrated } from "@/hooks/use-hydrated";
 
 const navigationLinks = [
   {
@@ -79,10 +80,11 @@ export default function Navbar() {
   const wishlistItems = useWishlistStore((state) => state.items);
 
   const [isMounted, setIsMounted] = useState(false);
+  const hydrated = useHydrated();
   
-  useEffect(() => {
+  if(!hydrated) {
     setIsMounted(true);
-  }, []);
+  }
 
   /*
    * ========================================
