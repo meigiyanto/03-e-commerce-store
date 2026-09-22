@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
 import { ArrowLeft, ArrowRight, Check, CreditCard, MapPin, Package, ShieldCheck, Tag, Truck, Wallet } from "lucide-react";
 import { FormEvent, useMemo,useState } from "react";
 import { PaymentMethod, useCheckoutStore } from "@/stores/checkout-store";
@@ -36,7 +37,10 @@ const paymentOptions: {
   },
 ];
 
+console.log("CHECKOUT PAGE LOADED");
+
 export default function CheckoutPage() {
+  const { isLoaded, isSignedIn } = useAuth();
   const { items, clearCart } = useCartStore();
   const router = useRouter();
   const { step, setStep, couponCode, couponDiscount, shippingDiscount, couponMessage, setCoupon, clearCoupon, shipping, setShipping, paymentMethod, setPaymentMethod, setLastOrder } = useCheckoutStore();
@@ -126,51 +130,97 @@ export default function CheckoutPage() {
     setPaymentError("");
 
     try {
-      const response = await fetch(
-        "/api/orders",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            items: items.map((item) => ({
-              productId: item.id,
-              quantity: item.quantity,
-            })),
-            shipping,
-            couponCode: couponCode || undefined,
-            paymentMethod,
-          }),
-        }
-      );
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          items: items.map((item) => ({
+            productId: item.id,
+            quantity: item.quantity,
+          })),
+          shipping,
+          couponCode: couponCode || undefined,
+          paymentMethod,
+        }),
+      });
 
       const data = await response.json();
+
+      console.log("=== CHECKOUT DEBUG ===");
+      console.log("Response OK:", response.ok);
+      console.log("Response data:", data);
+      console.log("Order:", data.order);
+      console.log("Order ID:", data.order?.id);
+      console.log("======================");
 
       if (!response.ok) {
         throw new Error(data.message ?? "Gagal membuat pesanan");
       }
 
-      console.log("ORDER CREATED");
-      console.log("LAST ORDER", data.order);
+      if (!data.order?.id) {
+        throw new Error("ID pesanan tidak ditemukan dari server.");
+      }
+
+      const orderId = data.order.id;
 
       setLastOrder({
-        id: data.order.id,
+        id: orderId,
         orderNumber: data.order.orderNumber,
         total: data.order.total,
         paymentMethod: data.order.paymentMethod,
         createdAt: data.order.createdAt,
       });
-      // router.push("/checkout/success");
-      // setTimeout(() => {
-      //   clearCart();
-      // }, 100);
-      window.location.href = "/checkout/success";
+
+      clearCart();
+
+      const successUrl = `/checkout/success?orderId=${encodeURIComponent(
+        orderId
+      )}`;
+
+      console.log("Success URL:", successUrl);
+
+      router.push(successUrl);
     } catch (error) {
-      setPaymentError( error instanceof Error ? error.message : "Pembayaran gagal" );
+      console.error("CHECKOUT ERROR:", error);
+
+      setPaymentError(
+        error instanceof Error
+          ? error.message
+          : "Pembayaran gagal"
+      );
     } finally {
       setPaymentLoading(false);
     }
+  }
+
+  if (!isLoaded) {
+    return (
+      <main className="flex min-h-[70vh] items-center justify-center bg-gray-50">
+        <p className="text-sm text-gray-500">
+          Memeriksa autentikasi...
+        </p>
+      </main>
+    );
+  }
+
+  if (!isSignedIn) {
+    router.replace("/account/sign-in?redirect_url=/checkout");
+
+    return (
+      <main className="flex min-h-[70vh] items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <h1 className="text-xl font-bold text-gray-900">
+            Login diperlukan
+          </h1>
+
+          <p className="mt-2 text-sm text-gray-500">
+            Silakan login terlebih dahulu untuk melanjutkan checkout.
+          </p>
+        </div>
+      </main>
+    );
   }
 
   if (items.length === 0) {

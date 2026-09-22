@@ -85,14 +85,6 @@ export default function CartPage() {
               {totalItems === 1 ? "tersedia" : "tersedia"} di keranjang Anda
             </p>
           </div>
-
-          <Link
-            href="/products"
-            className="inline-flex w-fit items-center gap-2 text-sm font-medium text-gray-600 transition hover:text-blue-600"
-          >
-            <ArrowLeft size={17} />
-            Lanjut Belanja
-          </Link>
         </div>
 
         {/* Main Grid */}

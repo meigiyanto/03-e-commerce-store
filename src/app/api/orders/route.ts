@@ -22,6 +22,17 @@ export async function POST( request: Request ) {
   try {
     const body = await request.json();
     const { userId } = await auth();
+
+    if (!userId) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Anda harus login untuk melakukan checkout.",
+        },
+        { status: 401 }
+      );
+    }
+
     const items = body.items as OrderRequestItem[];
     const shipping = body.shipping as ShippingPayload;
     const couponCode = body.couponCode ? String(body.couponCode) : "";
@@ -185,7 +196,7 @@ export async function POST( request: Request ) {
           return tx.order.create({
             data: {
               orderNumber,
-              userId: userId ?? null,
+              userId,
               customerName: shipping.name,
               customerEmail: shipping.email,
               customerPhone: shipping.phone,

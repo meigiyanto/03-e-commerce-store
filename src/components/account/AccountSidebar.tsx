@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { ChevronLeft, ChevronRight, FileText, Home, MapPin, Menu, Package, Settings, ShoppingBag, Star, UserRound, X } from "lucide-react";
+import { Home, ShoppingBag, ChevronLeft, ChevronRight, MapPin, Menu, Star, FileText, Package, Settings, UserRound, X } from "lucide-react";
 import SignOutButton from "@/components/auth/SignOutButton";
 
 type AccountSidebarProps = {
@@ -67,23 +67,13 @@ export default function AccountSidebar({ fullName, email, imageUrl, role }: Acco
           fixed inset-y-0 left-0 z-50 flex flex-col border-r border-gray-100
           bg-white shadow-xl transition-all duration-300
           lg:sticky lg:top-0 lg:z-30 lg:h-[calc(100dvh-0px)] lg:shadow-none
-          ${
-            mobileOpen
-              ? "translate-x-0"
-              : "-translate-x-full lg:translate-x-0"
-          }
+          ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
           ${collapsed ? "lg:w-20" : "lg:w-64"}
           w-72
         `}
       >
         {/* Header */}
-        <div
-          className={`flex min-h-20 items-center border-b border-gray-100 ${
-            collapsed
-              ? "justify-center px-3"
-              : "justify-between px-5"
-          }`}
-        >
+        <div className={`flex min-h-20 items-center border-b border-gray-100 ${ collapsed ? "justify-center px-3" : "justify-between px-5" }`}>
           {!collapsed && (
             <div className="flex min-w-0 items-center gap-3">
               {imageUrl ? (
@@ -118,6 +108,8 @@ export default function AccountSidebar({ fullName, email, imageUrl, role }: Acco
                 <Image
                   src={imageUrl}
                   alt={fullName}
+                  width={10}
+                  height={10}
                   className="h-10 w-10 rounded-full object-cover"
                 />
               ) : (
@@ -206,14 +198,8 @@ export default function AccountSidebar({ fullName, email, imageUrl, role }: Acco
 
           <div className="my-4 border-t border-gray-100" />
 
-          <div
-            className={
-              collapsed
-                ? "[&>button]:justify-center [&>button]:px-2"
-                : ""
-            }
-          >
-            <SignOutButton />
+          <div className={collapsed ? "[&>button]:justify-center [&>button]:px-2" : ""}>
+           <SignOutButton/>
           </div>
         </nav>
 
@@ -228,11 +214,7 @@ export default function AccountSidebar({ fullName, email, imageUrl, role }: Acco
               hover:text-gray-900
               ${collapsed ? "justify-center" : "justify-between px-3"}
             `}
-            aria-label={
-              collapsed
-                ? "Buka sidebar"
-                : "Ciutkan sidebar"
-            }
+            aria-label={collapsed ? "Buka sidebar" : "Ciutkan sidebar"}
           >
             {!collapsed && (
               <span className="flex items-center gap-3">
@@ -265,16 +247,8 @@ function AccountNavItem({ href, icon, label, collapsed, active = false, onClick 
       className={`
         flex items-center rounded-xl py-3 text-sm font-medium
         transition
-        ${
-          collapsed
-            ? "justify-center px-2"
-            : "gap-3 px-3"
-        }
-        ${
-          active
-            ? "bg-purple-50 text-purple-700"
-            : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
-        }
+        ${ collapsed ? "justify-center px-2" : "gap-3 px-3" }
+        ${ active ? "bg-purple-50 text-purple-700" : "text-gray-500 hover:bg-gray-50 hover:text-gray-900" }
       `}
     >
       {icon}

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { ChevronDown, ChevronRight, Heart, Menu, Search, ShoppingCart, User, X } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
 import { useCartStore } from "@/stores/cart-store";
 import { useProductStore } from "@/stores/product-store";
 import { useWishlistStore } from "@/stores/wishlist-store";
@@ -69,6 +70,7 @@ const departments = [
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
+  const { isLoaded, isSignedIn, user } = useUser();
   const desktopSearchRef = useRef<HTMLDivElement>(null);
   const mobileSearchRef = useRef<HTMLDivElement>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -78,8 +80,6 @@ export default function Navbar() {
   const products = useProductStore((state) => state.products);
   const cartItems = useCartStore((state) => state.items);
   const wishlistItems = useWishlistStore((state) => state.items);
-
-  // const [isMounted, setIsMounted] = useState(false);
   const { hasHydrated } = useHydrated();
   
   /*
@@ -96,16 +96,13 @@ export default function Navbar() {
    * ========================================
    */
   const autocompleteProducts = useMemo(() => {
-    const query = searchQuery
-      .trim()
-      .toLowerCase();
+    const query = searchQuery.trim().toLowerCase();
 
     if (!query) {
       return [];
     }
 
-    return products
-      .filter((product) => {
+    return products.filter((product) => {
         const name = product.name?.toLowerCase() ?? "";
         const category = product.category?.toLowerCase() ?? "";
         const description = product.description?.toLowerCase() ?? "";
@@ -172,7 +169,6 @@ export default function Navbar() {
       autocompleteProducts.length > 0
     ) {
       event.preventDefault();
-
       handleAutocompleteClick(
         autocompleteProducts[0].id
       );
@@ -306,18 +302,12 @@ export default function Navbar() {
                 <input
                   type="search"
                   value={searchQuery}
-                  onFocus={() =>
-                    setIsSearchOpen(true)
-                  }
+                  onFocus={() => setSearchQuery("")}
                   onChange={(event) => {
-                    setSearchQuery(
-                      event.target.value
-                    );
+                    setSearchQuery(event.target.value);
                     setIsSearchOpen(true);
                   }}
-                  onKeyDown={
-                    handleSearchKeyDown
-                  }
+                  onKeyDown={handleSearchKeyDown}
                   placeholder="Cari produk yang Anda butuhkan..."
                   autoComplete="off"
                   className="h-12 w-full rounded-xl border border-gray-200 bg-gray-50 pl-12 pr-28 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-50"
@@ -353,16 +343,8 @@ export default function Navbar() {
                             <button
                               key={product.id}
                               type="button"
-                              onMouseDown={(
-                                event
-                              ) =>
-                                event.preventDefault()
-                              }
-                              onClick={() =>
-                                handleAutocompleteClick(
-                                  product.id
-                                )
-                              }
+                              onMouseDown={(event) => event.preventDefault()}
+                              onClick={() => handleAutocompleteClick(product.id) }
                               className="flex w-full items-center gap-3 px-4 py-3 text-left transition hover:bg-blue-50"
                             >
                               {/* Product Image */}
@@ -391,9 +373,7 @@ export default function Navbar() {
                                 </p>
 
                                 <p className="mt-1 truncate text-xs text-gray-500">
-                                  {
-                                    product.category
-                                  }
+                                  {product.category}
                                 </p>
 
                                 <p className="mt-1 text-sm font-bold text-blue-600">
@@ -468,12 +448,12 @@ export default function Navbar() {
 
               <div className="hidden xl:block">
                 <p className="text-xs text-gray-400">
-                  Halo,
+                  Halo, {isLoaded && isSignedIn ? (<span>{user.firstName || user.username}</span>) : (<span>Pengunjung</span>)}
                 </p>
 
-                <p className="text-sm font-semibold text-gray-800">
+                {/* <p className="text-sm font-semibold text-gray-800">
                   Akun Saya
-                </p>
+                </p> */}
               </div>
             </Link>
 
@@ -495,9 +475,7 @@ export default function Navbar() {
               <Heart size={21} />
               {wishlistItemCount > 0 && (
                 <span className="absolute -right-1 -top-1 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
-                  {wishlistItemCount > 99
-                    ? "99+"
-                    : wishlistItemCount}
+                  {wishlistItemCount > 99 ? "99+" : wishlistItemCount}
                 </span>
               )}
             </Link>
@@ -512,9 +490,7 @@ export default function Navbar() {
 
               {cartItemCount > 0 && (
                 <span className="absolute -right-1 -top-1 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-blue-600 px-1 text-[10px] font-bold text-white">
-                  {cartItemCount > 99
-                    ? "99+"
-                    : cartItemCount}
+                  {cartItemCount > 99 ? "99+" : cartItemCount}
                 </span>
               )}
             </Link>
@@ -541,18 +517,12 @@ export default function Navbar() {
               <input
                 type="search"
                 value={searchQuery}
-                onFocus={() =>
-                  setIsSearchOpen(true)
-                }
+                onFocus={() => setIsSearchOpen(true)}
                 onChange={(event) => {
-                  setSearchQuery(
-                    event.target.value
-                  );
+                  setSearchQuery(event.target.value);
                   setIsSearchOpen(true);
                 }}
-                onKeyDown={
-                  handleSearchKeyDown
-                }
+                onKeyDown={handleSearchKeyDown }
                 placeholder="Cari produk..."
                 autoComplete="off"
                 autoFocus
@@ -571,12 +541,8 @@ export default function Navbar() {
                           <button
                             key={product.id}
                             type="button"
-                            onMouseDown={(event) =>
-                              event.preventDefault()
-                            }
-                            onClick={() =>
-                              handleAutocompleteClick(product.id)
-                            }
+                            onMouseDown={(event) => event.preventDefault()}
+                            onClick={() => handleAutocompleteClick(product.id)}
                             className="flex w-full items-center gap-3 px-4 py-3 text-left transition hover:bg-blue-50"
                           >
                             <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-gray-100">
@@ -603,9 +569,7 @@ export default function Navbar() {
                               </p>
 
                               <p className="text-xs text-gray-500">
-                                {
-                                  product.category
-                                }
+                                { product.category }
                               </p>
 
                               <p className="text-sm font-bold text-blue-600">
@@ -626,14 +590,8 @@ export default function Navbar() {
 
                       <button
                         type="button"
-                        onMouseDown={(
-                          event
-                        ) =>
-                          event.preventDefault()
-                        }
-                        onClick={() =>
-                          submitSearch()
-                        }
+                        onMouseDown={(event) => event.preventDefault()}
+                        onClick={() => submitSearch()}
                         className="w-full border-t border-gray-100 px-4 py-3 text-sm font-semibold text-blue-600"
                       >
                         Lihat semua hasil
@@ -656,24 +614,14 @@ export default function Navbar() {
           <div className="relative">
             <button
               type="button"
-              onClick={() =>
-                setIsDepartmentOpen(
-                  !isDepartmentOpen
-                )
-              }
+              onClick={() => setIsDepartmentOpen(!isDepartmentOpen)}
               className="flex items-center gap-2 border-x border-gray-100 px-5 py-4 text-sm font-semibold text-gray-800 transition hover:bg-gray-50"
             >
               <Menu size={18} />
-
               Semua Kategori
-
               <ChevronDown
                 size={16}
-                className={`transition ${
-                  isDepartmentOpen
-                    ? "rotate-180"
-                    : ""
-                }`}
+                className={`transition ${isDepartmentOpen ? "rotate-180" : ""}`}
               />
             </button>
 
@@ -684,15 +632,10 @@ export default function Navbar() {
                     <Link
                       key={department.id}
                       href={department.href}
-                      onClick={() =>
-                        setIsDepartmentOpen(
-                          false
-                        )
-                      }
+                      onClick={() => setIsDepartmentOpen(false)}
                       className="flex items-center justify-between px-5 py-3 text-sm text-gray-700 transition hover:bg-blue-50 hover:text-blue-600"
                     >
                       {department.label}
-
                       <ChevronRight size={16} />
                     </Link>
                   )
@@ -702,16 +645,13 @@ export default function Navbar() {
           </div>
 
           {/* Navigation Links */}
-
           <nav className="flex items-center gap-6">
             {navigationLinks.map((link) => (
               <Link
                 key={link.id}
                 href={link.href}
                 className={`py-4 text-sm font-medium transition ${
-                  isActiveLink(link.href)
-                    ? "text-blue-600"
-                    : "text-gray-600 hover:text-blue-600"
+                  isActiveLink(link.href) ? "text-blue-600" : "text-gray-600 hover:text-blue-600"
                 }`}
               >
                 {link.label}
@@ -720,7 +660,6 @@ export default function Navbar() {
           </nav>
 
           {/* Right Promotion */}
-
           <Link
             href="/promo"
             className="ml-auto py-4 text-sm font-semibold text-red-500 transition hover:text-red-600"

@@ -49,18 +49,9 @@ export default async function AccountPage() {
     );
   }
 
-  const fullName =
-    [user.firstName, user.lastName].filter(Boolean).join(" ") ||
-    user.username ||
-    "NexaShop User";
-
-  const email =
-    user.emailAddresses[0]?.emailAddress ?? "Email belum tersedia";
-
-  const role =
-    typeof user.publicMetadata?.role === "string"
-      ? user.publicMetadata.role
-      : "user";
+  const fullName = [user.firstName, user.lastName].filter(Boolean).join(" ") || user.username || "NexaShop User";
+  const email = user.emailAddresses[0]?.emailAddress ?? "";
+  const role = typeof user.publicMetadata?.role === "string" ? user.publicMetadata.role : "user";
 
   const memberSince = new Date(user.createdAt).toLocaleDateString("id-ID", {
     month: "long",
