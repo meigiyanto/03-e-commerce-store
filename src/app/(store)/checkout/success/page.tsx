@@ -1,22 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import {
-  ArrowRight,
-  Check,
-  ClipboardCheck,
-  Package,
-  ShoppingBag,
-} from "lucide-react";
-
+import { ArrowRight, Check, ClipboardCheck, Package, ShoppingBag } from "lucide-react";
 import { useCheckoutStore } from "@/stores/checkout-store";
 
-const formatPrice = (price: number) =>
-  `Rp ${price.toLocaleString("id-ID")}`;
+const formatPrice = (price: number) => `Rp ${price.toLocaleString("id-ID")}`;
 
 export default function CheckoutSuccessPage() {
-  const { lastOrder } =
-    useCheckoutStore();
+  const { lastOrder } = useCheckoutStore();
 
   if (!lastOrder) {
     return (
@@ -35,8 +26,7 @@ export default function CheckoutSuccessPage() {
             </h1>
 
             <p className="mt-2 text-sm text-gray-500">
-              Tidak ada informasi pesanan terakhir
-              pada sesi ini.
+              Tidak ada informasi pesanan terakhir pada sesi ini.
             </p>
 
             <Link
@@ -72,8 +62,7 @@ export default function CheckoutSuccessPage() {
             </h1>
 
             <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-gray-500">
-              Pesanan Anda berhasil dibuat dan sedang
-              diproses oleh toko.
+              Pesanan Anda berhasil dibuat dan sedang diproses oleh toko.
             </p>
           </div>
 
@@ -81,23 +70,17 @@ export default function CheckoutSuccessPage() {
             <div className="grid gap-5 sm:grid-cols-2">
               <Info
                 label="Nomor Pesanan"
-                value={
-                  lastOrder.orderNumber
-                }
+                value={ lastOrder.orderNumber }
               />
 
               <Info
                 label="Total Pembayaran"
-                value={formatPrice(
-                  lastOrder.total
-                )}
+                value={formatPrice( lastOrder.total )}
               />
 
               <Info
                 label="Metode Pembayaran"
-                value={formatPaymentMethod(
-                  lastOrder.paymentMethod
-                )}
+                value={formatPaymentMethod(lastOrder.paymentMethod)}
               />
 
               <Info
@@ -122,10 +105,8 @@ export default function CheckoutSuccessPage() {
                 </h2>
 
                 <p className="mt-1 text-sm leading-6 text-gray-500">
-                  Simpan nomor pesanan Anda untuk
-                  referensi. Pada Phase 3 kita dapat
-                  menghubungkannya dengan halaman
-                  riwayat pesanan dan tracking.
+                  Simpan nomor pesanan Anda untuk referensi. Pada Phase 3 kita dapat
+                  menghubungkannya dengan halaman riwayat pesanan dan tracking.
                 </p>
               </div>
             </div>
@@ -154,10 +135,7 @@ export default function CheckoutSuccessPage() {
   );
 }
 
-function Info({
-  label,
-  value,
-}: {
+function Info({ label, value, }: {
   label: string;
   value: string;
 }) {
@@ -174,9 +152,7 @@ function Info({
   );
 }
 
-function formatPaymentMethod(
-  method: string
-) {
+function formatPaymentMethod(method: string ) {
   switch (method) {
     case "bank_transfer":
       return "Transfer Bank";

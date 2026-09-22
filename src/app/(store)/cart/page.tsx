@@ -133,6 +133,8 @@ export default function CartPage() {
                         <Image
                           src={item.image}
                           alt={item.name}
+                          width={128}
+                          height={128}
                           className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                         />
                       </Link>

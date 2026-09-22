@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { redirect } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, Check, CreditCard, MapPin, Package, ShieldCheck, Tag, Truck, Wallet } from "lucide-react";
 import { FormEvent, useMemo,useState } from "react";
 import { PaymentMethod, useCheckoutStore } from "@/stores/checkout-store";
@@ -38,6 +38,7 @@ const paymentOptions: {
 
 export default function CheckoutPage() {
   const { items, clearCart } = useCartStore();
+  const router = useRouter();
   const { step, setStep, couponCode, couponDiscount, shippingDiscount, couponMessage, setCoupon, clearCoupon, shipping, setShipping, paymentMethod, setPaymentMethod, setLastOrder } = useCheckoutStore();
   const [ couponInput, setCouponInput ] = useState(couponCode);
   const [ couponLoading, setCouponLoading ] = useState(false);
@@ -68,8 +69,7 @@ export default function CheckoutPage() {
         {
           method: "POST",
           headers: {
-            "Content-Type":
-              "application/json",
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             code: couponInput,
@@ -81,10 +81,7 @@ export default function CheckoutPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          data.message ??
-            "Kupon tidak valid"
-        );
+        throw new Error( data.message ?? "Kupon tidak valid" );
       }
 
       setCoupon(
@@ -94,11 +91,7 @@ export default function CheckoutPage() {
         data.message
       );
     } catch (error) {
-      setCouponError(
-        error instanceof Error
-          ? error.message
-          : "Gagal menerapkan kupon"
-      );
+      setCouponError(error instanceof Error ? error.message : "Gagal menerapkan kupon");
     } finally {
       setCouponLoading(false);
     }
@@ -138,8 +131,7 @@ export default function CheckoutPage() {
         {
           method: "POST",
           headers: {
-            "Content-Type":
-              "application/json",
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             items: items.map((item) => ({
@@ -147,8 +139,7 @@ export default function CheckoutPage() {
               quantity: item.quantity,
             })),
             shipping,
-            couponCode:
-              couponCode || undefined,
+            couponCode: couponCode || undefined,
             paymentMethod,
           }),
         }
@@ -160,6 +151,9 @@ export default function CheckoutPage() {
         throw new Error(data.message ?? "Gagal membuat pesanan");
       }
 
+      console.log("ORDER CREATED");
+      console.log("LAST ORDER", data.order);
+
       setLastOrder({
         id: data.order.id,
         orderNumber: data.order.orderNumber,
@@ -167,14 +161,13 @@ export default function CheckoutPage() {
         paymentMethod: data.order.paymentMethod,
         createdAt: data.order.createdAt,
       });
-      clearCart();
-      redirect("/checkout/success");
+      // router.push("/checkout/success");
+      // setTimeout(() => {
+      //   clearCart();
+      // }, 100);
+      window.location.href = "/checkout/success";
     } catch (error) {
-      setPaymentError(
-        error instanceof Error
-          ? error.message
-          : "Pembayaran gagal"
-      );
+      setPaymentError( error instanceof Error ? error.message : "Pembayaran gagal" );
     } finally {
       setPaymentLoading(false);
     }
@@ -197,8 +190,7 @@ export default function CheckoutPage() {
             </h1>
 
             <p className="mt-2 text-sm text-gray-500">
-              Tambahkan produk sebelum
-              melanjutkan checkout.
+              Tambahkan produk sebelum melanjutkan checkout.
             </p>
 
             <Link
@@ -231,8 +223,7 @@ export default function CheckoutPage() {
           </h1>
 
           <p className="mt-1 text-sm text-gray-500">
-            Lengkapi data untuk menyelesaikan
-            pesanan Anda.
+            Lengkapi data untuk menyelesaikan pesanan Anda.
           </p>
         </div>
 
@@ -252,11 +243,8 @@ export default function CheckoutPage() {
               label: "Pembayaran",
             },
           ].map((item) => {
-            const active =
-              step === item.number;
-
-            const completed =
-              step > item.number;
+            const active = step === item.number;
+            const completed = step > item.number;
 
             return (
               <div
@@ -265,10 +253,7 @@ export default function CheckoutPage() {
               >
                 <div
                   className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold ${
-                    active ||
-                    completed
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-200 text-gray-500"
+                    active || completed ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-500"
                   }`}
                 >
                   {completed ? (
@@ -280,9 +265,7 @@ export default function CheckoutPage() {
 
                 <span
                   className={`hidden text-sm font-medium sm:block ${
-                    active
-                      ? "text-blue-600"
-                      : "text-gray-500"
+                    active ? "text-blue-600" : "text-gray-500"
                   }`}
                 >
                   {item.label}
@@ -305,8 +288,7 @@ export default function CheckoutPage() {
                   </div>
 
                   <div className="divide-y divide-gray-100">
-                    {items.map(
-                      (item) => (
+                    {items.map((item) => (
                         <div
                           key={item.id}
                           className="flex gap-4 p-5"
@@ -314,6 +296,8 @@ export default function CheckoutPage() {
                           <Image
                             src={item.image}
                             alt={item.name}
+                            width={80}
+                            height={80}
                             className="h-20 w-20 rounded-xl object-cover"
                           />
 
@@ -329,16 +313,11 @@ export default function CheckoutPage() {
                             <div className="mt-2 flex justify-between gap-3 text-sm">
                               <span className="text-gray-500">
                                 {item.quantity} ×{" "}
-                                {formatPrice(
-                                  item.price
-                                )}
+                                {formatPrice( item.price )}
                               </span>
 
                               <span className="font-semibold text-gray-900">
-                                {formatPrice(
-                                  item.price *
-                                    item.quantity
-                                )}
+                                {formatPrice( item.price * item.quantity )}
                               </span>
                             </div>
                           </div>
@@ -383,9 +362,7 @@ export default function CheckoutPage() {
 
                       <button
                         type="button"
-                        onClick={
-                          removeCoupon
-                        }
+                        onClick={ removeCoupon }
                         className="text-xs font-semibold text-red-500 hover:text-red-600"
                       >
                         Hapus
@@ -393,36 +370,23 @@ export default function CheckoutPage() {
                     </div>
                   ) : (
                     <form
-                      onSubmit={
-                        applyCoupon
-                      }
+                      onSubmit={ applyCoupon }
                       className="mt-5"
                     >
                       <div className="flex gap-2">
                         <input
-                          value={
-                            couponInput
-                          }
-                          onChange={(event) =>
-                            setCouponInput(
-                              event.target
-                                .value
-                            )
-                          }
+                          value={ couponInput }
+                          onChange={(event) => setCouponInput(event.target.value) }
                           placeholder="Contoh: HEMAT10"
                           className="h-11 min-w-0 flex-1 rounded-xl border border-gray-200 px-4 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                         />
 
                         <button
                           type="submit"
-                          disabled={
-                            couponLoading
-                          }
+                          disabled={ couponLoading }
                           className="rounded-xl bg-gray-900 px-5 text-sm font-semibold text-white hover:bg-gray-800 disabled:opacity-50"
                         >
-                          {couponLoading
-                            ? "..."
-                            : "Pakai"}
+                          {couponLoading ? "..." : "Pakai"}
                         </button>
                       </div>
 
@@ -437,9 +401,7 @@ export default function CheckoutPage() {
 
                 <button
                   type="button"
-                  onClick={() =>
-                    setStep(2)
-                  }
+                  onClick={() => setStep(2)}
                   className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3.5 text-sm font-semibold text-white hover:bg-blue-700"
                 >
                   Lanjut ke Pengiriman
@@ -450,9 +412,7 @@ export default function CheckoutPage() {
 
             {step === 2 && (
               <form
-                onSubmit={
-                  submitShipping
-                }
+                onSubmit={ submitShipping }
                 className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-6"
               >
                 <div className="flex items-center gap-3">
@@ -588,9 +548,7 @@ export default function CheckoutPage() {
                 <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
                   <button
                     type="button"
-                    onClick={() =>
-                      setStep(1)
-                    }
+                    onClick={() => setStep(1)}
                     className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 px-5 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50"
                   >
                     <ArrowLeft size={16} />
@@ -722,9 +680,7 @@ export default function CheckoutPage() {
                 <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
                   <button
                     type="button"
-                    onClick={() =>
-                      setStep(2)
-                    }
+                    onClick={() => setStep(2)}
                     className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 px-5 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50"
                   >
                     <ArrowLeft size={16} />
@@ -733,17 +689,11 @@ export default function CheckoutPage() {
 
                   <button
                     type="button"
-                    disabled={
-                      paymentLoading
-                    }
-                    onClick={
-                      submitPayment
-                    }
+                    disabled={ paymentLoading }
+                    onClick={ submitPayment }
                     className="inline-flex items-center justify-center gap-2 rounded-xl bg-green-600 px-5 py-3 text-sm font-semibold text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-60"
                   >
-                    {paymentLoading
-                      ? "Memproses..."
-                      : "Bayar Sekarang"}
+                    {paymentLoading ? "Memproses..." : "Bayar Sekarang"}
 
                     {!paymentLoading && (
                       <Check size={17} />
@@ -765,55 +715,33 @@ export default function CheckoutPage() {
 
               <div className="space-y-4 px-5 py-5">
                 <SummaryRow
-                  label={`Subtotal (${items.reduce(
-                    (sum, item) =>
-                      sum + item.quantity,
-                    0
-                  )} item)`}
-                  value={formatPrice(
-                    subtotal
-                  )}
+                  label={`Subtotal (${items.reduce((sum, item) => sum + item.quantity, 0)} item)`}
+                  value={formatPrice(subtotal)}
                 />
 
                 <SummaryRow
                   label="Pengiriman"
-                  value={
-                    shippingCost === 0
-                      ? "Gratis"
-                      : formatPrice(
-                          shippingCost
-                        )
-                  }
-                  valueClassName={
-                    shippingCost === 0
-                      ? "text-green-600"
-                      : undefined
-                  }
+                  value={ shippingCost === 0 ? "Gratis" : formatPrice(shippingCost) }
+                  valueClassName={ shippingCost === 0 ? "text-green-600" : undefined }
                 />
 
                 {couponDiscount > 0 && (
                   <SummaryRow
                     label="Diskon"
-                    value={`-${formatPrice(
-                      couponDiscount
-                    )}`}
+                    value={`-${formatPrice(couponDiscount)}`}
                     valueClassName="text-green-600"
                   />
                 )}
 
                 <SummaryRow
                   label="Pajak"
-                  value={formatPrice(
-                    tax
-                  )}
+                  value={formatPrice(tax)}
                 />
 
                 <div className="border-t border-dashed border-gray-200 pt-4">
                   <SummaryRow
                     label="Total"
-                    value={formatPrice(
-                      total
-                    )}
+                    value={formatPrice(total)}
                     strong
                   />
                 </div>
@@ -827,8 +755,7 @@ export default function CheckoutPage() {
                   />
 
                   <p className="text-xs leading-5 text-gray-500">
-                    Data pesanan Anda akan diproses
-                    secara aman.
+                    Data pesanan Anda akan diproses secara aman.
                   </p>
                 </div>
               </div>
@@ -840,14 +767,7 @@ export default function CheckoutPage() {
   );
 }
 
-function Field({
-  label,
-  value,
-  onChange,
-  placeholder,
-  type = "text",
-  required = false,
-}: {
+function Field({ label, value, onChange, placeholder, type = "text", required = false, }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
@@ -865,8 +785,7 @@ function Field({
         type={type}
         required={required}
         value={value}
-        onChange={(event) =>
-          onChange(event.target.value)
+        onChange={(event) => onChange(event.target.value)
         }
         placeholder={placeholder}
         className="mt-2 h-11 w-full rounded-xl border border-gray-200 px-4 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
@@ -875,12 +794,7 @@ function Field({
   );
 }
 
-function SummaryRow({
-  label,
-  value,
-  strong = false,
-  valueClassName = "",
-}: {
+function SummaryRow({ label, value, strong = false, valueClassName = "", }: {
   label: string;
   value: string;
   strong?: boolean;
@@ -889,21 +803,13 @@ function SummaryRow({
   return (
     <div className="flex items-center justify-between gap-4">
       <span
-        className={
-          strong
-            ? "font-semibold text-gray-900"
-            : "text-sm text-gray-500"
-        }
+        className={ strong ? "font-semibold text-gray-900" : "text-sm text-gray-500" }
       >
         {label}
       </span>
 
       <span
-        className={`${
-          strong
-            ? "text-xl font-bold"
-            : "text-sm font-semibold"
-        } ${valueClassName || "text-gray-900"}`}
+        className={`${strong ? "text-xl font-bold" : "text-sm font-semibold"} ${valueClassName || "text-gray-900"}`}
       >
         {value}
       </span>
