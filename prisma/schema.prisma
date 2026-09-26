@@ -23,7 +23,7 @@ model Product {
   orderItems  OrderItem[]
   reviews     Review[]
   categoryId  String
-  category    Categiry @relation(fields: [categoryId], references: [id])
+  category    Category @relation(fields: [categoryId], references: [id])
 
   @@index([category])
   @@index([createdAt])
